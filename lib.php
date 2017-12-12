@@ -1,0 +1,312 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * coursecompleted enrolment plugin.
+ *
+ * @package    enrol_coursecompleted
+ * @copyright  2017 iplusacademy  {@link https://www.iplusacademy.org}
+ * @author     Renaat Debleu (info@eWallah.net)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+class enrol_coursecompleted_plugin extends enrol_plugin {
+
+    /**
+     * Returns localised name of enrol instance
+     *
+     * @param object $instance (null is accepted too)
+     * @return string
+     */
+    public function get_instance_name($instance) {
+        global $DB;
+        if ($DB->record_exists('course', ['id' => $instance->customint1])) {
+            $course = get_course($instance->customint1);
+            $coursename = format_string($course->shortname, true, ['context' => context_course::instance($instance->courseid)]);
+            return get_string('aftercourse', 'enrol_coursecompleted', $coursename);
+        }
+        return "ERROR: Course not found";
+    }
+
+    /**
+     * Returns optional enrolment information icons.
+     *
+     * @param array $instances all enrol instances of this type in one course
+     * @return array of pix_icon
+     */
+    public function get_info_icons(array $instances) {
+        global $DB, $USER;
+        // Dependant on if user is enrolled in one of the dependant courses.
+        return [];
+    }
+
+    /**
+     * Returns optional enrolment instance description text.
+     *
+     * @param object $instance
+     * @return string short html text
+     */
+    public function get_description_text($instance) {
+        return 'Enrolment by coursecompleted';
+    }
+    /**
+     * Attempt to automatically gain coursecompleted access to course,
+     * calling code has to make sure the plugin and instance are active.
+     *
+     * @param stdClass $instance course enrol instance
+     * @return bool|int false means no coursecompleted access, integer means end of cached time
+     */
+    public function try_coursecompletedaccess(stdClass $instance) {
+        return ENROL_MAX_TIMESTAMP;
+    }
+
+    /**
+     * Returns link to page which may be used to add new instance of enrolment plugin in course.
+     * @param int $courseid
+     * @return moodle_url page url
+     */
+    public function get_newinstance_link($courseid) {
+        global $DB;
+
+        $context = context_course::instance($courseid, MUST_EXIST);
+        if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/coursecompleted:config', $context)) {
+            return null;
+        }
+        return new moodle_url('/enrol/coursecompleted/edit.php', ['sesskey' => sesskey(), 'courseid' => $courseid]);
+    }
+
+    /**
+     * Sets up navigation entries.
+     *
+     * @param object $instance
+     * @return void
+     */
+    public function add_course_navigation($instancesnode, stdClass $instance) {
+        if ($instance->enrol !== 'coursecompleted') {
+             throw new coding_exception('Invalid enrol instance type!');
+        }
+
+        $context = context_course::instance($instance->courseid);
+        if (has_capability('enrol/coursecompleted:config', $context)) {
+            $params = ['courseid' => $instance->courseid, 'id' => $instance->id];
+            $managelink = new moodle_url('/enrol/coursecompleted/edit.php', $params);
+            $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
+        }
+    }
+
+    /**
+     * Gets an array of the user enrolment actions
+     *
+     * @param course_enrolment_manager $manager
+     * @param stdClass $ue A user enrolment object
+     * @return array An array of user_enrolment_actions
+     */
+    public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
+        $actions = [];
+        $context = $manager->get_context();
+        $instance = $ue->enrolmentinstance;
+        $params = $manager->get_moodlepage()->url->params();
+        $params['ue'] = $ue->id;
+        if ($this->allow_unenrol($instance) && has_capability("enrol/coursecompleted:unenrol", $context)) {
+            $url = new moodle_url('/enrol/unenroluser.php', $params);
+            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''),
+                             get_string('unenrol', 'enrol'), $url, ['class' => 'unenrollink', 'rel' => $ue->id]);
+        }
+        if ($this->allow_manage($instance) && has_capability("enrol/coursecompleted:manage", $context)) {
+            $url = new moodle_url('/enrol/editenrolment.php', $params);
+            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''),
+                             get_string('edit'), $url, ['class' => 'editenrollink', 'rel' => $ue->id]);
+        }
+        return $actions;
+    }
+
+    /**
+     * Returns edit icons for the page with list of instances
+     * @param stdClass $instance
+     * @return array
+     */
+    public function get_action_icons(stdClass $instance) {
+        global $DB, $OUTPUT;
+
+        if ($instance->enrol !== 'coursecompleted') {
+            throw new coding_exception('invalid enrol instance!');
+        }
+        $context = context_course::instance($instance->courseid);
+        $icons = [];
+        if (has_capability('enrol/coursecompleted:config', $context)) {
+            $params = ['courseid' => $instance->courseid, 'id' => $instance->id];
+            $editlink = new moodle_url("/enrol/coursecompleted/edit.php", $params);
+            $icon = new pix_icon('t/edit', get_string('edit'), 'core', ['class' => 'iconsmall']);
+            $icons[] = $OUTPUT->action_icon($editlink, $icon);
+        }
+        return $icons;
+    }
+
+
+    /**
+     * Called after updating/inserting course.
+     *
+     * @param bool $inserted true if course just inserted
+     * @param object $course
+     * @param object $data form data
+     * @return void
+     */
+    public function course_updated($inserted, $course, $data) {
+        return true;
+        global $DB;
+        if ($inserted) {
+            $fields = $this->get_defaultfields($course);
+            $this->add_instance($course, $fields);
+        } else {
+            $instances = $DB->get_records('enrol', ['courseid' => $course->id, 'enrol' => 'coursecompleted']);
+            foreach ($instances as $instance) {
+                if (!empty($data->customint1)) {
+                    $instance->customint1 = $data->customint1['text'];
+                }
+                $instance->timemodified = time();
+                $DB->update_record('enrol', $instance);
+                $context = context_course::instance($course->id);
+                $context->mark_dirty();
+            }
+        }
+    }
+
+    /**
+     * Given a courseid this function returns true if the user is able to enrol or configure coursecompleteds.
+     *
+     * @param int $courseid
+     * @return bool
+     */
+    public function can_add_instance($courseid) {
+        global $CFG;
+        $coursecontext = context_course::instance($courseid);
+        if (!has_capability('moodle/course:enrolconfig', $coursecontext)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Add new instance of enrol plugin.
+     * @param object $course
+     * @param array $fields instance fields
+     * @return int id of new instance, null if can not be created
+     */
+    public function add_instance($course, array $fields = null) {
+        global $CFG;
+        $result = parent::add_instance($course, $fields);
+        $trace = new null_progress_trace();
+        $trace->finished();
+        return $result;
+    }
+
+    /**
+     * Returns default values of enrol plugin.
+     * @return array of default values
+     */
+    public function get_defaultfields($course) {
+        return ['status' => $this->get_config('status'),
+                'roleid' => $this->get_config('roleid', 0),
+                'enrolperiod' => $this->get_config('enrolperiod', 0),
+                'expirythreshold' => $this->get_config('expirythreshold', 86400),
+                'customtext1' => ''];
+    }
+
+    /**
+     * Add new instance of enrol plugin with default settings.
+     * @param object $course
+     * @return int id of new instance
+     */
+    public function add_default_instance($course) {
+        $fields = $this->get_defaultfields($course);
+        return $this->add_instance($course, $fields);
+    }
+
+    /**
+     * Restore instance and map settings.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $course
+     * @param int $oldid
+     */
+    public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
+        global $DB;
+
+        if (!$DB->record_exists('enrol', ['courseid' => $data->courseid, 'enrol' => $this->get_name()])) {
+            $this->add_instance($course, (array)$data);
+        }
+
+        // No need to set mapping, we do not restore users or roles here.
+        $step->set_mapping('enrol', $oldid, 0);
+    }
+
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param object $instance
+     * @return bool
+     */
+    public function can_delete_instance($instance) {
+        global $DB;
+        // TODO: if user count = 0.
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/coursecompleted:manage', $context);
+    }
+
+    /**
+     * Is it possible to hide/show enrol instance via standard UI?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    public function can_hide_show_instance($instance) {
+        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
+    }
+
+    /**
+     * Does this plugin allow manual unenrolment of all users?
+     *
+     * @param stdClass $instance course enrol instance
+     * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol others freely
+     */
+    public function allow_unenrol(stdClass $instance) {
+        return true;
+    }
+
+    /**
+     * Does this plugin allow manual changes in user_enrolments table?
+     *
+     * @param stdClass $instance course enrol instance
+     * @return bool - true means it is possible to change enrol period and status in user_enrolments table
+     */
+    public function allow_manage(stdClass $instance) {
+        return true;
+    }
+
+    /**
+     * Execute synchronisation.
+     * @param progress_trace $trace
+     * @return int exit code, 0 means ok
+     */
+    public function sync(progress_trace $trace) {
+        $this->process_expirations($trace);
+        return 0;
+    }
+
+}
