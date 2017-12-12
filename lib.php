@@ -50,7 +50,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array of pix_icon
      */
     public function get_info_icons(array $instances) {
-        global $DB, $USER;
         // Dependant on if user is enrolled in one of the dependant courses.
         return [];
     }
@@ -81,8 +80,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return moodle_url page url
      */
     public function get_newinstance_link($courseid) {
-        global $DB;
-
         $context = context_course::instance($courseid, MUST_EXIST);
         if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/coursecompleted:config', $context)) {
             return null;
@@ -141,7 +138,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array
      */
     public function get_action_icons(stdClass $instance) {
-        global $DB, $OUTPUT;
+        global $OUTPUT;
 
         if ($instance->enrol !== 'coursecompleted') {
             throw new coding_exception('invalid enrol instance!');
@@ -159,41 +156,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
 
 
     /**
-     * Called after updating/inserting course.
-     *
-     * @param bool $inserted true if course just inserted
-     * @param object $course
-     * @param object $data form data
-     * @return void
-     */
-    public function course_updated($inserted, $course, $data) {
-        return true;
-        global $DB;
-        if ($inserted) {
-            $fields = $this->get_defaultfields($course);
-            $this->add_instance($course, $fields);
-        } else {
-            $instances = $DB->get_records('enrol', ['courseid' => $course->id, 'enrol' => 'coursecompleted']);
-            foreach ($instances as $instance) {
-                if (!empty($data->customint1)) {
-                    $instance->customint1 = $data->customint1['text'];
-                }
-                $instance->timemodified = time();
-                $DB->update_record('enrol', $instance);
-                $context = context_course::instance($course->id);
-                $context->mark_dirty();
-            }
-        }
-    }
-
-    /**
      * Given a courseid this function returns true if the user is able to enrol or configure coursecompleteds.
      *
      * @param int $courseid
      * @return bool
      */
     public function can_add_instance($courseid) {
-        global $CFG;
         $coursecontext = context_course::instance($courseid);
         if (!has_capability('moodle/course:enrolconfig', $coursecontext)) {
             return false;
@@ -208,7 +176,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return int id of new instance, null if can not be created
      */
     public function add_instance($course, array $fields = null) {
-        global $CFG;
         $result = parent::add_instance($course, $fields);
         $trace = new null_progress_trace();
         $trace->finished();
@@ -263,7 +230,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool
      */
     public function can_delete_instance($instance) {
-        global $DB;
         // TODO: if user count = 0.
         $context = context_course::instance($instance->courseid);
         return has_capability('enrol/coursecompleted:manage', $context);
@@ -308,5 +274,4 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $this->process_expirations($trace);
         return 0;
     }
-
 }

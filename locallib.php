@@ -41,7 +41,7 @@ class enrol_coursecompleted_handler {
      * @return bool
      */
     public static function course_completed(\core\event\course_completed $event) {
-        global $DB, $CFG;
+        global $DB;
         if (!enrol_is_enabled('coursecompleted')) {
             return true;
         }

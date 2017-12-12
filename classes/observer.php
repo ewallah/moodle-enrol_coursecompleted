@@ -30,9 +30,8 @@ class enrol_coursecompleted_observer {
 
     public static function enroluser(\core\event\course_completed $event) {
         global $DB;
-        $userid = $event->relateduserid;
-        $courseid = $event->courseid;
-        if ($enrols = $DB->get_records('enrol', ['enrol' => 'coursecompleted', 'status' => 0, 'customint1' => $courseid])) {
+        $params = ['enrol' => 'coursecompleted', 'status' => 0, 'customint1' => $event->courseid];
+        if ($enrols = $DB->get_records('enrol', $params)) {
             $plugin = \enrol_get_plugin('coursecompleted');
             foreach ($enrols as $enrol) {
                 $plugin->enrol_user($enrol, $event->relateduserid);
