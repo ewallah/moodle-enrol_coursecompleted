@@ -50,7 +50,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array of pix_icon
      */
     public function get_info_icons(array $instances) {
-        // Dependant on if user is enrolled in one of the dependant courses.
+        // TODO: Dependant on if user is enrolled in one of the dependant courses.
         return [];
     }
 
@@ -61,7 +61,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string short html text
      */
     public function get_description_text($instance) {
-        return 'Enrolment by coursecompleted';
+        return 'Enrolment by completetion of a course';
     }
     /**
      * Attempt to automatically gain coursecompleted access to course,
@@ -152,21 +152,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $icons[] = $OUTPUT->action_icon($editlink, $icon);
         }
         return $icons;
-    }
-
-
-    /**
-     * Given a courseid this function returns true if the user is able to enrol or configure coursecompleteds.
-     *
-     * @param int $courseid
-     * @return bool
-     */
-    public function can_add_instance($courseid) {
-        $coursecontext = context_course::instance($courseid);
-        if (!has_capability('moodle/course:enrolconfig', $coursecontext)) {
-            return false;
-        }
-        return true;
     }
 
     /**
