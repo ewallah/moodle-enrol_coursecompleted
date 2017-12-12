@@ -41,6 +41,6 @@ Feature: Enrolment on course completion
     And I trigger cron
     And I wait until the page is ready
     And I log in as "user1"
-    Then I should see "Course 1"
-    And I should see "Course 2"
+    And I am on "Course 1" course homepage
+    And I am on "Course 2" course homepage
     And I log out
