@@ -30,7 +30,7 @@ Feature: Enrolment on course completion
     Given I am on "Course 1" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I add "Course completed enrolment" enrolment method with:
-       | course | Course 2 |
+       | Course | Course 2 |
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
@@ -44,4 +44,3 @@ Feature: Enrolment on course completion
     Then I should see "Course 1"
     And I should see "Course 2"
     And I log out
-  

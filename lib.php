@@ -172,6 +172,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array of default values
      */
     public function get_defaultfields($course) {
+        // TODO: Use $course parameter.
         return ['status' => $this->get_config('status'),
                 'roleid' => $this->get_config('roleid', 0),
                 'enrolperiod' => $this->get_config('enrolperiod', 0),
@@ -215,9 +216,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool
      */
     public function can_delete_instance($instance) {
-        // TODO: if user count = 0.
-        $context = context_course::instance($instance->courseid);
-        return has_capability('enrol/coursecompleted:manage', $context);
+        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
     }
 
     /**
@@ -237,7 +236,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol others freely
      */
     public function allow_unenrol(stdClass $instance) {
-        return true;
+        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
     }
 
     /**
@@ -247,7 +246,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means it is possible to change enrol period and status in user_enrolments table
      */
     public function allow_manage(stdClass $instance) {
-        return true;
+        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
     }
 
     /**

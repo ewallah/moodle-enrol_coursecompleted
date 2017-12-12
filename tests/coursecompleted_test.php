@@ -31,15 +31,13 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);
         $enabled['coursecompleted'] = true;
-        $enabled = array_keys($enabled);
-        set_config('enrol_plugins_enabled', implode(',', $enabled));
+        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
     }
 
     protected function disable_plugin() {
         $enabled = enrol_get_plugins(true);
         unset($enabled['coursecompleted']);
-        $enabled = array_keys($enabled);
-        set_config('enrol_plugins_enabled', implode(',', $enabled));
+        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
     }
 
     public function test_basics() {
