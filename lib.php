@@ -50,7 +50,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array of pix_icon
      */
     public function get_info_icons(array $instances) {
-        global $OUTPUT, $USER;
+        global $USER;
         $arr = [];
         if (!isguestuser()) {
             foreach ($instances as $instance) {
@@ -73,17 +73,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string short html text
      */
     public function get_description_text($instance) {
-        return 'Enrolment by completetion of a course';
-    }
-    /**
-     * Attempt to automatically gain coursecompleted access to course,
-     * calling code has to make sure the plugin and instance are active.
-     *
-     * @param stdClass $instance course enrol instance
-     * @return bool|int false means no coursecompleted access, integer means end of cached time
-     */
-    public function try_coursecompletedaccess(stdClass $instance) {
-        return ENROL_MAX_TIMESTAMP;
+        return 'Enrolment by completetion of course with id ' . $instance->customint1;
     }
 
     /**
@@ -92,7 +82,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @return string html text, usually a form in a text box
      */
-    function enrol_page_hook(stdClass $instance) {
+    public function enrol_page_hook(stdClass $instance) {
         global $OUTPUT, $USER;
         $context = context_course::instance($instance->customint1);
         if (!isguestuser() AND is_enrolled($context, $USER->id, 'moodle/course:isincompletionreports', true)) {

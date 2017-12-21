@@ -64,7 +64,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         global $CFG, $DB, $PAGE;
         $this->resetAfterTest();
         require_once($CFG->dirroot . '/enrol/locallib.php');
-        
+
         $PAGE->set_url('/enrol/editinstance.php');
         $this->enable_plugin();
         $manualplugin = enrol_get_plugin('manual');
@@ -72,7 +72,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course(['enablecompletion' => 1]);
         $course2 = $generator->create_course();
-        $studentrole = $DB->get_record('role', ['shortname'=>'student']);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->assertNotEmpty($studentrole);
         $student = $generator->create_user();
         $instance1 = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'manual'], '*', MUST_EXIST);
@@ -85,7 +85,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertCount(0, $userenrolment2);
         $plugin = enrol_get_plugin('coursecompleted');
         $this->assertNotEmpty($plugin);
-        $id = $plugin->add_instance($course2, ['customint1' => $course1->id]);
+        $plugin->add_instance($course2, ['customint1' => $course1->id]);
         $completion = new completion_completion(['course' => $course1->id, 'userid' => $student->id]);
         $completion->mark_complete();
         $comptask = new \core\task\completion_regular_task();
