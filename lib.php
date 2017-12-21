@@ -50,8 +50,20 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array of pix_icon
      */
     public function get_info_icons(array $instances) {
-        // TODO: Dependant on if user is enrolled in one of the dependant courses.
-        return [];
+        global $OUTPUT, $USER;
+        $arr = [];
+        if (!isguestuser()) {
+            foreach ($instances as $instance) {
+                $context = context_course::instance($instance->customint1);
+                if (is_enrolled($context, $USER->id, 'moodle/course:isincompletionreports', true)) {
+                    $course = get_course($instance->customint1);
+                    $name = format_string($course->fullname, true, ['context' => $context]);
+                    $name = get_string('aftercourse', 'enrol_coursecompleted', $name);
+                    $arr[] = new pix_icon('icon', $name, 'enrol_coursecompleted');
+                }
+            }
+        }
+        return $arr;
     }
 
     /**
@@ -72,6 +84,24 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function try_coursecompletedaccess(stdClass $instance) {
         return ENROL_MAX_TIMESTAMP;
+    }
+
+    /**
+     * Notifies that the user will be enrolled.
+     *
+     * @param stdClass $instance
+     * @return string html text, usually a form in a text box
+     */
+    function enrol_page_hook(stdClass $instance) {
+        global $OUTPUT, $USER;
+        $context = context_course::instance($instance->customint1);
+        if (!isguestuser() AND is_enrolled($context, $USER->id, 'moodle/course:isincompletionreports', true)) {
+            $course = get_course($instance->customint1);
+            $name = format_string($course->fullname, true, ['context' => $context]);
+            $link = html_writer::link(new moodle_url('/course/view.php', ['id' => $course->id]), $name);
+            return $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link));
+        }
+        return '';
     }
 
     /**
@@ -152,42 +182,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $icons[] = $OUTPUT->action_icon($editlink, $icon);
         }
         return $icons;
-    }
-
-    /**
-     * Add new instance of enrol plugin.
-     * @param object $course
-     * @param array $fields instance fields
-     * @return int id of new instance, null if can not be created
-     */
-    public function add_instance($course, array $fields = null) {
-        $result = parent::add_instance($course, $fields);
-        $trace = new null_progress_trace();
-        $trace->finished();
-        return $result;
-    }
-
-    /**
-     * Returns default values of enrol plugin.
-     * @return array of default values
-     */
-    public function get_defaultfields($course) {
-        // TODO: Use $course parameter.
-        return ['status' => $this->get_config('status'),
-                'roleid' => $this->get_config('roleid', 0),
-                'enrolperiod' => $this->get_config('enrolperiod', 0),
-                'expirythreshold' => $this->get_config('expirythreshold', 86400),
-                'customtext1' => ''];
-    }
-
-    /**
-     * Add new instance of enrol plugin with default settings.
-     * @param object $course
-     * @return int id of new instance
-     */
-    public function add_default_instance($course) {
-        $fields = $this->get_defaultfields($course);
-        return $this->add_instance($course, $fields);
     }
 
     /**

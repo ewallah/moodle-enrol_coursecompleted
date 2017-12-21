@@ -34,7 +34,7 @@ class enrol_coursecompleted_observer {
         if ($enrols = $DB->get_records('enrol', $params)) {
             $plugin = \enrol_get_plugin('coursecompleted');
             foreach ($enrols as $enrol) {
-                $plugin->enrol_user($enrol, $event->relateduserid);
+                $plugin->enrol_user($enrol, $event->relateduserid,  $enrol->roleid, $enrol->enrolstartdate, $enrol->enrolenddate);
             }
         }
     }

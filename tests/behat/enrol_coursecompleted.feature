@@ -9,7 +9,8 @@ Feature: Enrolment on course completion
     And the following "users" exist:
       | username | firstname | lastname |
       | user1    | Username  | 1        |
-      | teacher  | Teacher   | 2        |
+      | user2    | Username  | 2        |
+      | teacher  | Teacher   | 1        |
     And the following "course enrolments" exist:
       | user    | course   | role           |
       | user1   | C1       | student        |
@@ -25,22 +26,57 @@ Feature: Enrolment on course completion
     And I expand all fieldsets
     And I set the field "Teacher" to "1"
     And I press "Save changes"
-
-  Scenario: When course 1 is completed, a user is auto enrolled into course 2
-    Given I am on "Course 1" course homepage
+    And I am on "Course 2" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
-    And I add "Course completed enrolment" enrolment method with:
-       | Course | Course 2 |
+
+  Scenario: Only enrolled users should be informed about the enrolment
+    Given I add "Course completed enrolment" enrolment method with:
+       | Course | Course 1 |
+    And I log out
+    And I log in as "user1"
+    And I am on "Course 2" course homepage
+    Then I should see "You will be enrolled in this course when"
+    And I log out
+    And I log in as "user2"
+    And I am on "Course 2" course homepage
+    Then I should not see "You will be enrolled in this course when"
+
+  Scenario: Later start date
+    Given I add "Course completed enrolment" enrolment method with:
+       | id_enrolperiod_enabled    | 1          |
+       | id_enrolperiod_number     | 30         |
+       | id_enrolstartdate_enabled | 1          |
+       | id_enrolstartdate_year    | 2020       |
+       | Course                    | Course 1   |
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
     And I navigate to "Course completion" node in "Course administration > Reports"
     And I follow "Click to mark user complete"
+    And I wait "1" seconds
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I log out
+    And I trigger cron
+    And I wait until the page is ready
+    And I log in as "user1"
+    And I am on "Course 2" course homepage
+    Then I should see "You will be enrolled in this course when"
+
+  Scenario: When a course is completed, a user is auto enrolled into another course
+    Given I add "Course completed enrolment" enrolment method with:
+       | Course | Course 1 |
+    And I log out
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Course completion" node in "Course administration > Reports"
+    And I follow "Click to mark user complete"
+    And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
     And I log out
     And I trigger cron
     And I wait until the page is ready
     And I log in as "user1"
     And I am on "Course 1" course homepage
+    Then I should not see "You will be enrolled in this course when"
     And I am on "Course 2" course homepage
-    And I log out
+    Then I should not see "You will be enrolled in this course when"

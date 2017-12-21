@@ -79,10 +79,10 @@ if ($mform->is_cancelled()) {
             $context->mark_dirty();
         }
     } else {
-        $fie = ['status' => $data->status, 'name' => $data->name, 'roleid' => $data->roleid, 'enrolperiod' => $data->enrolperiod,
-                'enrolstartdate' => $data->enrolstartdate, 'enrolenddate' => $data->enrolenddate,
-                'customtext1' => $data->customint1];
-        $plugin->add_instance($course, $fie);
+        $fields = 
+           ['status' => $data->status, 'name' => $data->name, 'roleid' => $data->roleid, 'enrolperiod' => $data->enrolperiod,
+            'enrolstartdate' => $data->enrolstartdate, 'enrolenddate' => $data->enrolenddate, 'customint1' => $data->customint1];
+        $plugin->add_instance($course, $fields);
     }
     redirect($return);
 }
