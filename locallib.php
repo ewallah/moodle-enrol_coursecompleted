@@ -64,7 +64,8 @@ class enrol_coursecompleted_handler {
             }
             unset($instance->roleexists);
             // No problem if already enrolled.
-            $plugin->enrol_user($instance, $event->relateduserid, $instance->roleid, 0, 0, ENROL_USER_ACTIVE);
+            $plugin->enrol_user($instance, $event->relateduserid, $instance->roleid, $instance->enrolstartdate,
+                                $instance->enrolenddate, ENROL_USER_ACTIVE);
         }
         return true;
     }

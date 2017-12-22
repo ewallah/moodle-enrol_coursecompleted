@@ -91,6 +91,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertNotEmpty($manualplugin);
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course(['enablecompletion' => 1]);
+        $context1 = context_course::instance($course1->id);
         $course2 = $generator->create_course();
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->assertNotEmpty($studentrole);
@@ -108,6 +109,16 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $plugin->add_instance($course2, ['customint1' => $course1->id]);
         $completion = new completion_completion(['course' => $course1->id, 'userid' => $student->id]);
         $completion->mark_complete();
+        $coursecompletionevent = \core\event\course_completion_updated::create(['courseid' => $course1->id, 'context' => $context1]);
+
+        // Mark course as complete and get triggered event.
+        $sink = $this->redirectEvents();
+        $coursecompletionevent->trigger();
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+        $userenrolment2 = $manager2->get_user_enrolments($student->id);
+        $this->assertCount(0, $userenrolment2);
         $comptask = new \core\task\completion_regular_task();
         $eventstask = new \core\task\events_cron_task();
         ob_start();
