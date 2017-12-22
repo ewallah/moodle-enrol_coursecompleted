@@ -17,11 +17,10 @@
 /**
  * Coursecompleted enrolment plugin event handler definition.
  *
- * @package enrol_coursecompleted
- * @category event
- * @copyright 2017 i+solutions (www.iplussolutions.org)
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
  * @author    Renaat Debleu (www.ewallah.net)
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

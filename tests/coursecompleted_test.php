@@ -17,29 +17,46 @@
 /**
  * coursecompleted enrolment plugin tests.
  *
- * @package    enrol_coursecompleted
- * @copyright  2017 iplusacademy  {@link https://www.iplusacademy.org}
- * @author     Renaat Debleu (info@eWallah.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu (info@eWallah.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 
+/**
+ * coursecompleted enrolment plugin tests.
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu (info@eWallah.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class enrol_coursecompleted_testcase extends advanced_testcase {
 
+    /**
+     * Enable plugin.
+     */
     protected function enable_plugin() {
         $enabled = enrol_get_plugins(true);
         $enabled['coursecompleted'] = true;
         set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
     }
 
+    /**
+     * Disable plugin.
+     */
     protected function disable_plugin() {
         $enabled = enrol_get_plugins(true);
         unset($enabled['coursecompleted']);
         set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
     }
 
+    /**
+     * Basic test.
+     */
     public function test_basics() {
         $this->assertFalse(enrol_is_enabled('coursecompleted'));
         $plugin = enrol_get_plugin('coursecompleted');
@@ -47,6 +64,9 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertEquals(ENROL_EXT_REMOVED_SUSPENDNOROLES, get_config('enrol_coursecompleted', 'expiredaction'));
     }
 
+    /**
+     * Test if user is sync is working.
+     */
     public function test_sync_nothing() {
         $this->resetAfterTest();
 

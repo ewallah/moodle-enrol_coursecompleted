@@ -18,10 +18,10 @@
  * Adds new instance of enrol_coursecompleted to specified course
  * or edits current instance.
  *
- * @package    enrol_coursecompleted
- * @copyright  2016 iplusacademy  {@link https://www.iplusacademy.org}
- * @author     Renaat Debleu (info@eWallah.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu (info@eWallah.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');

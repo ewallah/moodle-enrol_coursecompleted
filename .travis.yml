@@ -23,13 +23,13 @@ cache:
 
 php:
  - 7.1
- #- 7.2
+ - 7.2
 
 env:
-  #- DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
-  #- DB=pgsql MOODLE_BRANCH=master
+  - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=pgsql MOODLE_BRANCH=master
   - DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
-  #- DB=mysqli MOODLE_BRANCH=master
+  - DB=mysqli MOODLE_BRANCH=master
  
 before_install:
   - phpenv config-rm xdebug.ini
@@ -51,6 +51,9 @@ script:
   - moodle-plugin-ci savepoints
   - moodle-plugin-ci mustache
   - moodle-plugin-ci grunt
-  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci phpunit --coverage-clover
   - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
+
+after_success:
+  - moodle-plugin-ci coveralls-upload

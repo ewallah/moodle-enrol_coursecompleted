@@ -18,18 +18,31 @@
  * Adds new instance of enrol_coursecompleted to specified course
  * or edits current instance.
  *
- * @package    enrol_coursecompleted
- * @copyright  2017 iplusacademy  {@link https://www.iplusacademy.org}
- * @author     Renaat Debleu (info@eWallah.net)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu (info@eWallah.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * Adds new instance of enrol_coursecompleted to specified course
+ * or edits current instance.
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu (info@eWallah.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class enrol_coursecompleted_edit_form extends moodleform {
 
+    /**
+     * Form definition.
+     * @return void
+     */
     public function definition() {
         $mform = $this->_form;
 
@@ -82,6 +95,13 @@ class enrol_coursecompleted_edit_form extends moodleform {
         $this->set_data($instance);
     }
 
+    /**
+     * Validate this form. Calls plugin validation method.
+     *
+     * @param array $data
+     * @param array $files
+     * @return array
+     */
     public function validation($data, $files) {
         global $DB;
         $errors = parent::validation($data, $files);

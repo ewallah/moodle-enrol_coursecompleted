@@ -18,16 +18,28 @@
  * Event observers
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 i+solutions (www.iplussolutions.org)
+ * @copyright 2017 eWallah (www.eWallah.net)
  * @author    Renaat Debleu (www.ewallah.net)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Event observers
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu (www.ewallah.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class enrol_coursecompleted_observer {
 
+    /**
+     * Triggered when user completes a course.
+     *
+     * @param \core\event\course_completed $event
+     */
     public static function enroluser(\core\event\course_completed $event) {
         global $DB;
         $params = ['enrol' => 'coursecompleted', 'status' => 0, 'customint1' => $event->courseid];
