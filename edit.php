@@ -15,8 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Adds new instance of enrol_coursecompleted to specified course
- * or edits current instance.
+ * Adds new or edit instance of enrol_coursecompleted to specified course
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu (info@eWallah.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Adds new or edit instance of enrol_coursecompleted to specified course
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
@@ -26,7 +36,6 @@
 
 require('../../config.php');
 require_once('edit_form.php');
-
 $courseid   = required_param('courseid', PARAM_INT);
 $instanceid = optional_param('id', 0, PARAM_INT);
 

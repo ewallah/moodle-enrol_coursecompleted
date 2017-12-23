@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Adds new instance of enrol_coursecompleted to specified course
- * or edits current instance.
+ * Endrol coursecompleted edit form
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
@@ -25,12 +24,10 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
 require_once($CFG->libdir.'/formslib.php');
 
 /**
- * Adds new instance of enrol_coursecompleted to specified course
- * or edits current instance.
+ * Endrol coursecompleted edit form
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
