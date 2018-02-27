@@ -180,7 +180,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $icon = new pix_icon('t/edit', get_string('edit'), 'core', ['class' => 'iconsmall']);
             $icons[] = $OUTPUT->action_icon($editlink, $icon);
             $managelink = new moodle_url("/enrol/coursecompleted/manage.php", ['enrolid' => $instance->id]);
-            $icons[] = $OUTPUT->action_icon($managelink, 
+            $icons[] = $OUTPUT->action_icon($managelink,
                        new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_manual'), 'core', ['class' => 'iconsmall']));
         }
         return $icons;

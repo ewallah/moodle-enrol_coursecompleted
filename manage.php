@@ -62,16 +62,16 @@ echo $OUTPUT->heading(get_string('enrolusers', 'enrol'));
 
 if ($enrolid > 0) {
     if ($action === 'enrol') {
-        if($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
+        if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
             foreach ($candidates as $candidate) {
                 $enrol->enrol_user($instance, $candidate, $instance->roleid, $instance->enrolstartdate, $instance->enrolenddate);
                 echo '.';
             }
             echo '<br/><br/>' . count($candidates) . ' Users enrolled';
-       }
+        }
     } else {
         $cancelurl = new moodle_url('/enrol/instances.php', ['id' => $instance->courseid]);
-        if($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
+        if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
             $enro = get_string('enrol', 'enrol');
             $canc = get_string('cancel');
             $allusers = [];
