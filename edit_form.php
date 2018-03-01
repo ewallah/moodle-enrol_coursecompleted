@@ -102,10 +102,13 @@ class enrol_coursecompleted_edit_form extends moodleform {
     public function validation($data, $files) {
         global $DB;
         $errors = parent::validation($data, $files);
+        list($instance, $plugin, $context) = $this->_customdata;
         if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
             $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
         }
-        if ($data['customint1'] == 1 or !$DB->record_exists('course', ['id' => $data['customint1']])) {
+        if (empty($data['customint1']) or
+            $data['customint1'] == 1 or
+            !$DB->record_exists('course', ['id' => $data['customint1']])) {
             $errors['customint'] = get_string('error_nonexistingcourse', 'tool_generator');
         }
         return $errors;
