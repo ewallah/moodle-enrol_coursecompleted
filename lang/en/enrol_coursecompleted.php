@@ -24,14 +24,14 @@
  */
 
 $string['aftercourse'] = 'After completing course: {$a}';
-$string['cachedef_compcourses'] = 'Enrolment on course ompletion cache';
-$string['coursecompleted:config'] = 'Configure enrol on course completion instances';
+$string['cachedef_compcourses'] = 'Enrolment on course completion cache';
+$string['coursecompleted:config'] = 'Configure enrol coursecompletion instances';
 $string['coursecompleted:manage'] = 'Manage enrolled users';
-$string['coursecompleted:notifyenroled'] = 'Be notified when enroled';
+$string['coursecompleted:enrolpast'] = 'Enrol users who completed courses in the past';
 $string['coursecompleted:unenrol'] = 'Unenrol users from course';
 $string['coursecompleted:unenrolself'] = 'Unenrol self from the course';
 $string['compcourse'] = 'Completed course';
-$string['compcourse_help'] = 'List of comma seperated courses that have to be completed.';
+$string['compcourse_help'] = 'Which course have to be completed.';
 $string['pluginname'] = 'Course completed enrolment';
 $string['pluginname_desc'] = 'Course completed enrol plugin grants access to courses upon coursecompleted of a course.';
 $string['status'] = 'Enabled';

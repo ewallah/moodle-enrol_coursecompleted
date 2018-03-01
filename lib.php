@@ -179,9 +179,11 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $editlink = new moodle_url("/enrol/coursecompleted/edit.php", $params);
             $icon = new pix_icon('t/edit', get_string('edit'), 'core', ['class' => 'iconsmall']);
             $icons[] = $OUTPUT->action_icon($editlink, $icon);
+        }
+        if (has_capability('enrol/coursecompleted:enrolpast', $context)) {
             $managelink = new moodle_url("/enrol/coursecompleted/manage.php", ['enrolid' => $instance->id]);
-            $icons[] = $OUTPUT->action_icon($managelink,
-                       new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_manual'), 'core', ['class' => 'iconsmall']));
+            $icon = new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_manual'), 'core', ['class' => 'iconsmall']);
+            $icons[] = $OUTPUT->action_icon($managelink, $icon);
         }
         return $icons;
     }
