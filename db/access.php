@@ -29,8 +29,8 @@ $caps = ['captype' => 'write', 'contextlevel' => CONTEXT_COURSE,
          'archetypes' => ['manager' => CAP_ALLOW, 'editingteacher' => CAP_ALLOW]];
 $capabilities = [
     'enrol/coursecompleted:config' => $caps,
-    'enrol/coursecompleted:enrolpast' =>
-        ['captype' => 'write', 'contextlevel' => CONTEXT_COURSE, 'archetypes' => ['manager' => CAP_ALLOW]],
+    'enrol/coursecompleted:enrolpast' => [
+        'captype' => 'write', 'contextlevel' => CONTEXT_COURSE, 'archetypes' => ['manager' => CAP_ALLOW]],
     'enrol/coursecompleted:manage' => $caps,
     'enrol/coursecompleted:unenrol' => $caps,
     'enrol/coursecompleted:unenrolself' => ['captype' => 'write', 'contextlevel' => CONTEXT_COURSE, 'archetypes' => []]];
