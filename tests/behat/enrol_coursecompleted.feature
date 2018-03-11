@@ -43,11 +43,11 @@ Feature: Enrolment on course completion
 
   Scenario: Later start date
     Given I add "Course completed enrolment" enrolment method with:
+       | Course                    | Course 1   |
        | id_enrolperiod_enabled    | 1          |
        | id_enrolperiod_number     | 30         |
        | id_enrolstartdate_enabled | 1          |
        | id_enrolstartdate_year    | 2020       |
-       | Course                    | Course 1   |
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
