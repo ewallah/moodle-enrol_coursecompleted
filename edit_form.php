@@ -73,7 +73,7 @@ class enrol_coursecompleted_edit_form extends moodleform {
         $mform->setDefault('enrolenddate', 0);
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_paypal');
 
-        $options = ['multiple' => false, 'exclude' => $instance->courseid, 'includefrontpage' => false];
+        $options = ['multiple' => false, 'includefrontpage' => false];
         $mform->addElement('course', 'customint1', get_string('course'), $options);
 
         $mform->addElement('hidden', 'id');
