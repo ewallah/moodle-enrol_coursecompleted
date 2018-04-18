@@ -31,7 +31,8 @@ Feature: Enrolment on course completion
 
   Scenario: Only enrolled users should be informed about the enrolment
     Given I add "Course completed enrolment" enrolment method with:
-       | Course | Course 1 |
+       | Course                 | Course 1 |
+       | id_enrolperiod_enabled | 0        |
     And I log out
     And I log in as "user1"
     And I am on "Course 2" course homepage
