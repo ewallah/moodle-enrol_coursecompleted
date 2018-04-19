@@ -256,4 +256,13 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $this->process_expirations($trace);
         return 0;
     }
+
+    /**
+     * We are a good plugin and don't invent our own UI/validation code path.
+     *
+     * @return boolean
+     */
+    public function use_standard_editing_ui() {
+        return true;
+    }
 }
