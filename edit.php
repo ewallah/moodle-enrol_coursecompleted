@@ -54,9 +54,10 @@ if ($instanceid <> 0) {
     $instance = new stdClass();
     $instance->id = null;
     $instance->courseid = $course->id;
+    $instance->status = ENROL_INSTANCE_ENABLED; // Do not use default for automatically created instances here.
 }
 
-$mform = new enrol_coursecompleted_edit_form(null, [$instance, $plugin, $context]);
+$mform = new enrol_coursecompleted_edit_form(null, [$instance, $plugin, $context, 'coursecompleted', $return]);
 
 if ($mform->is_cancelled()) {
     redirect($return);
