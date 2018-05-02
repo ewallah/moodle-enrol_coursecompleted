@@ -34,9 +34,6 @@ $context = context_course::instance($course->id, MUST_EXIST);
 require_login($course);
 require_capability('enrol/coursecompleted:config', $context);
 
-$PAGE->set_url('/enrol/coursecompleted/edit.php', ['courseid' => $course->id, 'id' => $instanceid]);
-$PAGE->set_pagelayout('admin');
-
 $return = new moodle_url('/enrol/instances.php', ['id' => $course->id]);
 if (!enrol_is_enabled('coursecompleted')) {
     redirect($return);
@@ -44,9 +41,10 @@ if (!enrol_is_enabled('coursecompleted')) {
 
 $plugin = enrol_get_plugin('coursecompleted');
 
-if ($instanceid <> 0) {
+if ($instanceid > 0) {
     $arr = ['courseid' => $courseid, 'enrol' => 'coursecompleted', 'id' => $instanceid];
     $instance = $DB->get_record('enrol', $arr, '*', MUST_EXIST);
+    $PAGE->set_url('/enrol/coursecompleted/edit.php', ['courseid' => $course->id, 'id' => $instanceid]);
 } else {
     require_capability('moodle/course:enrolconfig', $context);
     // No instance yet, we have to add new instance.
@@ -55,8 +53,9 @@ if ($instanceid <> 0) {
     $instance->id = null;
     $instance->courseid = $course->id;
     $instance->status = ENROL_INSTANCE_ENABLED; // Do not use default for automatically created instances here.
+    $PAGE->set_url('/enrol/coursecompleted/edit.php', ['courseid' => $course->id]);
 }
-
+$PAGE->set_pagelayout('admin');
 $mform = new enrol_coursecompleted_edit_form(null, [$instance, $plugin, $context, 'coursecompleted', $return]);
 
 if ($mform->is_cancelled()) {
