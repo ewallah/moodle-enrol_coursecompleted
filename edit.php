@@ -44,7 +44,7 @@ if (!enrol_is_enabled('coursecompleted')) {
 
 $plugin = enrol_get_plugin('coursecompleted');
 
-if ($instanceid) {
+if ($instanceid <> 0) {
     $arr = ['courseid' => $courseid, 'enrol' => 'coursecompleted', 'id' => $instanceid];
     $instance = $DB->get_record('enrol', $arr, '*', MUST_EXIST);
 } else {
