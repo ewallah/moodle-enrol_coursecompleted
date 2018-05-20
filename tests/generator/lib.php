@@ -40,9 +40,8 @@ class enrol_coursecompleted_generator extends testing_module_generator {
 
         // TODO for behats I think this is the reason for studentquiz 0!
         if (!isset($record->name)) {
-            $record->name = 'test'
+            $record->name = 'test';
         }
-
         return parent::create_instance($record, (array)$options);
     }
 }
