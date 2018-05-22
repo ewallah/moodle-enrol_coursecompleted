@@ -263,6 +263,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return boolean
      */
     public function use_standard_editing_ui() {
-        return false;
+        return true;
     }
 }
