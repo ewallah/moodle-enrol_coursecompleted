@@ -35,10 +35,16 @@ defined('MOODLE_INTERNAL') || die();
  */
 class enrol_coursecompleted_generator extends testing_module_generator {
 
-    public function create_instance($record = null, array $options = null) {
+    /**
+     * Create a course completed enrol instance.
+     *
+     * @param array|stdClass $record enrol instance.
+     * @param array $options further, enrol-specific options to control how the instance is created.
+     * @return stdClass the enrol_instance record that has just been created.
+     */
+     public function create_instance($record = null, array $options = null) {
         $record = (object)(array)$record;
 
-        // TODO for behats I think this is the reason for studentquiz 0!
         if (!isset($record->name)) {
             $record->name = 'test';
         }

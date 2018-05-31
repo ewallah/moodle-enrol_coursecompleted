@@ -166,20 +166,14 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @return array
      */
-    public function oldget_action_icons(stdClass $instance) {
+    public function get_action_icons(stdClass $instance) {
         global $OUTPUT;
 
         if ($instance->enrol !== 'coursecompleted') {
             throw new coding_exception('invalid enrol instance!');
         }
+        $icons = parent::get_action_icons($instance);
         $context = context_course::instance($instance->courseid);
-        $icons = [];
-        if (has_capability('enrol/coursecompleted:config', $context)) {
-            $params = ['courseid' => $instance->courseid, 'id' => $instance->id];
-            $editlink = new moodle_url("/enrol/coursecompleted/edit.php", $params);
-            $icon = new pix_icon('t/edit', get_string('edit'), 'core', ['class' => 'iconsmall']);
-            $icons[] = $OUTPUT->action_icon($editlink, $icon);
-        }
         if (has_capability('enrol/coursecompleted:enrolpast', $context)) {
             $managelink = new moodle_url("/enrol/coursecompleted/manage.php", ['enrolid' => $instance->id]);
             $icon = new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_manual'), 'core', ['class' => 'iconsmall']);
@@ -275,42 +269,27 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool
      */
     public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
-        $plugin = enrol_get_plugin('coursecompleted');
-        $mform->addElement('header', 'header', get_string('pluginname', 'enrol_coursecompleted'));
-        $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
-        $mform->setType('name', PARAM_TEXT);
 
         $options = [ENROL_INSTANCE_ENABLED  => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
-        $mform->setDefault('status', $plugin->get_config('status'));
 
         $role = ($instance->id) ? $instance->roleid : $plugin->get_config('roleid');
         $roles = get_default_enrol_roles($context, $role);
         $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_paypal'), $roles);
-        $mform->setDefault('roleid', $plugin->get_config('roleid'));
 
         $s = get_string('enrolperiod', 'enrol_paypal');
         $mform->addElement('duration', 'enrolperiod', $s, ['optional' => true, 'defaultunit' => 86400]);
-        $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
         $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_paypal');
 
         $s = get_string('enrolstartdate', 'enrol_paypal');
         $mform->addElement('date_time_selector', 'enrolstartdate', 'Enrolment ' . $s, ['optional' => true]);
-        $mform->setDefault('enrolstartdate', 0);
         $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_paypal');
 
         $s = get_string('enrolenddate', 'enrol_paypal');
         $mform->addElement('date_time_selector', 'enrolenddate', 'Enrolment ' . $s, ['optional' => true]);
-        $mform->setDefault('enrolenddate', 0);
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_paypal');
 
         $mform->addElement('course', 'customint1', get_string('course'), ['multiple' => false, 'includefrontpage' => false]);
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-
-        $mform->addElement('hidden', 'courseid');
-        $mform->setType('courseid', PARAM_INT);
 
         if (enrol_accessing_via_instance($instance)) {
             $mform->addElement('static', 'selfwarn', get_string('instanceeditselfwarning', 'core_enrol'),
