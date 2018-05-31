@@ -166,7 +166,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @return array
      */
-    public function get_action_icons(stdClass $instance) {
+    public function oldget_action_icons(stdClass $instance) {
         global $OUTPUT;
 
         if ($instance->enrol !== 'coursecompleted') {
@@ -263,6 +263,85 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return boolean
      */
     public function use_standard_editing_ui() {
-        return false;
+        return true;
+    }
+
+    /**
+     * Add elements to the edit instance form.
+     *
+     * @param stdClass $instance
+     * @param MoodleQuickForm $mform
+     * @param context $context
+     * @return bool
+     */
+    public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
+        global $CFG;
+
+        $mform->addElement('header', 'header', get_string('pluginname', 'enrol_coursecompleted'));
+        $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
+        $mform->setType('name', PARAM_TEXT);
+
+        $options = [ENROL_INSTANCE_ENABLED  => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
+        $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
+        $mform->setDefault('status', $plugin->get_config('status'));
+
+        $role = ($instance->id) ? $instance->roleid : $plugin->get_config('roleid');
+        $roles = get_default_enrol_roles($context, $role);
+        $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_paypal'), $roles);
+        $mform->setDefault('roleid', $plugin->get_config('roleid'));
+
+        $s = get_string('enrolperiod', 'enrol_paypal');
+        $mform->addElement('duration', 'enrolperiod', $s, ['optional' => true, 'defaultunit' => 86400]);
+        $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
+        $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_paypal');
+
+        $s = get_string('enrolstartdate', 'enrol_paypal');
+        $mform->addElement('date_time_selector', 'enrolstartdate', 'Enrolment ' . $s, ['optional' => true]);
+        $mform->setDefault('enrolstartdate', 0);
+        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_paypal');
+
+        $s = get_string('enrolenddate', 'enrol_paypal');
+        $mform->addElement('date_time_selector', 'enrolenddate', 'Enrolment ' . $s, ['optional' => true]);
+        $mform->setDefault('enrolenddate', 0);
+        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_paypal');
+
+        $mform->addElement('course', 'customint1', get_string('course'), ['multiple' => false, 'includefrontpage' => false]);
+
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'courseid');
+        $mform->setType('courseid', PARAM_INT);
+
+        if (enrol_accessing_via_instance($instance)) {
+            $mform->addElement('static', 'selfwarn', get_string('instanceeditselfwarning', 'core_enrol'),
+                               get_string('instanceeditselfwarningtext', 'core_enrol'));
+        }
+    }
+
+    /**
+     * Perform custom validation of the data used to edit the instance.
+     *
+     * @param array $data array of ("fieldname"=>value) of submitted data
+     * @param array $files array of uploaded files "element_name"=>tmp_file_path
+     * @param object $instance The instance loaded from the DB
+     * @param context $context The context of the instance we are editing
+     * @return array of "element_name"=>"error_description" if there are errors,
+     *         or an empty array if everything is OK.
+     * @return void
+     */
+    public function edit_instance_validation($data, $files, $instance, $context) {
+
+        global $DB;
+        $errors = parent::validation($data, $files);
+        if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
+            $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
+        }
+        if (empty($data['customint1']) or
+            $data['customint1'] == 1 or
+            !$DB->record_exists('course', ['id' => $data['customint1']])) {
+            $errors['customint'] = get_string('error_nonexistingcourse', 'tool_generator');
+        }
+        return $errors;
     }
 }
