@@ -282,12 +282,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('duration', 'enrolperiod', $s, ['optional' => true, 'defaultunit' => 86400]);
         $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_paypal');
 
-        $s = get_string('enrolstartdate', 'enrol_paypal');
-        $mform->addElement('date_time_selector', 'enrolstartdate', 'Enrolment ' . $s, ['optional' => true]);
+        $s = get_string('completionduration', 'completion') . ' ' . get_string('enrolstartdate', 'enrol_paypal');
+        $mform->addElement('date_time_selector', 'enrolstartdate', $s, ['optional' => true]);
         $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_paypal');
 
-        $s = get_string('enrolenddate', 'enrol_paypal');
-        $mform->addElement('date_time_selector', 'enrolenddate', 'Enrolment ' . $s, ['optional' => true]);
+        $s = get_string('completionduration', 'completion') . ' ' . get_string('enrolenddate', 'enrol_paypal');
+        $mform->addElement('date_time_selector', 'enrolenddate', $s, ['optional' => true]);
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_paypal');
 
         $mform->addElement('course', 'customint1', get_string('course'), ['multiple' => false, 'includefrontpage' => false]);
