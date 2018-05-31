@@ -42,7 +42,7 @@ class enrol_coursecompleted_generator extends testing_module_generator {
      * @param array $options further, enrol-specific options to control how the instance is created.
      * @return stdClass the enrol_instance record that has just been created.
      */
-     public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, array $options = null) {
         $record = (object)(array)$record;
 
         if (!isset($record->name)) {
