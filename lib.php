@@ -275,8 +275,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool
      */
     public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
-        global $CFG;
-
         $plugin = enrol_get_plugin('coursecompleted');
         $mform->addElement('header', 'header', get_string('pluginname', 'enrol_coursecompleted'));
         $mform->addElement('text', 'name', get_string('custominstancename', 'enrol'));
