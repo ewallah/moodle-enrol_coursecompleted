@@ -273,6 +273,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $options = [ENROL_INSTANCE_ENABLED  => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
 
+        $plugin = enrol_get_plugin('coursecompleted');
         $role = ($instance->id) ? $instance->roleid : $plugin->get_config('roleid');
         $roles = get_default_enrol_roles($context, $role);
         $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_paypal'), $roles);
