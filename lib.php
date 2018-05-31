@@ -332,14 +332,16 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public function edit_instance_validation($data, $files, $instance, $context) {
 
         global $DB;
-        $errors = parent::validation($data, $files);
-        if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
-            $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
-        }
-        if (empty($data['customint1']) or
-            $data['customint1'] == 1 or
-            !$DB->record_exists('course', ['id' => $data['customint1']])) {
-            $errors['customint'] = get_string('error_nonexistingcourse', 'tool_generator');
+        $errors = [];
+        if ($data['status'] == ENROL_INSTANCE_ENABLED) {
+            if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
+                $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
+            }
+            if (empty($data['customint1']) or
+                $data['customint1'] == 1 or
+                !$DB->record_exists('course', ['id' => $data['customint1']])) {
+                $errors['customint'] = get_string('error_nonexistingcourse', 'tool_generator');
+            }
         }
         return $errors;
     }
