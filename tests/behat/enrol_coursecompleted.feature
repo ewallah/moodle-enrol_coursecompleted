@@ -29,7 +29,7 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
 
-  Scenario: Only enrolled users should be informed about the enrolment
+  Scenario: Only enrolled users should be informed about possible enrolment
     Given I add "Course completed enrolment" enrolment method with:
        | Course                 | Course 1 |
        | id_enrolperiod_enabled | 0        |

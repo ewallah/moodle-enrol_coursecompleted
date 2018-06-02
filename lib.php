@@ -81,7 +81,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string short html text
      */
     public function get_description_text($instance) {
-        return 'Enrolment by completetion of course with id ' . $instance->customint1;
+        return 'Enrolment by completion of course with id ' . $instance->customint1;
     }
 
     /**
@@ -100,39 +100,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             return $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link));
         }
         return '';
-    }
-
-    /**
-     * Returns link to page which may be used to add new instance of enrolment plugin in course.
-     * @param int $courseid
-     * @return moodle_url page url
-     */
-    public function get_newinstance_link($courseid) {
-        $context = context_course::instance($courseid, MUST_EXIST);
-        if (!has_capability('moodle/course:enrolconfig', $context) or !has_capability('enrol/coursecompleted:config', $context)) {
-            return null;
-        }
-        return new moodle_url('/enrol/coursecompleted/edit.php', ['sesskey' => sesskey(), 'courseid' => $courseid]);
-    }
-
-    /**
-     * Sets up navigation entries.
-     *
-     * @param object $instancesnode
-     * @param stdClass $instance
-     * @return void
-     */
-    public function add_course_navigation($instancesnode, stdClass $instance) {
-        if ($instance->enrol !== 'coursecompleted') {
-             throw new coding_exception('Invalid enrol instance type!');
-        }
-
-        $context = context_course::instance($instance->courseid);
-        if (has_capability('enrol/coursecompleted:config', $context)) {
-            $params = ['courseid' => $instance->courseid, 'id' => $instance->id];
-            $managelink = new moodle_url('/enrol/coursecompleted/edit.php', $params);
-            $instancesnode->add($this->get_instance_name($instance), $managelink, navigation_node::TYPE_SETTING);
-        }
     }
 
     /**
@@ -199,6 +166,16 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
 
         // No need to set mapping, we do not restore users or roles here.
         $step->set_mapping('enrol', $oldid, 0);
+    }
+
+    /**
+     * Is it possible to add enrol instance via standard UI?
+     *
+     * @param int $courseid id of the course to add the instance to
+     * @return boolean
+     */
+    public function can_add_instance($courseid) {
+        return has_capability('enrol/coursecompleted:manage', context_course::instance($courseid));
     }
 
     /**
