@@ -43,11 +43,8 @@ class enrol_coursecompleted_generator extends testing_module_generator {
      * @return stdClass the enrol_instance record that has just been created.
      */
     public function create_instance($record = null, array $options = null) {
-        $record = (object)(array)$record;
 
-        if (!isset($record->name)) {
-            $record->name = 'test';
-        }
+        $record = (array)$record + ['name' => 'test'];
         return parent::create_instance($record, (array)$options);
     }
 }

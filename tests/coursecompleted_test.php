@@ -119,13 +119,20 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertCount(0, $userenrolment2);
         $comptask = new \core\task\completion_regular_task();
         $eventstask = new \core\task\events_cron_task();
+        $event = \core\event\course_completed::create([
+            'objectid' => 1,
+            'relateduserid' => $student->id,
+            'context' => $context1,
+            'courseid' => $course1->id,
+            'other' => ['relateduserid' => $student->id]]);
+        $observer = new enrol_coursecompleted_observer();
         ob_start();
+        $observer->enroluser($event);
         $comptask->execute();
         $eventstask->execute();
         $comptask->execute();
         $eventstask->execute();
         ob_end_clean();
-        $generator->enrol_user($student->id, $course2->id, 'student', 'coursecompleted');
         $userenrolment2 = $manager2->get_user_enrolments($student->id);
         // TODO: User is not enrolled.
         $this->assertCount(0, $userenrolment2);
@@ -135,7 +142,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      * Test observer.
      */
     public function test_observer() {
-        global $CFG, $USER;
+        global $USER;
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);
