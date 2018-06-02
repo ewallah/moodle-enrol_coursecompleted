@@ -93,7 +93,6 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $course1 = $generator->create_course(['enablecompletion' => 1]);
         $context1 = context_course::instance($course1->id);
         $course2 = $generator->create_course();
-        $context2 = context_course::instance($course2->id);
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->assertNotEmpty($studentrole);
         $student = $generator->create_user();
@@ -160,8 +159,13 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertfalse($plugin->can_add_instance($course1->id));
         $this->setAdminUser();
         $this->asserttrue($plugin->can_add_instance($course1->id));
-        $x = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'name' => 'test']);
-        $instance = $DB->get_record('enrol', ['id' => $x]);
+        $id = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'name' => 'test']);
+        $manualplugin = enrol_get_plugin('manual');
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $student = $generator->create_user();
+        $instance1 = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $manualplugin->enrol_user($instance1, $student->id);
+        $instance = $DB->get_record('enrol', ['id' => $id]);
         $this->assertTrue($plugin->allow_unenrol($instance));
         $this->assertTrue($plugin->allow_manage($instance));
         $this->assertTrue($plugin->can_hide_show_instance($instance));
@@ -170,6 +174,13 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertEquals(2, count($plugin->get_action_icons($instance)));
         $this->assertEquals('After completing course: A2', $plugin->get_instance_name($instance));
         $this->assertEquals('Enrolment by completion of course with id ' . $course2->id, $plugin->get_description_text($instance));
+        $this->assertEquals('', $plugin->enrol_page_hook($instance));
+        $this->setUser($student);
+        $this->assertfalse($plugin->can_add_instance($course1->id));
+        $this->assertfalse($plugin->allow_unenrol($instance));
+        $this->assertfalse($plugin->allow_manage($instance));
+        $this->assertfalse($plugin->can_hide_show_instance($instance));
+        $this->assertfalse($plugin->can_delete_instance($instance));
         $this->assertEquals('', $plugin->enrol_page_hook($instance));
     }
 }

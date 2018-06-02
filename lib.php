@@ -42,13 +42,9 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string
      */
     public function get_instance_name($instance) {
-        global $DB;
-        if ($DB->record_exists('course', ['id' => $instance->customint1])) {
-            $course = get_course($instance->customint1);
-            $coursename = format_string($course->shortname, true, ['context' => context_course::instance($instance->courseid)]);
-            return get_string('aftercourse', 'enrol_coursecompleted', $coursename);
-        }
-        return "ERROR: Course not found";
+        $course = get_course($instance->customint1);
+        $coursename = format_string($course->shortname, true, ['context' => context_course::instance($instance->customint1)]);
+        return get_string('aftercourse', 'enrol_coursecompleted', $coursename);
     }
 
     /**
@@ -205,7 +201,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol others freely
      */
     public function allow_unenrol(stdClass $instance) {
-        return true;
+        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
     }
 
     /**
@@ -215,7 +211,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means it is possible to change enrol period and status in user_enrolments table
      */
     public function allow_manage(stdClass $instance) {
-        return true;
+        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
     }
 
     /**
