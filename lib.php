@@ -159,8 +159,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
         global $DB;
-
-        if (!$DB->record_exists('enrol', ['courseid' => $data->courseid, 'enrol' => 'coursecompleted'])) {
+        $para = ['courseid' => $data->courseid, 'enrol' => 'coursecompleted', 'customint1' => $data->customint1];
+        if (!$DB->record_exists('enrol', $para)) {
             $this->add_instance($course, (array)$data);
         }
 
@@ -205,7 +205,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol others freely
      */
     public function allow_unenrol(stdClass $instance) {
-        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
+        return true;
     }
 
     /**
@@ -215,7 +215,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means it is possible to change enrol period and status in user_enrolments table
      */
     public function allow_manage(stdClass $instance) {
-        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
+        return true;
     }
 
     /**
