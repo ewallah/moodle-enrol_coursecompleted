@@ -160,7 +160,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
         global $DB;
 
-        if (!$DB->record_exists('enrol', ['courseid' => $data->courseid, 'enrol' => $this->get_name()])) {
+        if (!$DB->record_exists('enrol', ['courseid' => $data->courseid, 'enrol' => 'coursecompleted'])) {
             $this->add_instance($course, (array)$data);
         }
 

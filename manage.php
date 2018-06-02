@@ -67,7 +67,7 @@ if ($enrolid > 0) {
                 $enrol->enrol_user($instance, $candidate, $instance->roleid, $instance->enrolstartdate, $instance->enrolenddate);
                 echo '.';
             }
-            echo '<br/><br/>' . count($candidates) . ' Users enrolled';
+            echo '<br/><br/>' . get_string('usersenrolled', 'enrol_coursecompleted', count($candidates));
         }
     } else {
         $cancelurl = new moodle_url('/enrol/instances.php', ['id' => $instance->courseid]);
@@ -82,8 +82,7 @@ if ($enrolid > 0) {
             }
             $link = new moodle_url($PAGE->url, ['enrolid' => $enrolid, 'action' => 'enrol', 'sesskey' => sesskey()]);
             echo $OUTPUT->confirm( implode(', ', $allusers),
-                new single_button($link, get_string('manual:enrol', 'enrol_manual')),
-                $cancelurl , get_string('cancel'));
+                new single_button($link, get_string('manual:enrol', 'enrol_manual')), $cancelurl , get_string('cancel'));
         } else {
             echo $OUTPUT->box(get_string('nousersfound'));
             echo '<br/>';

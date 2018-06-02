@@ -40,4 +40,5 @@ $string['status_desc'] = 'Allow enrolment by coursecompleted by default.';
 $string['status_help'] = 'This setting determines if the course completed enrolment is enabled.';
 $string['status_link'] = 'enrol/coursecompleted';
 $string['uponcompleting'] = 'Upon completing course {$a}';
+$string['usersenrolled'] = '{$a} Users enrolled';
 $string['willbeenrolled'] = 'You will be enrolled in this course when you complete course {$a}';
