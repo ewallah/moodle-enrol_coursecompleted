@@ -105,6 +105,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertCount(0, $manager->get_user_enrolments($student->id));
         $plugin = enrol_get_plugin('coursecompleted');
         $this->assertNotEmpty($plugin);
+        $this->setAdminUser();
         $plugin->add_instance($course2, ['customint1' => $course1->id, 'roleid' => 5, 'name' => 'test']);
         $compevent = \core\event\course_completed::create([
             'objectid' => $course1->id,
@@ -144,5 +145,31 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $privacy = new enrol_coursecompleted\privacy\provider();
         $this->assertEquals($privacy->get_reason(), 'privacy:metadata');
+    }
+
+    /**
+     * Test library.
+     */
+    public function test_library() {
+        global $DB;
+        $this->resetAfterTest();
+        $plugin = enrol_get_plugin('coursecompleted');
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['shortname' => 'A1', 'enablecompletion' => 1]);
+        $course2 = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
+        $this->assertfalse($plugin->can_add_instance($course1->id));
+        $this->setAdminUser();
+        $this->asserttrue($plugin->can_add_instance($course1->id));
+        $x = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'name' => 'test']);
+        $instance = $DB->get_record('enrol', ['id' => $x]);
+        $this->assertTrue($plugin->allow_unenrol($instance));
+        $this->assertTrue($plugin->allow_manage($instance));
+        $this->assertTrue($plugin->can_hide_show_instance($instance));
+        $this->assertTrue($plugin->can_delete_instance($instance));
+        $this->assertEquals(0, count($plugin->get_info_icons([$instance])));
+        $this->assertEquals(2, count($plugin->get_action_icons($instance)));
+        $this->assertEquals('After completing course: A2', $plugin->get_instance_name($instance));
+        $this->assertEquals('Enrolment by completion of course with id ' . $course2->id, $plugin->get_description_text($instance));
+        $this->assertEquals('', $plugin->enrol_page_hook($instance));
     }
 }
