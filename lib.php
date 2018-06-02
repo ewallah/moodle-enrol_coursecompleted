@@ -272,30 +272,31 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
 
         $options = [ENROL_INSTANCE_ENABLED  => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
+        $mform->setDefault('status', $this->get_config('status'));
 
-        $plugin = enrol_get_plugin('coursecompleted');
-        $role = ($instance->id) ? $instance->roleid : $plugin->get_config('roleid');
+        $role = ($instance->id) ? $instance->roleid : $this->get_config('roleid');
         $roles = get_default_enrol_roles($context, $role);
         $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_paypal'), $roles);
+        $mform->setDefault('roleid', $this->get_config('roleid'));
+        $mform->addRule('roleid', get_string('required'), 'required', null, 'client');
 
         $s = get_string('enrolperiod', 'enrol_paypal');
         $mform->addElement('duration', 'enrolperiod', $s, ['optional' => true, 'defaultunit' => 86400]);
+        $mform->setDefault('enrolperiod', $this->get_config('enrolperiod'));
         $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_paypal');
 
         $s = get_string('completionduration', 'completion') . ' ' . get_string('enrolstartdate', 'enrol_paypal');
         $mform->addElement('date_time_selector', 'enrolstartdate', $s, ['optional' => true]);
+        $mform->setDefault('enrolstartdate', 0);
         $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_paypal');
 
         $s = get_string('completionduration', 'completion') . ' ' . get_string('enrolenddate', 'enrol_paypal');
         $mform->addElement('date_time_selector', 'enrolenddate', $s, ['optional' => true]);
+        $mform->setDefault('enrolenddate', 0);
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_paypal');
 
         $mform->addElement('course', 'customint1', get_string('course'), ['multiple' => false, 'includefrontpage' => false]);
-
-        if (enrol_accessing_via_instance($instance)) {
-            $mform->addElement('static', 'selfwarn', get_string('instanceeditselfwarning', 'core_enrol'),
-                               get_string('instanceeditselfwarningtext', 'core_enrol'));
-        }
+        $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
     }
 
     /**
