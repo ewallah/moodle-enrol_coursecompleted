@@ -93,49 +93,29 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $course1 = $generator->create_course(['enablecompletion' => 1]);
         $context1 = context_course::instance($course1->id);
         $course2 = $generator->create_course();
+        $context2 = context_course::instance($course2->id);
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->assertNotEmpty($studentrole);
         $student = $generator->create_user();
         $instance1 = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance1, $student->id);
-        $manager1 = new course_enrolment_manager($PAGE, $course1);
-        $userenrolment1 = $manager1->get_user_enrolments($student->id);
-        $this->assertCount(1, $userenrolment1);
-        $manager2 = new course_enrolment_manager($PAGE, $course2);
-        $userenrolment2 = $manager2->get_user_enrolments($student->id);
-        $this->assertCount(0, $userenrolment2);
+        $manager = new course_enrolment_manager($PAGE, $course1);
+        $this->assertCount(1, $manager->get_user_enrolments($student->id));
+        $manager = new course_enrolment_manager($PAGE, $course2);
+        $this->assertCount(0, $manager->get_user_enrolments($student->id));
         $plugin = enrol_get_plugin('coursecompleted');
         $this->assertNotEmpty($plugin);
-        $plugin->add_instance($course2, ['customint1' => $course1->id]);
-        $completion = new completion_completion(['course' => $course1->id, 'userid' => $student->id]);
-        $completion->mark_complete();
-        $courseevent = \core\event\course_completion_updated::create(['courseid' => $course1->id, 'context' => $context1]);
-
-        // Mark course as complete and get triggered event.
-        $sink = $this->redirectEvents();
-        $courseevent->trigger();
-        $sink->close();
-        $userenrolment2 = $manager2->get_user_enrolments($student->id);
-        $this->assertCount(0, $userenrolment2);
-        $comptask = new \core\task\completion_regular_task();
-        $eventstask = new \core\task\events_cron_task();
-        $event = \core\event\course_completed::create([
-            'objectid' => 1,
+        $plugin->add_instance($course2, ['customint1' => $course1->id, 'roleid' => 5, 'name' => 'test']);
+        $compevent = \core\event\course_completed::create([
+            'objectid' => $course1->id,
             'relateduserid' => $student->id,
             'context' => $context1,
             'courseid' => $course1->id,
             'other' => ['relateduserid' => $student->id]]);
         $observer = new enrol_coursecompleted_observer();
-        ob_start();
-        $observer->enroluser($event);
-        $comptask->execute();
-        $eventstask->execute();
-        $comptask->execute();
-        $eventstask->execute();
-        ob_end_clean();
-        $userenrolment2 = $manager2->get_user_enrolments($student->id);
-        // TODO: User is not enrolled.
-        $this->assertCount(0, $userenrolment2);
+        $observer->enroluser($compevent);
+        $manager = new course_enrolment_manager($PAGE, $course2);
+        $this->assertCount(1, $manager->get_user_enrolments($student->id));
     }
 
     /**
@@ -147,16 +127,22 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);
         $context = context_course::instance($course->id);
-        $user = $generator->create_user();
         $event = \core\event\course_completed::create([
-            'objectid' => 1,
+            'objectid' => $course->id,
             'relateduserid' => $USER->id,
             'context' => $context,
             'courseid' => $course->id,
-            'other' => ['relateduserid' => $user->id]]);
+            'other' => ['relateduserid' => $USER->id]]);
         $observer = new enrol_coursecompleted_observer();
         $observer->enroluser($event);
-        $eventstask = new \core\task\events_cron_task();
-        $eventstask->execute();
+    }
+
+    /**
+     * Test privacy.
+     */
+    public function test_privacy() {
+        $this->resetAfterTest();
+        $privacy = new enrol_coursecompleted\privacy\provider();
+        $this->assertEquals($privacy->get_reason(), 'privacy:metadata');
     }
 }
