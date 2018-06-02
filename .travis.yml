@@ -54,7 +54,6 @@ script:
   - moodle-plugin-ci phpunit --coverage-clover
   - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
-  - moodle-plugin-ci behat --tags="@enrol&&~@enrol_meta&&~@_alert"
 
 after_success:
   - moodle-plugin-ci coveralls-upload
