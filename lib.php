@@ -85,7 +85,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     }
 
     /**
-     * Notifies that the user will be enrolled.
+     * Add information for people who want to enrol.
      *
      * @param stdClass $instance
      * @return string html text, usually a form in a text box
