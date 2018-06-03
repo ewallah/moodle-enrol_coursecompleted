@@ -215,6 +215,16 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     }
 
     /**
+     * Does this plugin shows enrol me?
+     *
+     * @param stdClass $instance course enrol instance
+     * @return bool - true means it is possible to enrol.
+     */
+    public function show_enrolme_link(stdClass $instance) {
+        return ($instance->status == ENROL_INSTANCE_ENABLED);
+    }
+
+    /**
      * Execute synchronisation.
      * @param progress_trace $trace
      * @return int exit code, 0 means ok
