@@ -88,14 +88,15 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function enrol_page_hook(stdClass $instance) {
         global $OUTPUT, $USER;
+        ob_start();
         $context = context_course::instance($instance->customint1);
         if (!isguestuser() AND is_enrolled($context, $USER->id, 'moodle/course:isincompletionreports', true)) {
             $course = get_course($instance->customint1);
             $name = format_string($course->fullname, true, ['context' => $context]);
             $link = html_writer::link(new moodle_url('/course/view.php', ['id' => $course->id]), $name);
-            return $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link));
+            echo get_string('willbeenrolled', 'enrol_coursecompleted', $link);
         }
-        return '';
+        return $OUTPUT->box(ob_get_clean());
     }
 
     /**
@@ -113,13 +114,15 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $params['ue'] = $ue->id;
         if ($this->allow_unenrol($instance) && has_capability("enrol/coursecompleted:unenrol", $context)) {
             $url = new moodle_url('/enrol/unenroluser.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/delete', ''),
-                             get_string('unenrol', 'enrol'), $url, ['class' => 'unenrollink', 'rel' => $ue->id]);
+            $pix = new pix_icon('t/delete', '');
+            $arr = ['class' => 'unenrollink', 'rel' => $ue->id];
+            $actions[] = new user_enrolment_action($pix, get_string('unenrol', 'enrol'), $url, $arr);
         }
         if ($this->allow_manage($instance) && has_capability("enrol/coursecompleted:manage", $context)) {
             $url = new moodle_url('/enrol/editenrolment.php', $params);
-            $actions[] = new user_enrolment_action(new pix_icon('t/edit', ''),
-                             get_string('edit'), $url, ['class' => 'editenrollink', 'rel' => $ue->id]);
+            $pix = new pix_icon('t/edit', '');
+            $arr = ['class' => 'editenrollink', 'rel' => $ue->id];
+            $actions[] = new user_enrolment_action($pix, get_string('edit'), $url, $arr);
         }
         return $actions;
     }
