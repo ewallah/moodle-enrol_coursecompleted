@@ -36,7 +36,7 @@ Feature: Enrolment on course completion
     And I log out
     And I log in as "user2"
     And I am on "Course 2" course homepage
-    Then I should not see "You will be enrolled in this course when"
+    Then I should see "You will be enrolled in this course when"
     And I log out
     And I log in as "user1"
     And I am on "Course 2" course homepage

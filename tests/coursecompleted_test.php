@@ -142,7 +142,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      * Test library.
      */
     public function test_library() {
-        global $DB, $PAGE;
+        global $DB;
         $this->enable_plugin();
         $plugin = enrol_get_plugin('coursecompleted');
         $generator = $this->getDataGenerator();
@@ -181,7 +181,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      * Test manage.
      */
     public function test_manage() {
-        global $DB, $PAGE;
+        global $DB;
         $this->enable_plugin();
         $plugin = enrol_get_plugin('coursecompleted');
         $generator = $this->getDataGenerator();
@@ -189,11 +189,16 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $course2 = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
         $this->setAdminUser();
         $id = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'name' => 'test']);
-        $PAGE->set_url("/enrol/coursecompleted/manage.php?enrolid=$id");
         $student = $generator->create_user();
         $manualplugin = enrol_get_plugin('manual');
         $instance1 = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance1, $student->id);
         $instance = $DB->get_record('enrol', ['id' => $id]);
+        $page = new moodle_page();
+        $page->set_context(context_course::instance($course1->id));
+        $page->set_course($course1);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('course-view');
+        $page->set_url("/enrol/coursecompleted/manage.php?enrolid=$id");
     }
 }
