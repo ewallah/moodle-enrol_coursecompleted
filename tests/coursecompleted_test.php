@@ -185,4 +185,24 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertfalse($plugin->can_delete_instance($instance));
         $this->assertEquals('<div class="box generalbox"></div>', $plugin->enrol_page_hook($instance));
     }
+
+    /**
+     * Test manage.
+     */
+    public function test_manage() {
+        global $DB, $PAGE;
+        $this->enable_plugin();
+        $plugin = enrol_get_plugin('coursecompleted');
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['shortname' => 'A1', 'enablecompletion' => 1]);
+        $course2 = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
+        $this->setAdminUser();
+        $id = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'name' => 'test']);
+        $manualplugin = enrol_get_plugin('manual');
+        $student = $generator->create_user();
+        $instance1 = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $manualplugin->enrol_user($instance1, $student->id);
+        $instance = $DB->get_record('enrol', ['id' => $id]);
+        $PAGE->set_url('/enrol/coursecompleted/manage.php?enrolid=');
+    }
 }
