@@ -37,6 +37,14 @@ defined('MOODLE_INTERNAL') || die();
 class enrol_coursecompleted_testcase extends advanced_testcase {
 
     /**
+     * Tests initial setup.
+     *
+     */
+    protected function setUp() {
+        $this->resetAfterTest(true);
+    }
+
+    /**
      * Enable plugin.
      */
     protected function enable_plugin() {
@@ -68,12 +76,8 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      * Test if user is sync is working.
      */
     public function test_sync_nothing() {
-        $this->resetAfterTest();
-
         $this->enable_plugin();
         $plugin = enrol_get_plugin('coursecompleted');
-
-        // Just make sure the sync does not throw any errors when nothing to do.
         $plugin->sync(new null_progress_trace());
     }
 
@@ -82,7 +86,6 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      */
     public function test_enrolled() {
         global $CFG, $DB, $PAGE;
-        $this->resetAfterTest();
         require_once($CFG->dirroot . '/enrol/locallib.php');
 
         $PAGE->set_url('/enrol/editinstance.php');
@@ -123,7 +126,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      */
     public function test_observer() {
         global $USER;
-        $this->resetAfterTest();
+        $this->enable_plugin();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);
         $context = context_course::instance($course->id);
@@ -141,7 +144,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      * Test privacy.
      */
     public function test_privacy() {
-        $this->resetAfterTest();
+        $this->enable_plugin();
         $privacy = new enrol_coursecompleted\privacy\provider();
         $this->assertEquals($privacy->get_reason(), 'privacy:metadata');
     }
@@ -151,7 +154,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      */
     public function test_library() {
         global $DB;
-        $this->resetAfterTest();
+        $this->enable_plugin();
         $plugin = enrol_get_plugin('coursecompleted');
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course(['shortname' => 'A1', 'enablecompletion' => 1]);
@@ -161,7 +164,6 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->asserttrue($plugin->can_add_instance($course1->id));
         $id = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'name' => 'test']);
         $manualplugin = enrol_get_plugin('manual');
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $student = $generator->create_user();
         $instance1 = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance1, $student->id);
@@ -174,13 +176,13 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertEquals(2, count($plugin->get_action_icons($instance)));
         $this->assertEquals('After completing course: A2', $plugin->get_instance_name($instance));
         $this->assertEquals('Enrolment by completion of course with id ' . $course2->id, $plugin->get_description_text($instance));
-        $this->assertEquals('', $plugin->enrol_page_hook($instance));
+        $this->assertEquals('<div class="box generalbox"></div>', $plugin->enrol_page_hook($instance));
         $this->setUser($student);
         $this->assertfalse($plugin->can_add_instance($course1->id));
         $this->assertfalse($plugin->allow_unenrol($instance));
         $this->assertfalse($plugin->allow_manage($instance));
         $this->assertfalse($plugin->can_hide_show_instance($instance));
         $this->assertfalse($plugin->can_delete_instance($instance));
-        $this->assertEquals('', $plugin->enrol_page_hook($instance));
+        $this->assertEquals('<div class="box generalbox"></div>', $plugin->enrol_page_hook($instance));
     }
 }
