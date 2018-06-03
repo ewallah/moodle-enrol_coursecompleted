@@ -198,11 +198,51 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $course2 = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
         $this->setAdminUser();
         $id = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'name' => 'test']);
-        $manualplugin = enrol_get_plugin('manual');
         $student = $generator->create_user();
+        $manualplugin = enrol_get_plugin('manual');
         $instance1 = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance1, $student->id);
         $instance = $DB->get_record('enrol', ['id' => $id]);
-        $PAGE->set_url('/enrol/coursecompleted/manage.php?enrolid=');
+        $PAGE->set_url("/enrol/coursecompleted/manage.php?enrolid=$id");
+    }
+    
+    /**
+     * Test for getting user enrolment actions.
+     */
+    public function test_get_user_enrolment_actions() {
+        global $CFG, $DB, $PAGE;
+        $this->enable_plugin();
+        $PAGE->set_url('/enrol/editinstance.php');
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course();
+        $course2 = $generator->create_course();
+        $plugin = enrol_get_plugin('coursecompleted');
+        $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'name' => 'test']);
+        $student = $generator->create_user();
+        $manualplugin = enrol_get_plugin('manual');
+        $instance1 = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $manualplugin->enrol_user($instance1, $student->id);
+        require_once($CFG->dirroot . '/enrol/locallib.php');
+        $manager = new course_enrolment_manager($PAGE, $course2);
+        $userenrolments = $manager->get_user_enrolments($student->id);
+        $this->assertCount(1, $userenrolments);
+        $ue = reset($userenrolments);
+        $actions = $plugin->get_user_enrolment_actions($manager, $ue);
+        $this->assertCount(0, $actions);
+        $context = context_course::instance($course2->id);
+        $event = \core\event\course_completed::create([
+            'objectid' => $course2->id,
+            'relateduserid' => $student->id,
+            'context' => $context,
+            'courseid' => $course2->id,
+            'other' => ['relateduserid' => $student->id]]);
+        $observer = new enrol_coursecompleted_observer();
+        $observer->enroluser($event);
+        $manager = new course_enrolment_manager($PAGE, $course1);
+        $userenrolments = $manager->get_user_enrolments($student->id);
+        $this->assertCount(1, $userenrolments);
+        $ue = reset($userenrolments);
+        $actions = $plugin->get_user_enrolment_actions($manager, $ue);
+        $this->assertCount(0, $actions);
     }
 }
