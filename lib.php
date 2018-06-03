@@ -87,16 +87,15 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        global $OUTPUT, $USER;
-        ob_start();
-        $context = context_course::instance($instance->customint1);
-        if (!isguestuser() AND is_enrolled($context, $USER->id, 'moodle/course:isincompletionreports', true)) {
+        global $OUTPUT;
+        if (!isguestuser()) {
+            $context = context_course::instance($instance->customint1);
             $course = get_course($instance->customint1);
             $name = format_string($course->fullname, true, ['context' => $context]);
             $link = html_writer::link(new moodle_url('/course/view.php', ['id' => $course->id]), $name);
-            echo get_string('willbeenrolled', 'enrol_coursecompleted', $link);
+            return $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link));
         }
-        return $OUTPUT->box(ob_get_clean());
+        return '';
     }
 
     /**
@@ -165,6 +164,19 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
 
         // No need to set mapping, we do not restore users or roles here.
         $step->set_mapping('enrol', $oldid, 0);
+    }
+
+    /**
+     * Restore user enrolment.
+     *
+     * @param restore_enrolments_structure_step $step
+     * @param stdClass $data
+     * @param stdClass $instance
+     * @param int $oldinstancestatus
+     * @param int $userid
+     */
+    public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
+        $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
     }
 
     /**
