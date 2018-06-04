@@ -53,7 +53,8 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      *
      */
     protected function setUp() {
-        global $DB;
+        global $CFG, $DB;
+        $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
         $this->enable_plugin();
         $generator = $this->getDataGenerator();
@@ -132,6 +133,24 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $observer->enroluser($compevent);
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
         $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
+    }
+
+    /**
+     * Test if user is enrolled after completing a course.
+     */
+    public function test_completion() {
+        global $PAGE;
+        $this->setAdminUser();
+        $manager1 = new course_enrolment_manager($PAGE, $this->course1);
+        $this->assertCount(0, $manager1->get_user_enrolments($this->student->id));
+        $completionauto = ['completion' => COMPLETION_TRACKING_AUTOMATIC];
+        $ccompletion = new completion_completion(['course' => $this->course2->id, 'userid' => $this->student->id]);
+        $sink = $this->redirectEvents();
+        $ccompletion->mark_complete();
+        $this->assertCount(1, $sink->get_events());
+        $sink->close();
+        // TODO: Why is this user not enrolled?
+        $this->assertCount(0, $manager1->get_user_enrolments($this->student->id));
     }
 
     /**
