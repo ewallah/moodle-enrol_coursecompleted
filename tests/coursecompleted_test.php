@@ -38,7 +38,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
 
     /** @var stdClass Instance. */
     private $instance;
-    
+
     /** @var stdClass Student. */
     private $student;
 
@@ -113,7 +113,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      * Test if user is enrolled after completing a course.
      */
     public function test_enrolled() {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $PAGE;
         require_once($CFG->dirroot . '/enrol/locallib.php');
 
         $this->setAdminUser();
@@ -148,7 +148,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $actions = $plugin->get_user_enrolment_actions($manager, $ue);
         $this->assertCount(2, $actions);
     }
-        
+
     /**
      * Test privacy.
      */
@@ -188,7 +188,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      * Test form.
      */
     public function test_form() {
-        global $CFG, $DB;
+        global $CFG;
         require_once($CFG->libdir . '/formslib.php');
         $plugin = enrol_get_plugin('coursecompleted');
         $this->setAdminUser();
