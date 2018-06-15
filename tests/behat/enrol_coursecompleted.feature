@@ -29,19 +29,6 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I navigate to "Enrolment methods" node in "Course administration > Users"
 
-  Scenario: Only enrolled users should be informed about possible enrolment
-    Given I add "Course completed enrolment" enrolment method with:
-       | Course                 | Course 1 |
-       | id_enrolperiod_enabled | 0        |
-    And I log out
-    And I log in as "user2"
-    And I am on "Course 2" course homepage
-    Then I should see "You will be enrolled in this course when"
-    And I log out
-    And I log in as "user1"
-    And I am on "Course 2" course homepage
-    Then I should see "You will be enrolled in this course when"
-
   Scenario: Later start date
     Given I add "Course completed enrolment" enrolment method with:
        | Course                    | Course 1   |
