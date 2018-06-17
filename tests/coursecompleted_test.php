@@ -143,9 +143,10 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->setAdminUser();
         $manager1 = new course_enrolment_manager($PAGE, $this->course1);
         $this->assertCount(0, $manager1->get_user_enrolments($this->student->id));
-        $completionauto = ['completion' => COMPLETION_TRACKING_AUTOMATIC];
         $ccompletion = new completion_completion(['course' => $this->course2->id, 'userid' => $this->student->id]);
         $sink = $this->redirectEvents();
+        $ccompletion->mark_enrolled();
+        $ccompletion->mark_inprogress();
         $ccompletion->mark_complete();
         $this->assertCount(1, $sink->get_events());
         $sink->close();
