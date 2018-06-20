@@ -46,6 +46,10 @@ Feature: Enrolment on course completion
     And I log out
     And I trigger cron
     And I wait until the page is ready
+    And I trigger cron
+    And I wait until the page is ready
+    And I trigger cron
+    And I wait until the page is ready
     And I wait "2" seconds
     And I log in as "user1"
     And I am on "Course 2" course homepage
@@ -62,6 +66,10 @@ Feature: Enrolment on course completion
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
     And I log out
+    And I trigger cron
+    And I wait until the page is ready
+    And I trigger cron
+    And I wait until the page is ready
     And I trigger cron
     And I wait until the page is ready
     And I log in as "user1"
