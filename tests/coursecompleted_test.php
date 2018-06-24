@@ -150,8 +150,13 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $ccompletion->mark_complete();
         $this->assertCount(1, $sink->get_events());
         $sink->close();
-        // TODO: Why is this user not enrolled?
-        $this->assertCount(0, $manager1->get_user_enrolments($this->student->id));
+        $now = time();
+        while (($task = \core\task\manager::get_next_adhoc_task($now)) !== null) {
+            $task->execute();
+            // Mark task complete.
+            \core\task\manager::adhoc_task_complete($task);
+        }
+        $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
     }
 
     /**

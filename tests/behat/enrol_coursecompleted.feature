@@ -43,15 +43,11 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait "2" seconds
     And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I wait until the page is ready
     And I log out
-    And I trigger cron
-    And I wait until the page is ready
-    And I trigger cron
-    And I wait until the page is ready
-    And I trigger cron
-    And I wait until the page is ready
-    And I wait "2" seconds
     And I log in as "user1"
+    And I wait "2" seconds
     And I am on "Course 2" course homepage
     Then I should see "You will be enrolled in this course when"
 
@@ -65,13 +61,9 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I wait until the page is ready
     And I log out
-    And I trigger cron
-    And I wait until the page is ready
-    And I trigger cron
-    And I wait until the page is ready
-    And I trigger cron
-    And I wait until the page is ready
     And I log in as "user1"
     And I wait "2" seconds
     And I am on "Course 1" course homepage
