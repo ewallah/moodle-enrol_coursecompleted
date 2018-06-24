@@ -147,15 +147,13 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $ccompletion->mark_complete(time());
         $this->assertEquals('100',
            \core_completion\progress::get_course_progress_percentage($this->course2, $this->student->id));
-
         $now = time();
         while (($task = \core\task\manager::get_next_adhoc_task($now)) !== null) {
             $task->execute();
             \core\task\manager::adhoc_task_complete($task);
         }
         $manager2 = new course_enrolment_manager($PAGE, $this->course1);
-        // TODO: Check why the student is not enrolled.
-        $this->assertCount(0, $manager2->get_user_enrolments($this->student->id));
+        $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
     }
 
     /**

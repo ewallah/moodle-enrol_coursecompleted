@@ -27,5 +27,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $observers = [['eventname' => '\core\event\course_completed',
                'callback' => 'enrol_coursecompleted_observer::enroluser',
-               'internal'  => false,
-               'priority'  => 50]];
+               'internal'  => true,
+               'priority'  => 500]];
