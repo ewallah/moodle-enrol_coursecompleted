@@ -174,7 +174,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @param int $userid
      * @param int $oldinstancestatus
-     */
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter) */
     public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
         $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
     }
