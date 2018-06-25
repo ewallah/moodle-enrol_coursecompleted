@@ -15,6 +15,7 @@ Feature: Enrolment on course completion
       | user    | course   | role           |
       | user1   | C1       | student        |
       | teacher | C1       | editingteacher |
+      | teacher | C2       | editingteacher |
     And I log in as "admin"
     And I navigate to "Manage enrol plugins" node in "Site administration > Plugins > Enrolments"
     And I click on "Disable" "link" in the "Guest access" "table_row"
@@ -36,6 +37,10 @@ Feature: Enrolment on course completion
        | id_enrolperiod_number     | 30         |
        | id_enrolstartdate_enabled | 1          |
        | id_enrolstartdate_year    | 2020       |
+    And I log out
+    And I log in as "user1"
+    And I am on "Course 2" course homepage
+    Then I should not see "You will be enrolled in this course when"
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
