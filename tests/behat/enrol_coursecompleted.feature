@@ -9,7 +9,6 @@ Feature: Enrolment on course completion
     And the following "users" exist:
       | username | firstname | lastname |
       | user1    | Username  | 1        |
-      | user2    | Username  | 2        |
       | teacher  | Teacher   | 1        |
     And the following "course enrolments" exist:
       | user    | course   | role           |
@@ -37,10 +36,6 @@ Feature: Enrolment on course completion
        | id_enrolperiod_number     | 30         |
        | id_enrolstartdate_enabled | 1          |
        | id_enrolstartdate_year    | 2020       |
-    And I log out
-    And I log in as "user1"
-    And I am on "Course 2" course homepage
-    Then I should not see "You will be enrolled in this course when"
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
@@ -91,7 +86,6 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I follow "Participants"
     Then I should see "Username 1" in the "participants" "table"
-    And I should see "Username 2" in the "participants" "table"
-    When I click on "//a[@data-action='unenrol']" "xpath_element" in the "Username 2" "table_row"
+    When I click on "//a[@data-action='unenrol']" "xpath_element" in the "Username 1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
-    Then I should see "Username 2" in the "participants" "table"
+    Then I should not see "Username 1" in the "participants" "table"
