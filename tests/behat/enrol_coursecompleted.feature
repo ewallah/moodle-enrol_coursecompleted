@@ -41,13 +41,13 @@ Feature: Enrolment on course completion
     And I am on "Course 1" course homepage
     And I navigate to "Course completion" node in "Course administration > Reports"
     And I follow "Click to mark user complete"
-    And I wait "2" seconds
+    And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
     And I log in as "user1"
-    And I wait "2" seconds
+    And I wait until the page is ready
     And I am on "Course 2" course homepage
     Then I should see "You will be enrolled in this course when"
 
@@ -59,14 +59,34 @@ Feature: Enrolment on course completion
     And I am on "Course 1" course homepage
     And I navigate to "Course completion" node in "Course administration > Reports"
     And I follow "Click to mark user complete"
-    And I wait "1" seconds
+    And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
     And I log in as "user1"
-    And I wait "2" seconds
+    And I wait until the page is ready
     And I am on "Course 1" course homepage
     Then I should not see "You will be enrolled in this course when"
     And I am on "Course 2" course homepage
     Then I should not see "You will be enrolled in this course when"
+
+  Scenario: Manage enrolled users
+    Given I add "Course completed enrolment" enrolment method with:
+       | Course | Course 1 |
+    And I log out
+    And I log in as "teacher"
+    And I am on "Course 1" course homepage
+    And I navigate to "Course completion" node in "Course administration > Reports"
+    And I follow "Click to mark user complete"
+    And I wait until the page is ready
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I wait until the page is ready
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
+    Then I should see "Username 1" in the "participants" "table"
+    And I should see "Username 2" in the "participants" "table"
+    When I click on "//a[@data-action='unenrol']" "xpath_element" in the "Username 2" "table_row"
+    And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
+    Then I should see "Username 2" in the "participants" "table"
