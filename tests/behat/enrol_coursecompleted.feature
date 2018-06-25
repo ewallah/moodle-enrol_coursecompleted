@@ -86,6 +86,6 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I follow "Participants"
     Then I should see "Username 1" in the "participants" "table"
-    When I click on "//a[@data-action='unenrol']" "xpath_element" in the "Username 1" "table_row"
+    When I click on "//a[@data-action='unenrol']" "xpath_element" in the "user1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     Then I should not see "Username 1" in the "participants" "table"
