@@ -84,7 +84,7 @@ Feature: Enrolment on course completion
     And I run all adhoc tasks
     And I wait until the page is ready
     And I am on "Course 2" course homepage
-    And I navigate to course participants
+    And I follow "Participants"
     Then I should see "Username 1" in the "participants" "table"
     And I should see "Username 2" in the "participants" "table"
     When I click on "//a[@data-action='unenrol']" "xpath_element" in the "Username 2" "table_row"
