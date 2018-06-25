@@ -8,8 +8,12 @@
   is automatically enrolled in one or more courses. But it can also be used to give a user another role when he/she
   completes the course.
 
-* Maturity: Beta code
+* Maturity: Stable
 
-* TODO: role exist check
+* TODO:
+ - role exist check
+ - behat test unenrol
+ - behat test bulk enrol past completed
+ 
 
 ![travis](https://travis-ci.org/ewallah/moodle-enrol_coursecompleted.svg)
