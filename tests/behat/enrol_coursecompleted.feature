@@ -64,6 +64,9 @@ Feature: Enrolment on course completion
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
     And I wait until the page is ready
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I wait until the page is ready
     And I log out
     And I log in as "user1"
     And I wait until the page is ready
@@ -81,6 +84,8 @@ Feature: Enrolment on course completion
     And I navigate to "Course completion" node in "Course administration > Reports"
     And I follow "Click to mark user complete"
     And I wait until the page is ready
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
     And I wait until the page is ready
