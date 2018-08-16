@@ -154,7 +154,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param stdClass $data
      * @param stdClass $course
      * @param int $oldid
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+     */
     public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
         global $DB;
         $para = ['courseid' => $data->courseid, 'enrol' => 'coursecompleted', 'customint1' => $data->customint1];
@@ -174,7 +174,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @param int $userid
      * @param int $oldinstancestatus
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+     */
     public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
         $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
     }
@@ -307,7 +307,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array of "element_name"=>"error_description" if there are errors,
      *         or an empty array if everything is OK.
      * @return void
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter) */
+     */
     public function edit_instance_validation($data, $files, $instance, $context) {
 
         global $DB;

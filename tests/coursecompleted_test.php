@@ -185,7 +185,10 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
     public function test_library() {
         $plugin = enrol_get_plugin('coursecompleted');
         $this->setAdminUser();
-        $this->asserttrue($plugin->can_add_instance($this->course1->id));
+        $this->assertEquals($plugin->get_name(), 'coursecompleted');
+        $this->assertEquals($plugin->get_config('enabled'), null);
+        $this->assertTrue($plugin->roles_protected());
+        $this->assertTrue($plugin->can_add_instance($this->course1->id));
         $this->assertTrue($plugin->allow_unenrol($this->instance));
         $this->assertTrue($plugin->allow_manage($this->instance));
         $this->assertTrue($plugin->can_hide_show_instance($this->instance));
@@ -198,6 +201,12 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
            $plugin->get_description_text($this->instance));
         $this->assertContains('Test course 2', $plugin->enrol_page_hook($this->instance));
         $this->setUser($this->student);
+        $page = new moodle_page();
+        $page->set_context(context_course::instance($this->course1->id));
+        $page->set_course($this->course1);
+        $page->set_pagelayout('standard');
+        $page->set_pagetype('course-view');
+        $page->set_url('/enrol/index.php?id=' . $this->course1->id);
         $this->assertfalse($plugin->can_add_instance($this->course1->id));
         $this->assertfalse($plugin->allow_unenrol($this->instance));
         $this->assertfalse($plugin->allow_manage($this->instance));
@@ -222,5 +231,36 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $page->set_url('/enrol/coursecompleted/manage.php?enrolid=' . $this->instance->id);
         $mform = new MoodleQuickForm('searchform', 'POST', $page->url);
         $plugin->edit_instance_form($this->instance, $mform, context_course::instance($this->course1->id));
+    }
+
+    /**
+     * Test backup.
+     */
+    public function test_backup() {
+        global $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+        $this->setAdminUser();
+        $ccompletion = new completion_completion(['course' => $this->course2->id, 'userid' => $this->student->id]);
+        $ccompletion->mark_complete(time());
+        $now = time();
+        while (($task = \core\task\manager::get_next_adhoc_task($now)) !== null) {
+            $task->execute();
+            \core\task\manager::adhoc_task_complete($task);
+        }
+        $bc = new backup_controller(backup::TYPE_1COURSE, $this->course1->id, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL, 2);
+        $bc->execute_plan();
+        $results = $bc->get_results();
+        $file = $results['backup_destination'];
+        $fp = get_file_packer('application/vnd.moodle.backup');
+        $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
+        $file->extract_to_pathname($fp, $filepath);
+        $bc->destroy();
+        $rc = new restore_controller('test-restore-course-event', $this->course1->id, backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL, 2, backup::TARGET_NEW_COURSE);
+        $rc->execute_precheck();
+        $rc->execute_plan();
+        $rc->destroy();
     }
 }
