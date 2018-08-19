@@ -1,4 +1,4 @@
-@enrol @iplus @enrol_coursecompleted @javascript
+@enrol @ewallah @enrol_coursecompleted @javascript
 Feature: Enrolment on course completion
 
   Background:

@@ -157,13 +157,19 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function restore_instance(restore_enrolments_structure_step $step, stdClass $data, $course, $oldid) {
         global $DB;
-        $para = ['courseid' => $data->courseid, 'enrol' => 'coursecompleted', 'customint1' => $data->customint1];
-        if (!$DB->record_exists('enrol', $para)) {
-            $this->add_instance($course, (array)$data);
+        if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
+            $merge = false;
+        } else {
+            $merge = ['courseid' => $course->id, 'enrol' => 'coursecompleted', 'roleid' => $data->roleid,
+                      'customint1' => $data->customint1];
         }
-
-        // No need to set mapping, we do not restore users or roles here.
-        $step->set_mapping('enrol', $oldid, 0);
+        if ($merge and $instances = $DB->get_records('enrol', $merge, 'id')) {
+            $instance = reset($instances);
+            $instanceid = $instance->id;
+        } else {
+            $instanceid = $this->add_instance($course, (array)$data);
+        }
+        $step->set_mapping('enrol', $oldid, $instanceid);
     }
 
     /**
