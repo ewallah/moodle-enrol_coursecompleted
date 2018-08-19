@@ -17,7 +17,7 @@ cache:
     - $HOME/.npm
 
 php:
- - 7.0
+ #- 7.0
  - 7.2
 
 env:
@@ -43,8 +43,16 @@ install:
   - moodle-plugin-ci install
 
 script:
-  - moodle-plugin-ci parallel
+  - moodle-plugin-ci phplint
+  - moodle-plugin-ci phpcpd
+  - moodle-plugin-ci phpmd
+  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci validate
+  #- moodle-plugin-ci savepoints
+  #- moodle-plugin-ci mustache
+  - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit --coverage-clover
+  - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
 
 after_success:

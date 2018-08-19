@@ -106,5 +106,8 @@ Feature: Enrolment on course completion
     And I navigate to "Enrolment methods" node in "Course administration > Users"
     And I click on "[aria-label='Enrol users']" "css_element" in the "tr.lastrow" "css_element"
     Then I should see "Username 1"
-    And I click on "Enrol users"
+    And I press "Enrol users"
     Then I should see "1 Users enrolled"
+    And I am on "Course 2" course homepage
+    And I follow "Participants"
+    Then I should see "Username 1" in the "participants" "table"
