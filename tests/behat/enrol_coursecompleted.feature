@@ -92,4 +92,19 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I follow "Participants"
     Then I should see "Username 1" in the "participants" "table"
-    # TODO: Unenrol user1
+    And I log out
+    And I log in as "admin"
+    And I am on "Course 2" course homepage
+    And I follow "Participants"
+    When I click on "//a[@data-action='unenrol']" "xpath_element"
+    And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
+    And I click on "//a[@title='Unenrol']" "xpath_element"
+    And I click on "Continue" "button"
+    Then I should not see "Username 1"
+    And I should not see "Teacher 1"
+    When I am on "Course 2" course homepage
+    And I navigate to "Enrolment methods" node in "Course administration > Users"
+    And I click on "[aria-label='Enrol users']" "css_element" in the "tr.lastrow" "css_element"
+    Then I should see "Username 1"
+    And I click on "Enrol users"
+    Then I should see "1 Users enrolled"

@@ -46,7 +46,12 @@ class enrol_coursecompleted_observer {
         if ($enrols = $DB->get_records('enrol', $params)) {
             $plugin = \enrol_get_plugin('coursecompleted');
             foreach ($enrols as $enrol) {
-                $plugin->enrol_user($enrol, $event->relateduserid,  $enrol->roleid, $enrol->enrolstartdate, $enrol->enrolenddate);
+                if ($DB->record_exists('role', ['id' => $enrol->roleid])) {
+                    $plugin->enrol_user($enrol, $event->relateduserid, $enrol->roleid,
+                                        $enrol->enrolstartdate, $enrol->enrolenddate);
+                } else {
+                    debugging('Role does not exist', DEBUG_DEVELOPER);
+                }
             }
         }
     }

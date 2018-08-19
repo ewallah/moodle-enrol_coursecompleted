@@ -35,7 +35,7 @@ if ($instance = $DB->get_record('enrol', ['id' => $enrolid, 'enrol' => 'courseco
 }
 require_login($course);
 
-$canenrol = has_capability('enrol/coursecompleted:enrol', $context);
+$canenrol = has_capability('enrol/coursecompleted:enrolpast', $context);
 $canunenrol = has_capability('enrol/coursecompleted:unenrol', $context);
 
 if (!$canenrol and !$canunenrol) {
@@ -61,13 +61,14 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('enrolusers', 'enrol'));
 
 if ($enrolid > 0) {
+    $br = html_writer::empty_tag('br');
     if ($action === 'enrol') {
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
             foreach ($candidates as $candidate) {
                 $enrol->enrol_user($instance, $candidate, $instance->roleid, $instance->enrolstartdate, $instance->enrolenddate);
                 echo '.';
             }
-            echo '<br/><br/>' . get_string('usersenrolled', 'enrol_coursecompleted', count($candidates));
+            echo $br . $br . get_string('usersenrolled', 'enrol_coursecompleted', count($candidates));
         }
     } else {
         $cancelurl = new moodle_url('/enrol/instances.php', ['id' => $instance->courseid]);
@@ -85,7 +86,7 @@ if ($enrolid > 0) {
                 new single_button($link, get_string('manual:enrol', 'enrol_manual')), $cancelurl , get_string('cancel'));
         } else {
             echo $OUTPUT->box(get_string('nousersfound'));
-            echo '<br/>';
+            echo $br;
             echo $OUTPUT->single_button($cancelurl, get_string('cancel'));
         }
     }

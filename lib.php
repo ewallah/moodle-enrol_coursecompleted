@@ -182,7 +182,9 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param int $oldinstancestatus
      */
     public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
-        $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
+        if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
+            $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
+        }
     }
 
     /**
@@ -315,7 +317,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return void
      */
     public function edit_instance_validation($data, $files, $instance, $context) {
-
         global $DB;
         $errors = [];
         if ($data['status'] == ENROL_INSTANCE_ENABLED) {
