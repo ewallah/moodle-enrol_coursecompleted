@@ -353,7 +353,7 @@ class temp_coursecompleted_form extends moodleform {
      */
     public function getform() {
         $mform = $this->_form;
-        // set submitted flag, to simulate submission
+        // Set submitted flag, to simulate submission.
         $mform->_flagSubmitted = true;
         return $mform;
     }

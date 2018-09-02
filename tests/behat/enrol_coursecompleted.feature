@@ -27,11 +27,11 @@ Feature: Enrolment on course completion
     And I expand all fieldsets
     And I set the field "Teacher" to "1"
     And I press "Save changes"
-    And I am on "Course 2" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
-
+    
   Scenario: Later start date
-    Given I add "Course completed enrolment" enrolment method with:
+    Given I am on "Course 2" course homepage
+    And I navigate to "Users > Enrolment methods" in current page administration
+    And I select "Course completed enrolment" from the "Add method" singleselect
        | Course                    | Course 1   |
        | id_enrolperiod_enabled    | 1          |
        | id_enrolperiod_number     | 30         |
@@ -44,16 +44,21 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
     And I log in as "user1"
-    And I wait until the page is ready
     And I am on "Course 2" course homepage
+    And I wait until the page is ready
     Then I should see "You will be enrolled in this course when"
 
   Scenario: When a course is completed, a user is auto enrolled into another course
-    Given I add "Course completed enrolment" enrolment method with:
+    Given I am on "Course 2" course homepage
+    And I navigate to "Users > Enrolment methods" in current page administration
+    And I select "Course completed enrolment" from the "Add method" singleselect
        | Course | Course 1 |
     And I log out
     And I log in as "teacher"
@@ -62,12 +67,9 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
-    And I wait until the page is ready
-    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
@@ -88,8 +90,9 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
     And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I am on "Course 2" course homepage
