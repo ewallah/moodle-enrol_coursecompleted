@@ -17,7 +17,7 @@ Feature: Enrolment on course completion
       | teacher | C1       | editingteacher |
       | teacher | C2       | editingteacher |
     And I log in as "admin"
-    And I navigate to "Manage enrol plugins" node in "Site administration > Plugins > Enrolments"
+    And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Disable" "link" in the "Guest access" "table_row"
     And I click on "Disable" "link" in the "Self enrolment" "table_row"
     And I click on "Disable" "link" in the "Cohort sync" "table_row"

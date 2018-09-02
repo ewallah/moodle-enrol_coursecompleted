@@ -235,6 +235,10 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertContains('Test course 2', $tmp);
         $this->assertContains('>You will be enrolled in this course when you complete course', $tmp);
         $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
+        $student = $generator->create_user();
+        $generator->enrol_user($student->id, $this->course1->id, 5);
+        $this->setUser($this->student);
+        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
     }
 
     /**
