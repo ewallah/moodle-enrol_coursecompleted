@@ -40,7 +40,7 @@ Feature: Enrolment on course completion
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
-    And I navigate to "Course completion" node in "Course administration > Reports"
+    And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
@@ -58,7 +58,7 @@ Feature: Enrolment on course completion
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
-    And I navigate to "Course completion" node in "Course administration > Reports"
+    And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
@@ -84,7 +84,7 @@ Feature: Enrolment on course completion
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
-    And I navigate to "Course completion" node in "Course administration > Reports"
+    And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"

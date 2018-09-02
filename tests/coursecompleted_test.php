@@ -208,7 +208,9 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertEquals([], $tmp);
         $this->setUser(1);
         $this->assertEquals('', $this->plugin->enrol_page_hook($this->instance));
+        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
         $this->setUser($this->student);
+        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
         $page = new moodle_page();
         $page->set_context(context_course::instance($this->course1->id));
         $page->set_course($this->course1);
@@ -232,6 +234,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $tmp = $this->plugin->enrol_page_hook($this->instance);
         $this->assertContains('Test course 2', $tmp);
         $this->assertContains('>You will be enrolled in this course when you complete course', $tmp);
+        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
     }
 
     /**
@@ -309,6 +312,21 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $rc->execute_precheck();
         $rc->execute_plan();
         $newid = $rc->get_courseid();
+        $rc->destroy();
+        $this->assertTrue(is_enrolled(context_course::instance($newid), $this->student->id));
+        $bc = new backup_controller(backup::TYPE_1COURSE, $this->course1->id, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL, 2);
+        $bc->execute_plan();
+        $results = $bc->get_results();
+        $file = $results['backup_destination'];
+        $fp = get_file_packer('application/vnd.moodle.backup');
+        $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
+        $file->extract_to_pathname($fp, $filepath);
+        $bc->destroy();
+        $rc = new restore_controller('test-restore-course-event', $newid, backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL, 2, backup::TARGET_EXISTING_ADDING);
+        $rc->execute_precheck();
+        $rc->execute_plan();
         $rc->destroy();
         $this->assertTrue(is_enrolled(context_course::instance($newid), $this->student->id));
     }
