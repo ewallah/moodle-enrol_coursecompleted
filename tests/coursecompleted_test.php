@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * coursecompleted enrolment plugin tests.
@@ -245,8 +247,6 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
      * Test form.
      */
     public function test_form() {
-        global $CFG;
-        require_once($CFG->libdir . '/formslib.php');
         $this->setAdminUser();
         $page = new moodle_page();
         $page->set_context(context_course::instance($this->course1->id));
@@ -254,7 +254,8 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $page->set_pagelayout('standard');
         $page->set_pagetype('course-view');
         $page->set_url('/enrol/coursecompleted/manage.php?enrolid=' . $this->instance->id);
-        $mform = new MoodleQuickForm('searchform', 'POST', $page->url);
+        $form = new temp_coursecompleted_form();
+        $mform = $form->getform();
         $this->plugin->edit_instance_form($this->instance, $mform, context_course::instance($this->course1->id));
     }
 
@@ -333,5 +334,27 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $rc->execute_plan();
         $rc->destroy();
         $this->assertTrue(is_enrolled(context_course::instance($newid), $this->student->id));
+    }
+}
+
+/**
+ * Form object to be used in test case.
+ */
+class temp_coursecompleted_form extends moodleform {
+    /**
+     * Form definition.
+     */
+    public function definition() {
+        // No definition required.
+    }
+    /**
+     * Returns form reference
+     * @return MoodleQuickForm
+     */
+    public function getform() {
+        $mform = $this->_form;
+        // set submitted flag, to simulate submission
+        $mform->_flagSubmitted = true;
+        return $mform;
     }
 }

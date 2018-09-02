@@ -23,12 +23,12 @@ Feature: Enrolment on course completion
     And I click on "Disable" "link" in the "Cohort sync" "table_row"
     And I click on "Enable" "link" in the "Course completed enrolment" "table_row"
     And I am on "Course 1" course homepage
-    And I navigate to "Course completion" node in "Course administration"
+    And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the field "Teacher" to "1"
     And I press "Save changes"
     And I am on "Course 2" course homepage
-    And I navigate to "Enrolment methods" node in "Course administration > Users"
+    And I navigate to "Users > Enrolment methods" in current page administration
 
   Scenario: Later start date
     Given I add "Course completed enrolment" enrolment method with:
@@ -106,7 +106,7 @@ Feature: Enrolment on course completion
     Then I should not see "Username 1"
     And I should not see "Teacher 1"
     When I am on "Course 2" course homepage
-    And I navigate to "Enrolment methods" node in "Course administration > Users"
+    And I navigate to "Users > Enrolment methods" in current page administration
     And I click on "[aria-label='Enrol users']" "css_element" in the "tr.lastrow" "css_element"
     Then I should see "Username 1"
     And I press "Enrol users"
