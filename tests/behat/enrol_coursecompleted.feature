@@ -46,6 +46,8 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
@@ -68,6 +70,8 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
@@ -92,6 +96,8 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I am on "Course 2" course homepage
