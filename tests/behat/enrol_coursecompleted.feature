@@ -27,7 +27,7 @@ Feature: Enrolment on course completion
     And I expand all fieldsets
     And I set the field "Teacher" to "1"
     And I press "Save changes"
-    
+
   Scenario: Later start date
     Given I am on "Course 2" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
@@ -47,6 +47,7 @@ Feature: Enrolment on course completion
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
     And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
     And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
@@ -73,6 +74,7 @@ Feature: Enrolment on course completion
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
     And I run all adhoc tasks
+    And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
     And I log in as "user1"
@@ -97,6 +99,7 @@ Feature: Enrolment on course completion
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
     And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
     And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
