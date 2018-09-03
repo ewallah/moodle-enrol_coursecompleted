@@ -46,9 +46,6 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
@@ -71,9 +68,6 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
@@ -97,12 +91,13 @@ Feature: Enrolment on course completion
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     And I wait until the page is ready
+    And I log out
+    And I log in as "admin"
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
+    And I log out
+    And I log in as "teacher"
     And I am on "Course 2" course homepage
     And I follow "Participants"
     Then I should see "Username 1" in the "participants" "table"
