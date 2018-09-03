@@ -61,6 +61,7 @@ Feature: Enrolment on course completion
     And I set the following fields to these values:
         | Course | Course 1 |
     And I press "Add method"
+    And I wait until the page is ready
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
@@ -70,6 +71,7 @@ Feature: Enrolment on course completion
     And I log out
     And I log in as "admin"
     And I run the scheduled task "core\task\completion_regular_task"
+    And I wait until the page is ready
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
@@ -87,38 +89,48 @@ Feature: Enrolment on course completion
     And I set the following fields to these values:
         | Course | Course 1 |
     And I press "Add method"
+    And I wait until the page is ready
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
+    And I wait until the page is ready
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I log out
     And I log in as "admin"
     And I run the scheduled task "core\task\completion_regular_task"
+    And I wait until the page is ready
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
     And I log in as "teacher"
     And I am on "Course 2" course homepage
+    And I wait until the page is ready
     And I follow "Participants"
+    And I wait until the page is ready
     Then I should see "Username 1" in the "participants" "table"
     And I log out
     And I log in as "admin"
     And I am on "Course 2" course homepage
+    And I wait until the page is ready
     And I follow "Participants"
+    And I wait until the page is ready
     When I click on "//a[@data-action='unenrol']" "xpath_element"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I click on "//a[@title='Unenrol']" "xpath_element"
     And I click on "Continue" "button"
+    And I wait until the page is ready
     Then I should not see "Username 1"
     And I should not see "Teacher 1"
     When I am on "Course 2" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
+    And I wait until the page is ready
     And I click on "[aria-label='Enrol users']" "css_element" in the "tr.lastrow" "css_element"
     Then I should see "Username 1"
     And I press "Enrol users"
     Then I should see "1 Users enrolled"
     And I am on "Course 2" course homepage
     And I follow "Participants"
+    And I wait until the page is ready
     Then I should see "Username 1" in the "participants" "table"
