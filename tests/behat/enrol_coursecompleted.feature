@@ -32,11 +32,13 @@ Feature: Enrolment on course completion
     Given I am on "Course 2" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Course completed enrolment" from the "Add method" singleselect
+    And I set the following fields to these values:
        | Course                    | Course 1   |
        | id_enrolperiod_enabled    | 1          |
        | id_enrolperiod_number     | 30         |
        | id_enrolstartdate_enabled | 1          |
        | id_enrolstartdate_year    | 2020       |
+    And I press "Add method"
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
@@ -44,9 +46,6 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
@@ -59,7 +58,9 @@ Feature: Enrolment on course completion
     Given I am on "Course 2" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Course completed enrolment" from the "Add method" singleselect
-       | Course | Course 1 |
+    And I set the following fields to these values:
+        | Course | Course 1 |
+    And I press "Add method"
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
@@ -67,9 +68,6 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
@@ -81,8 +79,12 @@ Feature: Enrolment on course completion
     Then I should not see "You will be enrolled in this course when"
 
   Scenario: Manage enrolled users
-    Given I add "Course completed enrolment" enrolment method with:
-       | Course | Course 1 |
+    Given I am on "Course 2" course homepage
+    And I navigate to "Users > Enrolment methods" in current page administration
+    And I select "Course completed enrolment" from the "Add method" singleselect
+    And I set the following fields to these values:
+        | Course | Course 1 |
+    And I press "Add method"
     And I log out
     And I log in as "teacher"
     And I am on "Course 1" course homepage
@@ -90,9 +92,6 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I wait until the page is ready
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I run all adhoc tasks
     And I run all adhoc tasks
     And I wait until the page is ready
     And I am on "Course 2" course homepage
