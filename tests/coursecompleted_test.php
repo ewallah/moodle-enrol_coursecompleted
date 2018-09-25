@@ -137,11 +137,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $ccompletion->mark_complete(time());
         $this->assertEquals('100',
            \core_completion\progress::get_course_progress_percentage($this->course2, $this->student->id));
-        $now = time();
-        while (($task = \core\task\manager::get_next_adhoc_task($now)) !== null) {
-            $task->execute();
-            \core\task\manager::adhoc_task_complete($task);
-        }
+        $this->runAdhocTasks();
         $manager2 = new course_enrolment_manager($PAGE, $this->course1);
         $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
         $this->plugin->sync(new null_progress_trace());
@@ -298,11 +294,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->setAdminUser();
         $ccompletion = new completion_completion(['course' => $this->course2->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
-        $now = time();
-        while (($task = \core\task\manager::get_next_adhoc_task($now)) !== null) {
-            $task->execute();
-            \core\task\manager::adhoc_task_complete($task);
-        }
+        $this->runAdhocTasks();
         $bc = new backup_controller(backup::TYPE_1COURSE, $this->course1->id, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO,
             backup::MODE_GENERAL, 2);
         $bc->execute_plan();
