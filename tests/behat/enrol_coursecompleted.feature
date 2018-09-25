@@ -40,6 +40,7 @@ Feature: Enrolment on course completion
        | id_enrolstartdate_year    | 2020       |
     And I press "Add method"
     And I log out
+    And I am on "Course 1" course homepage
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
@@ -63,7 +64,8 @@ Feature: Enrolment on course completion
     And I press "Add method"
     And I wait until the page is ready
     And I log out
-    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
@@ -91,7 +93,8 @@ Feature: Enrolment on course completion
     And I press "Add method"
     And I wait until the page is ready
     And I log out
-    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I wait until the page is ready
