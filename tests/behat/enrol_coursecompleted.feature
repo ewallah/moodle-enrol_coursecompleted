@@ -40,7 +40,6 @@ Feature: Enrolment on course completion
        | id_enrolstartdate_year    | 2020       |
     And I press "Add method"
     And I log out
-    And I am on "Course 1" course homepage
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
@@ -54,6 +53,7 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     Then I should see "You will be enrolled in this course when"
+    And I log out
 
   Scenario: When a course is completed, a user is auto enrolled into another course
     Given I am on "Course 2" course homepage
@@ -64,7 +64,6 @@ Feature: Enrolment on course completion
     And I press "Add method"
     And I wait until the page is ready
     And I log out
-    And I am on "Course 1" course homepage
     When I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
@@ -83,6 +82,7 @@ Feature: Enrolment on course completion
     Then I should not see "You will be enrolled in this course when"
     And I am on "Course 2" course homepage
     Then I should not see "You will be enrolled in this course when"
+    And I log out
 
   Scenario: Manage enrolled users
     Given I am on "Course 2" course homepage
@@ -137,3 +137,4 @@ Feature: Enrolment on course completion
     And I follow "Participants"
     And I wait until the page is ready
     Then I should see "Username 1" in the "participants" "table"
+    And I log out
