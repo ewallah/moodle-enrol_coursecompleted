@@ -10,12 +10,12 @@ Feature: Enrolment on course completion
       | username | firstname | lastname |
       | user1    | Username  | 1        |
       | user2    | Username  | 2        |
-      | teacher  | Teacher   | 1        |
+      | teacher1 | Teacher   | 1        |
     And the following "course enrolments" exist:
       | user    | course   | role           |
       | user1   | C1       | student        |
-      | teacher | C1       | editingteacher |
-      | teacher | C2       | editingteacher |
+      | teacher1| C1       | editingteacher |
+      | teacher1| C2       | editingteacher |
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Disable" "link" in the "Guest access" "table_row"
@@ -40,7 +40,7 @@ Feature: Enrolment on course completion
        | id_enrolstartdate_year    | 2020       |
     And I press "Add method"
     And I log out
-    And I log in as "teacher"
+    And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
@@ -63,7 +63,7 @@ Feature: Enrolment on course completion
     And I press "Add method"
     And I wait until the page is ready
     And I log out
-    And I log in as "teacher"
+    And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
@@ -91,7 +91,7 @@ Feature: Enrolment on course completion
     And I press "Add method"
     And I wait until the page is ready
     And I log out
-    And I log in as "teacher"
+    And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I wait until the page is ready
@@ -104,7 +104,7 @@ Feature: Enrolment on course completion
     And I run all adhoc tasks
     And I wait until the page is ready
     And I log out
-    And I log in as "teacher"
+    And I log in as "teacher1"
     And I am on "Course 2" course homepage
     And I wait until the page is ready
     And I follow "Participants"
