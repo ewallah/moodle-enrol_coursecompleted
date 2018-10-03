@@ -17,19 +17,19 @@ cache:
     - $HOME/.npm
 
 php:
-# - 7.1
+ - 7.1
  - 7.2
 
 env:
- # - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
- # - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=pgsql MOODLE_BRANCH=master
- # - DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
- # - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
- # - DB=mysqli MOODLE_BRANCH=master
- # - DB=mariadb MOODLE_BRANCH=MOODLE_34_STABLE
- # - DB=mariadb MOODLE_BRANCH=MOODLE_35_STABLE
- # - DB=mariadb MOODLE_BRANCH=master
+  - DB=mysqli MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+  - DB=mysqli MOODLE_BRANCH=master
+  - DB=mariadb MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=mariadb MOODLE_BRANCH=MOODLE_35_STABLE
+  - DB=mariadb MOODLE_BRANCH=master
 
 before_install:
   - phpenv config-rm xdebug.ini
@@ -53,7 +53,7 @@ script:
   - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit --coverage-text
   - moodle-plugin-ci phpunit --coverage-clover
-  - moodle-plugin-ci behat
+  #- moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
 
 after_success:
