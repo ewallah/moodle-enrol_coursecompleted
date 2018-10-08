@@ -231,12 +231,15 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $observer->enroluser($compevent);
         $tmp = $this->plugin->enrol_page_hook($this->instance);
         $this->assertContains('Test course 2', $tmp);
-        $this->assertContains('>You will be enrolled in this course when you complete course', $tmp);
+        $this->assertContains('You will be enrolled in this course when you complete course', $tmp);
         $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
         $student = $generator->create_user();
-        $generator->enrol_user($student->id, $this->course1->id, 5);
-        $this->setUser($this->student);
-        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
+        $generator->enrol_user($student->id, $this->course2->id, 5);
+        $this->setUser($student);
+        $this->assertEquals(1, count($this->plugin->get_info_icons([$this->instance])));
+        $tmp = $this->plugin->enrol_page_hook($this->instance);
+        $this->assertContains('Test course 2', $tmp);
+        $this->assertContains('You will be enrolled in this course when you complete course', $tmp);
     }
 
     /**

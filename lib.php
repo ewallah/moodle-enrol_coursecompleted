@@ -58,9 +58,9 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $arr = [];
         if (!isguestuser()) {
             foreach ($instances as $instance) {
-                $context = context_course::instance($instance->customint1);
+                $course = get_course($instance->customint1);
+                $context = context_course::instance($course->id);
                 if (is_enrolled($context, $USER->id, 'moodle/course:isincompletionreports', true)) {
-                    $course = get_course($instance->customint1);
                     $name = format_string($course->fullname, true, ['context' => $context]);
                     $name = get_string('aftercourse', 'enrol_coursecompleted', $name);
                     $arr[] = new pix_icon('icon', $name, 'enrol_coursecompleted');
