@@ -53,7 +53,7 @@ script:
   - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit --coverage-text
   - moodle-plugin-ci phpunit --coverage-clover
-  #- moodle-plugin-ci behat
+  - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
 
 after_success:

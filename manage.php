@@ -63,6 +63,7 @@ if ($enrolid > 0) {
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
             foreach ($candidates as $candidate) {
                 $enrol->enrol_user($instance, $candidate, $instance->roleid, $instance->enrolstartdate, $instance->enrolenddate);
+                // mark_user_dirty($candidate);
                 echo '.';
             }
             echo $br . $br . get_string('usersenrolled', 'enrol_coursecompleted', count($candidates));

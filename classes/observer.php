@@ -49,6 +49,7 @@ class enrol_coursecompleted_observer {
                 if ($DB->record_exists('role', ['id' => $enrol->roleid])) {
                     $plugin->enrol_user($enrol, $event->relateduserid, $enrol->roleid,
                                         $enrol->enrolstartdate, $enrol->enrolenddate);
+                    // mark_user_dirty($event->relateduserid);
                 } else {
                     debugging('Role does not exist', DEBUG_DEVELOPER);
                 }

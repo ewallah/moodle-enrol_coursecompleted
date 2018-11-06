@@ -73,6 +73,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $this->course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance, $this->student->id);
+        // mark_user_dirty($this->student->id);
     }
 
     /**
@@ -235,6 +236,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
         $student = $generator->create_user();
         $generator->enrol_user($student->id, $this->course2->id, 5);
+        // mark_user_dirty($student->id);
         $this->setUser($student);
         $this->assertEquals(1, count($this->plugin->get_info_icons([$this->instance])));
         $tmp = $this->plugin->enrol_page_hook($this->instance);
@@ -279,6 +281,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $editor = $this->getDataGenerator()->create_user();
         $editorroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
         $this->getDataGenerator()->enrol_user($editor->id, $this->course2->id, $editorroleid);
+        // mark_user_dirty($editor->id);
         $this->setUser($editor);
         $this->assertTrue(has_capability('enrol/coursecompleted:config', $context));
         $this->assertFalse(has_capability('enrol/coursecompleted:enrolpast', $context));
@@ -334,6 +337,11 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
 
 /**
  * Form object to be used in test case.
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu (info@eWallah.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class temp_coursecompleted_form extends moodleform {
     /**
