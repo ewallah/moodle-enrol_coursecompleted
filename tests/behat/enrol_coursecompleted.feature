@@ -27,18 +27,19 @@ Feature: Enrolment on course completion
     And I expand all fieldsets
     And I set the field "Teacher" to "1"
     And I press "Save changes"
-
-  Scenario: Later start date
-    Given I am on "Course 2" course homepage
+    And I am on "Course 2" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Course completed enrolment" from the "Add method" singleselect
-    And I set the following fields to these values:
+
+  Scenario: Later start date
+    When I set the following fields to these values:
        | Course                    | Course 1   |
        | id_enrolperiod_enabled    | 1          |
        | id_enrolperiod_number     | 30         |
        | id_enrolstartdate_enabled | 1          |
        | id_enrolstartdate_year    | 2020       |
     And I press "Add method"
+    And I am on "Course 2" course homepage
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -56,15 +57,12 @@ Feature: Enrolment on course completion
     And I log out
 
   Scenario: When a course is completed, a user is auto enrolled into another course
-    Given I am on "Course 2" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
-    And I select "Course completed enrolment" from the "Add method" singleselect
-    And I set the following fields to these values:
-        | Course | Course 1 |
+    When I set the following fields to these values:
+       | Course                    | Course 1   |
     And I press "Add method"
-    And I wait until the page is ready
+    And I am on "Course 2" course homepage
     And I log out
-    When I log in as "teacher1"
+    And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
@@ -85,16 +83,12 @@ Feature: Enrolment on course completion
     And I log out
 
   Scenario: Manage enrolled users
-    Given I am on "Course 2" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
-    And I select "Course completed enrolment" from the "Add method" singleselect
-    And I set the following fields to these values:
-        | Course | Course 1 |
+    When I set the following fields to these values:
+       | Course                    | Course 1   |
     And I press "Add method"
-    And I wait until the page is ready
+    And I am on "Course 2" course homepage
     And I log out
-    And I am on "Course 1" course homepage
-    When I log in as "teacher1"
+    And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I wait until the page is ready
