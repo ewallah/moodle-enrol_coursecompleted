@@ -18,15 +18,21 @@ cache:
 
 php:
  #- 7.1
- - 7.3
+ - 7.2
 
 env:
+  - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=pgsql MOODLE_BRANCH=master
+  - DB=mysqli MOODLE_BRANCH=MOODLE_35_STABLE
+  - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=mysqli MOODLE_BRANCH=master
+  - DB=mariadb MOODLE_BRANCH=MOODLE_35_STABLE
+  - DB=mariadb MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=mariadb MOODLE_BRANCH=master
 
 before_install:
-  #- phpenv config-rm xdebug.ini
+  - phpenv config-rm xdebug.ini
   - nvm install 8.9
   - nvm use 8.9
   - cd ../..
