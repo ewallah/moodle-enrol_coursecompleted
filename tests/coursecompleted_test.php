@@ -333,6 +333,17 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $rc->destroy();
         $this->assertTrue(is_enrolled(context_course::instance($newid), $this->student->id));
     }
+
+    /**
+     * Test deleted course.
+     */
+    public function test_deletedcourse() {
+        delete_course($this->course2->id, false);
+        $this->assertEquals('Deleted course ' . $this->course2->id, $this->plugin->get_instance_name($this->instance));
+        $this->assertEquals('Enrolment by completion of course with id ' . $this->course2->id,
+           $this->plugin->get_description_text($this->instance));
+
+    }
 }
 
 /**

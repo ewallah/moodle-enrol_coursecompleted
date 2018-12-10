@@ -42,9 +42,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string
      */
     public function get_instance_name($instance) {
-        $course = get_course($instance->customint1);
-        $coursename = format_string($course->shortname, true, ['context' => context_course::instance($instance->customint1)]);
-        return get_string('aftercourse', 'enrol_coursecompleted', $coursename);
+        global $DB;
+        if ($short = $DB->get_field('course', 'shortname', ['id' => $instance->customint1])) {
+            $coursename = format_string($short, true, ['context' => context_course::instance($instance->customint1)]);
+            return get_string('aftercourse', 'enrol_coursecompleted', $coursename);
+        }
+        return get_string('coursedeleted', '', $instance->customint1);
     }
 
     /**
@@ -54,16 +57,17 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array of pix_icon
      */
     public function get_info_icons(array $instances) {
-        global $USER;
+        global $DB, $USER;
         $arr = [];
         if (!isguestuser()) {
             foreach ($instances as $instance) {
-                $course = get_course($instance->customint1);
-                $context = context_course::instance($course->id);
-                if (is_enrolled($context, $USER->id, 'moodle/course:isincompletionreports', true)) {
-                    $name = format_string($course->fullname, true, ['context' => $context]);
-                    $name = get_string('aftercourse', 'enrol_coursecompleted', $name);
-                    $arr[] = new pix_icon('icon', $name, 'enrol_coursecompleted');
+                if ($course = $DB->get_record('course', ['id' => $instance->customint1])) {
+                    $context = context_course::instance($course->id);
+                    if (is_enrolled($context, $USER->id, 'moodle/course:isincompletionreports', true)) {
+                        $name = format_string($course->fullname, true, ['context' => $context]);
+                        $name = get_string('aftercourse', 'enrol_coursecompleted', $name);
+                        $arr[] = new pix_icon('icon', $name, 'enrol_coursecompleted');
+                    }
                 }
             }
         }
@@ -87,13 +91,14 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        global $OUTPUT;
+        global $DB, $OUTPUT;
         if (!isguestuser()) {
-            $context = context_course::instance($instance->customint1);
-            $course = get_course($instance->customint1);
-            $name = format_string($course->fullname, true, ['context' => $context]);
-            $link = html_writer::link(new moodle_url('/course/view.php', ['id' => $course->id]), $name);
-            return $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link));
+            if ($course = $DB->get_record('course', ['id' => $instance->customint1])) {
+                $context = context_course::instance($instance->customint1);
+                $name = format_string($course->fullname, true, ['context' => $context]);
+                $link = html_writer::link(new moodle_url('/course/view.php', ['id' => $course->id]), $name);
+                return $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link));
+            }
         }
         return '';
     }

@@ -47,13 +47,27 @@ class enrol_coursecompleted_observer {
             $plugin = \enrol_get_plugin('coursecompleted');
             foreach ($enrols as $enrol) {
                 if ($DB->record_exists('role', ['id' => $enrol->roleid])) {
-                    $plugin->enrol_user($enrol, $event->relateduserid, $enrol->roleid,
+                    if ($DB->record_exists('course', ['id' => $enrol->courseid])) {
+                        $plugin->enrol_user($enrol, $event->relateduserid, $enrol->roleid,
                                         $enrol->enrolstartdate, $enrol->enrolenddate);
-                    mark_user_dirty($event->relateduserid);
+                        mark_user_dirty($event->relateduserid);
+                    } else {
+                        debugging('Course does not exist', DEBUG_DEVELOPER);
+                    }
                 } else {
                     debugging('Role does not exist', DEBUG_DEVELOPER);
                 }
             }
         }
+    }
+
+    /**
+     * Course delete event observer.
+     *
+     * @param \core\event\course_deleted $event The course deleted event.
+     */
+    public static function coursedeleted(\core\event\course_deleted $event) {
+        global $DB;
+        $DB->delete_records('enrol', ['enrol' => 'coursecompleted', 'customint1' => $event->courseid]);
     }
 }
