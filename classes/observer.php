@@ -48,6 +48,9 @@ class enrol_coursecompleted_observer {
             foreach ($enrols as $enrol) {
                 if ($DB->record_exists('role', ['id' => $enrol->roleid])) {
                     if ($DB->record_exists('course', ['id' => $enrol->courseid])) {
+                        if ($enrol->enrolperiod > 0) {
+                            $enrol->enrolenddate = max(time(), $enrol->enrolstartdate) + $enrol->enrolperiod;
+                        }
                         $plugin->enrol_user($enrol, $event->relateduserid, $enrol->roleid,
                                         $enrol->enrolstartdate, $enrol->enrolenddate);
                         mark_user_dirty($event->relateduserid);
