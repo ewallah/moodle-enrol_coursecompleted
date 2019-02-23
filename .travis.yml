@@ -22,17 +22,34 @@ cache:
     - $HOME/.npm
 
 php:
+ - 7.1
  - 7.2
  - 7.3
 
 env:
+  - DB=pgsql MOODLE_BRANCH=MOODLE_34_STABLE
+  - DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
   - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=pgsql MOODLE_BRANCH=master
-  - DB=mysqli MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=mysqli MOODLE_BRANCH=master
-  - DB=mariadb MOODLE_BRANCH=MOODLE_36_STABLE
   - DB=mariadb MOODLE_BRANCH=master
-  
+
+matrix:
+    fast_finish: false
+    exclude:
+        - env: MOODLE_BRANCH=MOODLE_34_STABLE
+          php: 7.2
+        - env: MOODLE_BRANCH=MOODLE_34_STABLE
+          php: 7.3
+        - env: MOODLE_BRANCH=MOODLE_35_STABLE
+          php: 7.2
+        - env: MOODLE_BRANCH=MOODLE_35_STABLE
+          php: 7.3
+        - env: MOODLE_BRANCH=MOODLE_36_STABLE
+          php: 7.1
+        - env: MOODLE_BRANCH=master
+          php: 7.1
+
 before_install:
   - phpenv config-rm xdebug.ini
   - nvm install 8.9
