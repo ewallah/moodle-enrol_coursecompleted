@@ -31,13 +31,44 @@ Feature: Enrolment on course completion
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Course completed enrolment" from the "Add method" singleselect
 
+  Scenario: Duration
+    When I set the following fields to these values:
+       | Course                    | Course 1   |
+       | id_enrolperiod_enabled    | 1          |
+       | id_enrolperiod_number     | 3 days     |
+       | id_enrolstartdate_enabled | 1          |
+       | id_enrolstartdate_day     | 1          |
+       | id_enrolstartdate_month   | 1          |
+       | id_enrolstartdate_year    | 2030       |
+    And I press "Add method"
+    And I am on "Course 2" course homepage
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to "Reports > Course completion" in current page administration
+    And I follow "Click to mark user complete"
+    And I wait until the page is ready
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I wait until the page is ready
+    And I am on "Course 2" course homepage
+    And I wait until the page is ready
+    And I follow "Participants"
+    And I open the autocomplete suggestions list
+    And I click on "Role: Student" item in the autocomplete list
+    When I click on "//a[@title='Edit']" "xpath_element"
+    Then I should see "2030"
+    And I should see "4"
+    And I log out
+
   Scenario: Later start date
     When I set the following fields to these values:
        | Course                    | Course 1   |
        | id_enrolperiod_enabled    | 1          |
-       | id_enrolperiod_number     | 30         |
+       | id_enrolperiod_number     | 3 days     |
        | id_enrolstartdate_enabled | 1          |
-       | id_enrolstartdate_year    | 2020       |
+       | id_enrolstartdate_year    | 2030       |
+
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out
