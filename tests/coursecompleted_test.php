@@ -70,9 +70,10 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $id = $this->plugin->add_instance($this->course1, ['customint1' => $this->course2->id, 'roleid' => 5, 'name' => 'test']);
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
         $this->student = $generator->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $this->course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $this->student->id);
+        $manualplugin->enrol_user($instance, $this->student->id, $studentrole->id);
         mark_user_dirty($this->student->id);
     }
 
@@ -273,7 +274,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $this->assertEquals('', $this->plugin->enrol_page_hook($this->instance));
         $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
         $this->setUser($this->student);
-        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
+        $this->assertEquals(1, count($this->plugin->get_info_icons([$this->instance])));
         $page = new moodle_page();
         $page->set_context(context_course::instance($this->course1->id));
         $page->set_course($this->course1);
@@ -297,7 +298,7 @@ class enrol_coursecompleted_testcase extends advanced_testcase {
         $tmp = $this->plugin->enrol_page_hook($this->instance);
         $this->assertContains('Test course 2', $tmp);
         $this->assertContains('You will be enrolled in this course when you complete course', $tmp);
-        $this->assertEquals(0, count($this->plugin->get_info_icons([$this->instance])));
+        $this->assertEquals(1, count($this->plugin->get_info_icons([$this->instance])));
         $student = $generator->create_user();
         $generator->enrol_user($student->id, $this->course2->id, 5);
         mark_user_dirty($student->id);
