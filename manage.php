@@ -71,8 +71,6 @@ if ($enrolid > 0) {
     } else {
         $cancelurl = new moodle_url('/enrol/instances.php', ['id' => $instance->courseid]);
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
-            $enro = get_string('enrol', 'enrol');
-            $canc = get_string('cancel');
             $allusers = [];
             foreach ($candidates as $candidate) {
                 $user = \core_user::get_user($candidate);
