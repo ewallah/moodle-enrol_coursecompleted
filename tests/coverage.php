@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course completed enrol plugin version specification.
+ * Coverage information for the enrolment on course completion.
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
@@ -25,8 +25,16 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2019040506;
-$plugin->requires  = 2018051700;
-$plugin->release = '3.5+';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = 'enrol_coursecompleted';
+return new class extends phpunit_coverage_info {
+    /** @var array The list of folders relative to the plugin root to whitelist in coverage generation. */
+    protected $whitelistfolders = ['classes'];
+
+    /** @var array The list of files relative to the plugin root to whitelist in coverage generation. */
+    protected $whitelistfiles = [];
+
+    /** @var array The list of folders relative to the plugin root to excludelist in coverage generation. */
+    protected $excludelistfolders = [];
+
+    /** @var array The list of files relative to the plugin root to excludelist in coverage generation. */
+    protected $excludelistfiles = ['tests/coverage.php'];
+};

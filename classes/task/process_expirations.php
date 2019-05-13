@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course completed enrol plugin version specification.
+ * Process expirations task.
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
@@ -23,10 +23,35 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace enrol_coursecompleted\task;
+
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2019040506;
-$plugin->requires  = 2018051700;
-$plugin->release = '3.5+';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = 'enrol_coursecompleted';
+/**
+ * Process expirations task.
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu (info@eWallah.net)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class process_expirations extends \core\task\scheduled_task {
+
+    /**
+     * Name for this task.
+     *
+     * @return string
+     */
+    public function get_name() {
+        return get_string('processexpirationstask', 'enrol_coursecompleted');
+    }
+
+    /**
+     * Run task for processing expirations.
+     */
+    public function execute() {
+        $enrol = enrol_get_plugin('coursecompleted');
+        $trace = new \text_progress_trace();
+        $enrol->process_expirations($trace);
+    }
+}

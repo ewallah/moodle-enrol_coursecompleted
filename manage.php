@@ -24,7 +24,7 @@
  */
 
 require('../../config.php');
-require_once($CFG->dirroot.'/enrol/coursecompleted/lib.php');
+require_once($CFG->dirroot . '/enrol/coursecompleted/lib.php');
 
 $enrolid = required_param('enrolid', PARAM_INT);
 $action = optional_param('action', '', PARAM_RAW);

@@ -35,6 +35,7 @@ $string['compcourse_help'] = 'Which course have to be completed.';
 $string['pluginname'] = 'Course completed enrolment';
 $string['pluginname_desc'] = 'Course completed enrol plugin grants access to courses upon coursecompleted of a course.';
 $string['privacy:metadata'] = 'The Course completed enrolment plugin does not store any personal data.';
+$string['processexpirationstask'] = 'Course completed enrolment expiry task';
 $string['status'] = 'Enabled';
 $string['status_desc'] = 'Allow enrolment by coursecompleted by default.';
 $string['status_help'] = 'This setting determines if the course completed enrolment is enabled.';

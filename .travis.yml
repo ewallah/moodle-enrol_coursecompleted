@@ -12,8 +12,7 @@ addons:
   postgresql: "9.6"
   apt:
     packages:
-      - oracle-java8-installer
-      - oracle-java8-set-default
+      - openjdk-8-jre-headless
       - chromium-chromedriver
 
 cache:
@@ -23,13 +22,23 @@ cache:
 
 php:
  - 7.2
- - 7.3
 
 env:
   - DB=pgsql MOODLE_BRANCH=master
   - DB=mysqli MOODLE_BRANCH=master
   - DB=mariadb MOODLE_BRANCH=master
 
+matrix:
+  include:
+    - php: 7.1
+      env: DB=pgsql MOODLE_BRANCH=MOODLE_35_STABLE
+    - php: 7.2
+      env: DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
+#    - php: 7.2
+#      env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
+    - php: 7.3
+      env: DB=pgsql MOODLE_BRANCH=master
+  
 before_install:
   - phpenv config-rm xdebug.ini
   - nvm install 8.9
@@ -45,7 +54,7 @@ script:
   - moodle-plugin-ci phplint
   - moodle-plugin-ci phpcpd
   - moodle-plugin-ci phpmd
-  - moodle-plugin-ci phpdoc
+  - moodle-plugin-ci phpdoc || true
   - moodle-plugin-ci codechecker
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints
