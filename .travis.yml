@@ -1,5 +1,5 @@
 language: php
-dist: trusty
+dist: xenial
 
 notifications:
   email:
@@ -11,6 +11,7 @@ sudo: required
 addons:
   firefox: "47.0.1"
   postgresql: "9.6"
+  chrome: stable
   apt:
     packages:
       - openjdk-8-jre-headless
@@ -45,6 +46,7 @@ before_install:
   - cd ../..
   - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 
 install:
   - moodle-plugin-ci install
