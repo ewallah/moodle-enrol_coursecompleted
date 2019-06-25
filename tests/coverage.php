@@ -27,14 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 
 return new class extends phpunit_coverage_info {
     /** @var array The list of folders relative to the plugin root to whitelist in coverage generation. */
-    protected $whitelistfolders = ['classes'];
+    protected $whitelistfolders = ['classes', 'db'];
 
     /** @var array The list of files relative to the plugin root to whitelist in coverage generation. */
-    protected $whitelistfiles = [];
+    protected $whitelistfiles = ['lib.php', 'classes/observer.php'];
 
     /** @var array The list of folders relative to the plugin root to excludelist in coverage generation. */
-    protected $excludelistfolders = ['tests', 'tests\behat'];
+    protected $excludelistfolders = ['tests', 'tests/behat', 'lang/en'];
 
     /** @var array The list of files relative to the plugin root to excludelist in coverage generation. */
-    protected $excludelistfiles = ['tests\coverage.php', 'manage.php', 'version.php', 'settings.php'];
+    protected $excludelistfiles = ['tests/coverage.php', 'manage.php', 'version.php', 'settings.php'];
 };
