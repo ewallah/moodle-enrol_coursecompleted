@@ -57,7 +57,7 @@ Feature: Duration Enrolment on course completion
     And I follow "Participants"
     And I open the autocomplete suggestions list
     And I click on "Role: Student" item in the autocomplete list
-    When I click on "//a[@title='Edit']" "xpath_element"
+    When I click on "//a[@data-action='editenrolment']" "xpath_element"
     Then I should see "Username 1"
     And I wait "3" seconds
     And I trigger cron
@@ -69,7 +69,6 @@ Feature: Duration Enrolment on course completion
     And I log in as "user1"
     And I am on "Course 2" course homepage
     Then I should see "Enrolment options"
-    And I log out
 
   Scenario: Course completion with end date set
     When I set the following fields to these values:
@@ -102,4 +101,3 @@ Feature: Duration Enrolment on course completion
     And I log in as "user1"
     And I am on "Course 2" course homepage
     Then I should see "Enrolment options"
-    And I log out

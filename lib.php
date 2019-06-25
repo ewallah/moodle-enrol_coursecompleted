@@ -61,10 +61,10 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $arr = [];
         if (!isguestuser()) {
             foreach ($instances as $instance) {
-                if ($course = $DB->get_record('course', ['id' => $instance->customint1])) {
-                    $context = context_course::instance($course->id);
+                if ($fullname = $DB->get_field('course', 'fullname', ['id' => $instance->customint1])) {
+                    $context = context_course::instance($instance->customint1);
                     if (is_enrolled($context, $USER->id, 'moodle/course:isincompletionreports', true)) {
-                        $name = format_string($course->fullname, true, ['context' => $context]);
+                        $name = format_string($fullname, true, ['context' => $context]);
                         $name = get_string('aftercourse', 'enrol_coursecompleted', $name);
                         $arr[] = new pix_icon('icon', $name, 'enrol_coursecompleted');
                     }
@@ -111,23 +111,16 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array An array of user_enrolment_actions
      */
     public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
-        $actions = [];
-        $context = $manager->get_context();
-        $instance = $ue->enrolmentinstance;
-        $params = $manager->get_moodlepage()->url->params();
-        $params['ue'] = $ue->id;
-        if ($this->allow_unenrol($instance) && has_capability("enrol/coursecompleted:unenrol", $context)) {
-            $url = new moodle_url('/enrol/unenroluser.php', $params);
-            $pix = new pix_icon('t/delete', '');
-            $arr = ['class' => 'unenrollink', 'rel' => $ue->id];
-            $actions[] = new user_enrolment_action($pix, get_string('unenrol', 'enrol'), $url, $arr);
-        }
-        if ($this->allow_manage($instance) && has_capability("enrol/coursecompleted:manage", $context)) {
-            $url = new moodle_url('/enrol/editenrolment.php', $params);
-            $pix = new pix_icon('t/edit', '');
-            $arr = ['class' => 'editenrollink', 'rel' => $ue->id];
-            $actions[] = new user_enrolment_action($pix, get_string('edit'), $url, $arr);
-        }
+        global $DB;
+        $actions = parent::get_user_enrolment_actions($manager, $ue);
+        $instanceid = $ue->enrolmentinstance->customint1;
+        if ($DB->record_exists('course', ['id' => $instanceid]) &&
+                has_capability('report/completion:view', context_course::instance($instanceid))) {
+            $url = new moodle_url('/report/completion/index.php', ['course' => $instanceid]);
+            $arr = ['class' => 'originlink', 'rel' => $ue->id];
+            $str = get_string('pluginname', 'report_completion');
+            $actions[] = new user_enrolment_action(new pix_icon('a/search', ''), $str, $url, $arr);
+        }    
         return $actions;
     }
 

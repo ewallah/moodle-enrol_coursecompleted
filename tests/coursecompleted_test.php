@@ -200,18 +200,15 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
      */
     public function test_completion() {
         global $PAGE;
-        $manager1 = new \course_enrolment_manager($PAGE, $this->course1);
-        $this->assertCount(0, $manager1->get_user_enrolments($this->student->id));
+        $manager = new \course_enrolment_manager($PAGE, $this->course1);
+        $this->assertCount(0, $manager->get_user_enrolments($this->student->id));
         $ccompletion = new \completion_completion(['course' => $this->course2->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
         $this->assertEquals('100',
            \core_completion\progress::get_course_progress_percentage($this->course2, $this->student->id));
         $this->runAdhocTasks();
-        $manager2 = new \course_enrolment_manager($PAGE, $this->course1);
-        $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
-        $this->plugin->sync(new \null_progress_trace());
-        $manager2 = new \course_enrolment_manager($PAGE, $this->course1);
-        $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
+        $manager = new \course_enrolment_manager($PAGE, $this->course1);
+        $this->assertCount(1, $manager->get_user_enrolments($this->student->id));
     }
 
     /**
@@ -219,12 +216,21 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
      */
     public function test_ue() {
         global $PAGE;
+        $ccompletion = new \completion_completion(['course' => $this->course2->id, 'userid' => $this->student->id]);
+        $ccompletion->mark_complete(time());
+        $this->assertEquals('100',
+           \core_completion\progress::get_course_progress_percentage($this->course2, $this->student->id));
+        $this->runAdhocTasks();
         $PAGE->set_url('/enrol/editinstance.php');
-        $manager = new \course_enrolment_manager($PAGE, $this->course2);
+        $manager = new \course_enrolment_manager($PAGE, $this->course1);
         $enrolments = $manager->get_user_enrolments($this->student->id);
-        $ue = reset($enrolments);
+        $this->assertCount(1, $enrolments);
+        $ue = end($enrolments);
         $actions = $this->plugin->get_user_enrolment_actions($manager, $ue);
-        $this->assertCount(2, $actions);
+        $this->assertCount(0, $actions);
+        $ue->status = ENROL_USER_SUSPENDED;
+        $actions = $this->plugin->get_user_enrolment_actions($manager, $ue);
+        $this->assertCount(0, $actions);
     }
 
     /**

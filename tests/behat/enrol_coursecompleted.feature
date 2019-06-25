@@ -53,10 +53,9 @@ Feature: Enrolment on course completion
     And I navigate to course participants
     And I open the autocomplete suggestions list
     And I click on "Role: Student" item in the autocomplete list
-    When I click on "//a[@title='Edit']" "xpath_element"
+    When I click on "//a[@data-action='editenrolment']" "xpath_element"
     Then I should see "2030"
     And I should see "4"
-    And I log out
 
   Scenario: Later start date
     When I set the following fields to these values:
@@ -79,7 +78,6 @@ Feature: Enrolment on course completion
     And I log in as "user1"
     And I am on "Course 2" course homepage
     Then I should see "You will be enrolled in this course when"
-    And I log out
 
   Scenario: When a course is completed, a user is auto enrolled into another course
     When I set the following fields to these values:
@@ -101,7 +99,6 @@ Feature: Enrolment on course completion
     Then I should not see "You will be enrolled in this course when"
     And I am on "Course 2" course homepage
     Then I should not see "You will be enrolled in this course when"
-    And I log out
 
   Scenario: Manage enrolled users
     When I set the following fields to these values:
@@ -128,8 +125,8 @@ Feature: Enrolment on course completion
     And I navigate to course participants
     When I click on "//a[@data-action='unenrol']" "xpath_element"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
-    And I click on "//a[@title='Unenrol']" "xpath_element"
-    And I click on "Continue" "button"
+    And I click on "//a[@data-action='unenrol']" "xpath_element"
+    And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     Then I should not see "Username 1"
     And I should not see "Teacher 1"
     When I am on "Course 2" course homepage
@@ -142,4 +139,6 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should see "Username 1" in the "participants" "table"
-    And I log out
+    And I click on "[title='Course completion']" "css_element"
+    Then I should see "Course 1"
+    And I should see "Aggregation method"
