@@ -74,7 +74,6 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $id = $this->plugin->add_instance($this->course1, ['customint1' => $this->course2->id, 'roleid' => $studentrole->id]);
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
         $this->student = $generator->create_user();
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $this->course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance, $this->student->id, $studentrole->id);
@@ -142,9 +141,9 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $course2 = $generator->create_course(['shortname' => 'B2']);
         $course3 = $generator->create_course(['shortname' => 'B3', 'enablecompletion' => 1]);
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
-        $params = ['customint1' => $course3->id, 'roleid' => $studentrole->id, 'enrolperiod' => 3];
+        $params = ['customint1' => $course3->id, 'roleid' => $studentrole->id, 'enrolperiod' => 1];
         $id1 = $this->plugin->add_instance($course1, $params);
-        $params = ['customint1' => $course3->id, 'roleid' => $studentrole->id, 'enrolperiod' => 6];
+        $params = ['customint1' => $course3->id, 'roleid' => $studentrole->id, 'enrolperiod' => 2];
         $id2 = $this->plugin->add_instance($course2, $params);
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $course3->id, 'enrol' => 'manual'], '*', MUST_EXIST);
@@ -176,8 +175,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertNotEquals(0, $ueinstance->timeend);
         $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id2, 'userid' => $this->student->id]);
         $this->assertEquals(0, $ueinstance->timestart);
-        $this->assertEquals(time() + 6, $ueinstance->timeend);
-        sleep(3);
+        $this->assertEquals(time() + 2, $ueinstance->timeend);
+        sleep(1);
         $trace = new \null_progress_trace();
         $this->plugin->sync($trace);
         mark_user_dirty($this->student->id);
@@ -188,7 +187,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $manager2 = new \course_enrolment_manager($PAGE, $course2);
         $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
         $this->plugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
-        sleep(4);
+        sleep(2);
         $this->plugin->sync($trace);
         mark_user_dirty($this->student->id);
         $this->assertFalse(is_enrolled(\context_course::instance($course2->id), $this->student->id));
@@ -310,6 +309,11 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $form = new temp_coursecompleted_form();
         $mform = $form->getform();
         $this->plugin->edit_instance_form($this->instance, $mform, $context);
+        $this->assertContains('Required field', $mform->getReqHTML());
+        ob_start();
+        $mform->display();
+        $html = ob_get_clean();
+        $this->assertContains('Required field', $html);
     }
 
     /**

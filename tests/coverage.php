@@ -33,8 +33,8 @@ return new class extends phpunit_coverage_info {
     protected $whitelistfiles = [];
 
     /** @var array The list of folders relative to the plugin root to excludelist in coverage generation. */
-    protected $excludelistfolders = [];
+    protected $excludelistfolders = ['tests', 'tests\behat'];
 
     /** @var array The list of files relative to the plugin root to excludelist in coverage generation. */
-    protected $excludelistfiles = ['tests/coverage.php'];
+    protected $excludelistfiles = ['tests\coverage.php', 'manage.php', 'version.php', 'settings.php'];
 };

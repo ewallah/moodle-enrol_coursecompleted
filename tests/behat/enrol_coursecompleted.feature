@@ -134,6 +134,7 @@ Feature: Enrolment on course completion
     And I should not see "Teacher 1"
     When I am on "Course 2" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
+    And I wait until the page is ready
     And I click on "[aria-label='Enrol users']" "css_element" in the "tr.lastrow" "css_element"
     Then I should see "Username 1"
     And I press "Enrol users"

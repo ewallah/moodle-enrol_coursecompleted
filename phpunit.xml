@@ -40,7 +40,6 @@
                 <exclude>
                     <directory suffix="_test.php">.</directory>
                     <file>tests/coverage.php</file>
-                    <file>index.php</file>
                     <file>manage.php</file>
                     <file>version.php</file>
                     <file>settings.php</file>
