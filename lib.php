@@ -120,7 +120,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $arr = ['class' => 'originlink', 'rel' => $ue->id];
             $str = get_string('pluginname', 'report_completion');
             $actions[] = new user_enrolment_action(new pix_icon('a/search', ''), $str, $url, $arr);
-        }    
+        }
         return $actions;
     }
 

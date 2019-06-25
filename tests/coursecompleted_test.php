@@ -227,10 +227,10 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertCount(1, $enrolments);
         $ue = end($enrolments);
         $actions = $this->plugin->get_user_enrolment_actions($manager, $ue);
-        $this->assertCount(0, $actions);
+        $this->assertCount(3, $actions);
         $ue->status = ENROL_USER_SUSPENDED;
         $actions = $this->plugin->get_user_enrolment_actions($manager, $ue);
-        $this->assertCount(0, $actions);
+        $this->assertCount(3, $actions);
     }
 
     /**
