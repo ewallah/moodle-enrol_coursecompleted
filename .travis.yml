@@ -58,16 +58,13 @@ script:
   - moodle-plugin-ci phplint
   - moodle-plugin-ci phpcpd
   - moodle-plugin-ci phpmd
-  - moodle-plugin-ci phpdoc || true
+  - moodle-plugin-ci phpdoc
   - moodle-plugin-ci codechecker
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints
   - moodle-plugin-ci mustache
   - moodle-plugin-ci grunt
-  - moodle-plugin-ci phpunit --coverage-text
+  - moodle-plugin-ci phpunit
   - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
-  - moodle-plugin-ci phpunit --coverage-clover
-
-after_success:
-  - moodle-plugin-ci coveralls-upload
+ 
