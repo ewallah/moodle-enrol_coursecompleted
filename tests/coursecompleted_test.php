@@ -221,7 +221,11 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertEquals('100',
            \core_completion\progress::get_course_progress_percentage($this->course2, $this->student->id));
         $this->runAdhocTasks();
-        $PAGE->set_url('/enrol/editinstance.php');
+        $this->setAdminUser();
+        $context = context_course::instance($this->course2->id);
+        $this->assertTrue(has_capability('report/completion:view', $context));
+        $url = new moodle_url('/user/index.php', ['id' => $this->course1->id]);
+        $PAGE->set_url($url);
         $manager = new \course_enrolment_manager($PAGE, $this->course1);
         $enrolments = $manager->get_user_enrolments($this->student->id);
         $this->assertCount(1, $enrolments);

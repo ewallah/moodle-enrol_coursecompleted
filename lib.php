@@ -93,10 +93,10 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public function enrol_page_hook(stdClass $instance) {
         global $DB, $OUTPUT;
         if (!isguestuser()) {
-            if ($course = $DB->get_record('course', ['id' => $instance->customint1])) {
+            if ($fullname = $DB->get_field('course', 'fullname', ['id' => $instance->customint1])) {
                 $context = context_course::instance($instance->customint1);
-                $name = format_string($course->fullname, true, ['context' => $context]);
-                $link = html_writer::link(new moodle_url('/course/view.php', ['id' => $course->id]), $name);
+                $name = format_string($fullname, true, ['context' => $context]);
+                $link = html_writer::link(new moodle_url('/course/view.php', ['id' => $instance->customint1]), $name);
                 return $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link));
             }
         }
@@ -113,13 +113,16 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public function get_user_enrolment_actions(course_enrolment_manager $manager, $ue) {
         global $DB;
         $actions = parent::get_user_enrolment_actions($manager, $ue);
-        $instanceid = $ue->enrolmentinstance->customint1;
-        if ($DB->record_exists('course', ['id' => $instanceid]) &&
-                has_capability('report/completion:view', context_course::instance($instanceid))) {
-            $url = new moodle_url('/report/completion/index.php', ['course' => $instanceid]);
-            $arr = ['class' => 'originlink', 'rel' => $ue->id];
-            $str = get_string('pluginname', 'report_completion');
-            $actions[] = new user_enrolment_action(new pix_icon('a/search', ''), $str, $url, $arr);
+        $id = $ue->enrolmentinstance->customint1;
+        if ($DB->record_exists('course', ['id' => $id])) {
+            $context = context_course::instance($id);
+            if (has_capability('report/completion:view', $context)) {
+                $actions[] = new user_enrolment_action(
+                    new pix_icon('a/search', ''),
+                    get_string('pluginname', 'report_completion'),
+                    new moodle_url('/report/completion/index.php', ['course' => $id]),
+                    ['class' => 'originlink', 'rel' => $ue->id]);
+            }
         }
         return $actions;
     }
@@ -131,7 +134,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function get_action_icons(stdClass $instance) {
         global $OUTPUT;
-
         if ($instance->enrol !== 'coursecompleted') {
             throw new coding_exception('invalid enrol instance!');
         }
@@ -161,7 +163,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $merge = ['courseid' => $course->id, 'enrol' => 'coursecompleted', 'roleid' => $data->roleid,
                       'customint1' => $data->customint1];
         }
-        if ($merge and $instances = $DB->get_records('enrol', $merge, 'id')) {
+        if ($merge && $instances = $DB->get_records('enrol', $merge, 'id')) {
             $instance = reset($instances);
             $instanceid = $instance->id;
         } else {
@@ -274,7 +276,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool
      */
     public function edit_instance_form($instance, MoodleQuickForm $mform, $context) {
-
         $options = [ENROL_INSTANCE_ENABLED  => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
         $mform->setDefault('status', $this->get_config('status'));
@@ -284,18 +285,17 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_paypal'), $roles);
         $mform->setDefault('roleid', $this->get_config('roleid'));
 
-        $s = get_string('enrolperiod', 'enrol_paypal');
-        $mform->addElement('duration', 'enrolperiod', $s, ['optional' => true, 'defaultunit' => 86400]);
+        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_paypal'),
+            ['optional' => true, 'defaultunit' => 86400]);
         $mform->setDefault('enrolperiod', $this->get_config('enrolperiod'));
         $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_paypal');
 
-        $s = get_string('enrolstartdate', 'enrol_paypal');
-        $mform->addElement('date_time_selector', 'enrolstartdate', $s, ['optional' => true]);
+        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_paypal'),
+            ['optional' => true]);
         $mform->setDefault('enrolstartdate', 0);
         $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_paypal');
 
-        $s = get_string('enrolenddate', 'enrol_paypal');
-        $mform->addElement('date_time_selector', 'enrolenddate', $s, ['optional' => true]);
+        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_paypal'), ['optional' => true]);
         $mform->setDefault('enrolenddate', 0);
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_paypal');
 
@@ -318,7 +318,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         global $DB;
         $errors = [];
         if ($data['status'] == ENROL_INSTANCE_ENABLED) {
-            if (!empty($data['enrolenddate']) and $data['enrolenddate'] < $data['enrolstartdate']) {
+            if (!empty($data['enrolenddate']) && $data['enrolenddate'] < $data['enrolstartdate']) {
                 $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
             }
             if (empty($data['customint1']) or
