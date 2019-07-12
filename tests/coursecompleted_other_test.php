@@ -19,7 +19,7 @@
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
- * @author    Renaat Debleu (info@eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/formslib.php');
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
- * @author    Renaat Debleu (info@eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass enrol_coursecompleted
  */

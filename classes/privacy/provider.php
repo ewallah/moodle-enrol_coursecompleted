@@ -18,7 +18,7 @@
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
- * @author    Renaat Debleu (info@eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace enrol_coursecompleted\privacy;
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
- * @author    Renaat Debleu (info@eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements \core_privacy\local\metadata\null_provider {
