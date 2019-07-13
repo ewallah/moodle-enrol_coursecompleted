@@ -19,7 +19,7 @@
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
- * @author    Renaat Debleu (info@eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
- * @author    Renaat Debleu (info@eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass enrol_coursecompleted
  */
@@ -413,7 +413,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
- * @author    Renaat Debleu (info@eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class temp_coursecompleted_form extends \moodleform {
