@@ -106,6 +106,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test if user is enrolled after completing a course.
+     * @covers enrol_coursecompleted_observer
      */
     public function test_enrolled() {
         global $CFG, $PAGE;
@@ -229,12 +230,12 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $manager = new \course_enrolment_manager($PAGE, $this->course1);
         $enrolments = $manager->get_user_enrolments($this->student->id);
         $this->assertCount(1, $enrolments);
-        $ue = end($enrolments);
-        $actions = $this->plugin->get_user_enrolment_actions($manager, $ue);
-        $this->assertCount(3, $actions);
-        $ue->status = ENROL_USER_SUSPENDED;
-        $actions = $this->plugin->get_user_enrolment_actions($manager, $ue);
-        $this->assertCount(3, $actions);
+        foreach ($enrolments as $enrolment) {
+            if ($enrolment->enrolmentinstance->enrol == 'coursecompleted') {
+                $actions = $this->plugin->get_user_enrolment_actions($manager, $enrolment);
+                $this->assertCount(3, $actions);
+            }
+        }
     }
 
     /**
