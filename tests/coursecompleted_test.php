@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @copyright 2017 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass enrol_coursecompleted
+ * @coversDefaultClass \enrol_coursecompleted_plugin
  */
 class enrol_coursecompleted_testcase extends \advanced_testcase {
 
@@ -106,7 +106,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test if user is enrolled after completing a course.
-     * @covers enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted_observer
      */
     public function test_enrolled() {
         global $CFG, $PAGE;
@@ -132,6 +132,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test if user is enrolled for a specific time after completing a course.
+     * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_observer
      */
     public function test_time_enrolled() {
         global $CFG, $DB, $PAGE;
@@ -153,6 +155,9 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertFalse(is_enrolled(\context_course::instance($course2->id), $this->student->id, '', true));
         $this->assertTrue(is_enrolled(\context_course::instance($course3->id), $this->student->id, '', true));
         mark_user_dirty($this->student->id);
+        rebuild_course_cache($course1->id, true);
+        rebuild_course_cache($course2->id, true);
+        rebuild_course_cache($course3->id, true);
         $PAGE->set_url('/enrol/editinstance.php');
         $manager1 = new \course_enrolment_manager($PAGE, $course1);
         $this->assertCount(0, $manager1->get_user_enrolments($this->student->id));
@@ -168,6 +173,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
             'other' => ['relateduserid' => $this->student->id]]);
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
+        // TODO: Sometimes fails after update to new Moodle version!
         $this->assertTrue(is_enrolled(\context_course::instance($course1->id), $this->student->id, '', true));
         $this->assertTrue(is_enrolled(\context_course::instance($course2->id), $this->student->id, '', true));
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
@@ -240,6 +246,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test library.
+     * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_observer
      */
     public function test_library() {
         global $DB;
@@ -399,12 +407,22 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test deleted course.
+     * @covers \enrol_coursecompleted_observer
      */
     public function test_deletedcourse() {
+        $sink = $this->redirectEvents();
+        ob_start();
         delete_course($this->course2->id, false);
+        ob_end_clean();
+        $events = $sink->get_events();
+        $sink->close();
         $this->assertEquals('Deleted course ' . $this->course2->id, $this->plugin->get_instance_name($this->instance));
         $this->assertEquals('Enrolment by completion of course with id ' . $this->course2->id,
-            $this->plugin->get_description_text($this->instance));
+        $this->plugin->get_description_text($this->instance));
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\course_deleted', $event);
+        $observer = new \enrol_coursecompleted_observer();
+        $observer->coursedeleted($event);
     }
 }
 

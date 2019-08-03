@@ -35,7 +35,7 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright 2017 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass enrol_coursecompleted
+ * @coversDefaultClass \enrol_coursecompleted_plugin
  */
 class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
@@ -64,7 +64,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Test privacy.
-     * @covers enrol_coursecompleted\privacy\provider
+     * @covers \enrol_coursecompleted\privacy\provider
      */
     public function test_privacy() {
         $privacy = new enrol_coursecompleted\privacy\provider();
@@ -85,6 +85,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Test invalid role.
+     * @covers \enrol_coursecompleted_observer
      */
     public function test_invalid_role() {
         global $DB;
@@ -96,7 +97,6 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->setAdminUser();
         $id = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 9999]);
-        $instance = $DB->get_record('enrol', ['id' => $id]);
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance, $student->id, $studentrole->id);
@@ -113,7 +113,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Test expiration task.
-     * @covers enrol_coursecompleted\task\process_expirations
+     * @covers \enrol_coursecompleted\task\process_expirations
      */
     public function test_task() {
         $task = new \enrol_coursecompleted\task\process_expirations;
