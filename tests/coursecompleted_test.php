@@ -408,6 +408,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
     /**
      * Test deleted course.
      * @covers \enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_deletedcourse() {
         $sink = $this->redirectEvents();

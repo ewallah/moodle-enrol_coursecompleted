@@ -96,7 +96,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->setAdminUser();
-        $id = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 9999]);
+        $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 9999]);
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance, $student->id, $studentrole->id);
