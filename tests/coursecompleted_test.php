@@ -171,9 +171,9 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
             'context' => \context_course::instance($course3->id),
             'courseid' => $course3->id,
             'other' => ['relateduserid' => $this->student->id]]);
+        mark_user_dirty($this->student->id);
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
-        // TODO: Sometimes fails after update to new Moodle version!
         $this->assertTrue(is_enrolled(\context_course::instance($course1->id), $this->student->id, '', true));
         $this->assertTrue(is_enrolled(\context_course::instance($course2->id), $this->student->id, '', true));
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
