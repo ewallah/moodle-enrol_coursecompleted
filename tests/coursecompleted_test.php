@@ -222,6 +222,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test ue.
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_ue() {
         global $PAGE;
@@ -318,6 +319,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test form.
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_form() {
         $page = new \moodle_page();
