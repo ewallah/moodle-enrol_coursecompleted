@@ -73,17 +73,14 @@ if ($enrolid > 0) {
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
             $allusers = [];
             foreach ($candidates as $candidate) {
-                $user = \core_user::get_user($candidate);
                 $userurl = new moodle_url('/user/view.php', ['course' => 1, 'id' => $candidate]);
-                $allusers[] = html_writer::link($userurl, fullname($user));
+                $allusers[] = html_writer::link($userurl, fullname(\core_user::get_user($candidate)));
             }
             $link = new moodle_url($PAGE->url, ['enrolid' => $enrolid, 'action' => 'enrol', 'sesskey' => sesskey()]);
             echo $OUTPUT->confirm( implode(', ', $allusers),
                 new single_button($link, get_string('manual:enrol', 'enrol_manual')), $cancelurl , get_string('cancel'));
         } else {
-            echo $OUTPUT->box(get_string('nousersfound'));
-            echo $br;
-            echo $OUTPUT->single_button($cancelurl, get_string('cancel'));
+            echo $OUTPUT->box(get_string('nousersfound')) . $br . $OUTPUT->single_button($cancelurl, get_string('cancel'));
         }
     }
 }

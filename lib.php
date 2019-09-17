@@ -184,8 +184,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public function restore_user_enrolment(restore_enrolments_structure_step $step, $data, $instance, $userid, $oldinstancestatus) {
         if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
             $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
-            mark_user_dirty($userid);
         }
+        mark_user_dirty($userid);
     }
 
     /**
