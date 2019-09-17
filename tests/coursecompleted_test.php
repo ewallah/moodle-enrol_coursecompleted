@@ -155,9 +155,9 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertFalse(is_enrolled(\context_course::instance($course2->id), $this->student->id, '', true));
         $this->assertTrue(is_enrolled(\context_course::instance($course3->id), $this->student->id, '', true));
         mark_user_dirty($this->student->id);
-        rebuild_course_cache($course1->id, true);
-        rebuild_course_cache($course2->id, true);
-        rebuild_course_cache($course3->id, true);
+        rebuild_course_cache($course1->id);
+        rebuild_course_cache($course2->id);
+        rebuild_course_cache($course3->id);
         $PAGE->set_url('/enrol/editinstance.php');
         $manager1 = new \course_enrolment_manager($PAGE, $course1);
         $this->assertCount(0, $manager1->get_user_enrolments($this->student->id));
@@ -175,8 +175,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
         mark_user_dirty($this->student->id);
-        rebuild_course_cache($course1->id, true);
-        rebuild_course_cache($course2->id, true);
+        rebuild_course_cache($course1->id);
+        rebuild_course_cache($course2->id);
         mark_user_dirty($this->student->id);
         $this->assertTrue(is_enrolled(\context_course::instance($course1->id), $this->student->id, '', true));
         $this->assertTrue(is_enrolled(\context_course::instance($course2->id), $this->student->id, '', true));
