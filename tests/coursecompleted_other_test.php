@@ -41,7 +41,6 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Tests initial setup.
-     *
      */
     protected function setUp() {
         global $CFG;
@@ -54,14 +53,13 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Test other files.
+     * @coversDefaultClass \enrol_coursecompleted_plugin
      */
     public function test_files() {
         global $CFG;
-        require($CFG->dirroot . '/enrol/coursecompleted/db/tasks.php');
-        require($CFG->dirroot . '/enrol/coursecompleted/db/access.php');
-        require($CFG->dirroot . '/enrol/coursecompleted/db/events.php');
-        $options = include($CFG->dirroot . '/enrol/coursecompleted/tests/coverage.php');
-        $this->assertIsObject($options);
+        include($CFG->dirroot . '/enrol/coursecompleted/db/tasks.php');
+        include($CFG->dirroot . '/enrol/coursecompleted/db/access.php');
+        include($CFG->dirroot . '/enrol/coursecompleted/db/events.php');
     }
 
     /**
@@ -75,6 +73,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Test invalid instance.
+     * @coversDefaultClass \enrol_coursecompleted_plugin
      */
     public function test_invalid_instance() {
         $plugin = enrol_get_plugin('coursecompleted');

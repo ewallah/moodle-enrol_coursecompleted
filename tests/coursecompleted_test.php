@@ -58,7 +58,6 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Tests initial setup.
-     *
      */
     protected function setUp() {
         global $CFG, $DB;
@@ -91,6 +90,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Basic test.
+     * @coversDefaultClass \enrol_coursecompleted_plugin
      */
     public function test_basics() {
         $enabled = enrol_get_plugins(true);
@@ -208,6 +208,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test if user is enrolled after completing a course.
+     * @coversDefaultClass \enrol_coursecompleted_plugin
      */
     public function test_completion() {
         global $PAGE;
@@ -346,6 +347,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test access.
+     * @coversDefaultClass \enrol_coursecompleted_plugin
      */
     public function test_access() {
         global $DB;
@@ -375,6 +377,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test backup.
+     * @coversDefaultClass \enrol_coursecompleted_plugin
      */
     public function test_backup() {
         global $CFG;
