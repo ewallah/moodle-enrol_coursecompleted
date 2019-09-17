@@ -60,6 +60,8 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         require($CFG->dirroot . '/enrol/coursecompleted/db/tasks.php');
         require($CFG->dirroot . '/enrol/coursecompleted/db/access.php');
         require($CFG->dirroot . '/enrol/coursecompleted/db/events.php');
+        $options = include($CFG->dirroot . '/enrol/coursecompleted/tests/coverage.php');
+        $this->assertIsObject($options);
     }
 
     /**
@@ -80,7 +82,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $tst->enrol = 'wrong';
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage('invalid enrol instance!');
-        $this->assertEquals(0, count($plugin->get_action_icons($tst)));
+        $this->assertCount(0, $plugin->get_action_icons($tst));
     }
 
     /**
@@ -123,5 +125,48 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $output = ob_get_contents();
         ob_end_clean();
         $this->assertContains('No expired enrol_coursecompleted enrolments detected', $output);
+    }
+
+    /**
+     * Test manage.
+     */
+    public function test_manage() {
+        global $CFG, $DB, $PAGE;
+
+        $generator = $this->getDataGenerator();
+        $plugin = enrol_get_plugin('coursecompleted');
+        $student = $generator->create_user();
+        $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
+        $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->setAdminUser();
+        $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => $studentrole->id]);
+        $instance = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'coursecompleted'], '*', MUST_EXIST);
+        $url = new moodle_url('/enrol/coursecompleted/manage.php', ['enrolid' => $instance->id]);
+        $PAGE->set_url($url->out());
+        $page = new moodle_page();
+        $page->set_context(context_course::instance($course1->id));
+        $page->set_url($PAGE->url);
+        $PAGE->initialise_theme_and_output();
+        $manager = new course_enrolment_manager($PAGE, $course1);
+
+        $userenrolments = $manager->get_user_enrolments($student->id);
+        $this->assertCount(0, $userenrolments);
+        $compevent = \core\event\course_completed::create([
+            'objectid' => $course2->id,
+            'relateduserid' => $student->id,
+            'context' => context_course::instance($course2->id),
+            'courseid' => $course2->id,
+            'other' => ['relateduserid' => $student->id]]);
+        $observer = new enrol_coursecompleted_observer();
+        $observer->enroluser($compevent);
+        $userenrolments = $manager->get_user_enrolments($student->id);
+        $this->assertCount(1, $userenrolments);
+        $ue = reset($userenrolments);
+        $actions = $plugin->get_user_enrolment_actions($manager, $ue);
+        $this->assertCount(3, $actions);
+        $this->assertEquals('Edit enrolment', $actions[0]->get_title());
+        $this->assertEquals('Unenrol', $actions[1]->get_title());
+        $this->assertEquals('Course completion', $actions[2]->get_title());
     }
 }

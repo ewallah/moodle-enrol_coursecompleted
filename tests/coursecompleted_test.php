@@ -151,9 +151,9 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $course3->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance, $this->student->id, $studentrole->id);
-        $this->assertFalse(is_enrolled(\context_course::instance($course1->id), $this->student->id, '', true));
-        $this->assertFalse(is_enrolled(\context_course::instance($course2->id), $this->student->id, '', true));
-        $this->assertTrue(is_enrolled(\context_course::instance($course3->id), $this->student->id, '', true));
+        $this->assertFalse(is_enrolled(\context_course::instance($course1->id), $this->student->id));
+        $this->assertFalse(is_enrolled(\context_course::instance($course2->id), $this->student->id));
+        $this->assertTrue(is_enrolled(\context_course::instance($course3->id), $this->student->id));
         mark_user_dirty($this->student->id);
         rebuild_course_cache($course1->id);
         rebuild_course_cache($course2->id);
@@ -178,8 +178,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         rebuild_course_cache($course1->id);
         rebuild_course_cache($course2->id);
         mark_user_dirty($this->student->id);
-        $this->assertTrue(is_enrolled(\context_course::instance($course1->id), $this->student->id, '', true));
-        $this->assertTrue(is_enrolled(\context_course::instance($course2->id), $this->student->id, '', true));
+        $this->assertTrue(is_enrolled(\context_course::instance($course1->id), $this->student->id));
+        $this->assertTrue(is_enrolled(\context_course::instance($course2->id), $this->student->id));
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
         $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id1, 'userid' => $this->student->id]);
         $this->assertEquals(0, $ueinstance->timestart);
