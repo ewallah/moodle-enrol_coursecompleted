@@ -245,6 +245,9 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
             if ($enrolment->enrolmentinstance->enrol == 'coursecompleted') {
                 $actions = $this->plugin->get_user_enrolment_actions($manager, $enrolment);
                 $this->assertCount(3, $actions);
+                $this->assertEquals('Edit enrolment', $actions[0]->get_title());
+                $this->assertEquals('Unenrol', $actions[1]->get_title());
+                $this->assertEquals('Course completion', $actions[2]->get_title());
             }
         }
     }
