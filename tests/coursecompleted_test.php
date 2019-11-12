@@ -443,7 +443,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $sink->close();
         $this->assertEquals('Deleted course ' . $this->course2->id, $this->plugin->get_instance_name($this->instance));
         $this->assertEquals('Enrolment by completion of course with id ' . $this->course2->id,
-        $this->plugin->get_description_text($this->instance));
+            $this->plugin->get_description_text($this->instance));
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\course_deleted', $event);
         $observer = new \enrol_coursecompleted_observer();
