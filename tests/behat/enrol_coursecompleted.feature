@@ -47,13 +47,16 @@ Feature: Enrolment on course completion
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
+    # Running completion task just after clicking sometimes fail, as record
+    # should be created before the task runs.
+    And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
     And I am on "Course 2" course homepage
     And I navigate to course participants
     And I open the autocomplete suggestions list
     And I click on "Role: Student" item in the autocomplete list
-    When I click on "//a[@data-action='editenrolment']" "xpath_element"
+    When I click on "//a[@data-action='editenrolment']" "xpath_element" in the "user1" "table_row"
     Then I should see "2030"
     And I should see "4"
 

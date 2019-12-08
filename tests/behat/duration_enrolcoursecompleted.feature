@@ -48,22 +48,18 @@ Feature: Duration Enrolment on course completion
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
-    And I wait until the page is ready
+    # Running completion task just after clicking sometimes fail, as record
+    # should be created before the task runs.
+    And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I wait until the page is ready
     And I am on "Course 2" course homepage
-    And I wait until the page is ready
-    And I follow "Participants"
-    And I open the autocomplete suggestions list
-    And I click on "Role: Student" item in the autocomplete list
-    When I click on "//a[@data-action='editenrolment']" "xpath_element"
+    And I navigate to course participants
     Then I should see "Username 1"
     And I wait "3" seconds
     And I trigger cron
-    And I am on "Course 2" course homepage
     And I wait until the page is ready
-    And I follow "Participants"
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
     Then I should not see "Username 1"
     And I log out
     And I log in as "user1"
@@ -81,21 +77,18 @@ Feature: Duration Enrolment on course completion
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
-    And I wait until the page is ready
+    # Running completion task just after clicking sometimes fail, as record
+    # should be created before the task runs.
+    And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I wait until the page is ready
     And I am on "Course 2" course homepage
-    And I wait until the page is ready
-    And I follow "Participants"
-    And I open the autocomplete suggestions list
-    And I click on "Role: Student" item in the autocomplete list
+    And I navigate to course participants
     Then I should see "Username 1"
     And I wait "3" seconds
     And I trigger cron
-    And I am on "Course 2" course homepage
     And I wait until the page is ready
-    And I follow "Participants"
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
     Then I should not see "Username 1"
     And I log out
     And I log in as "user1"
