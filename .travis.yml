@@ -1,13 +1,13 @@
 language: php
 dist: bionic
 
-sudo: required
+os:
+  - linux
 
 services:
   - mysql
 
 addons:
-  firefox: "47.0.1"
   postgresql: "9.6"
   chrome: stable
   apt:
@@ -26,7 +26,6 @@ php:
 env:
   - DB=pgsql MOODLE_BRANCH=master
   - DB=mysqli MOODLE_BRANCH=master
-  - DB=mariadb MOODLE_BRANCH=master
 
 matrix:
   include:
@@ -46,7 +45,7 @@ before_install:
   - cd ../..
   - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://127.0.0.1 &
+  - google-chrome-stable --headless --disable-extensions --no-sandbox --remote-debugging-port=9222 --remote-debugging-address=127.0.0.1 &
 
 install:
   - moodle-plugin-ci install
@@ -64,7 +63,6 @@ script:
   - moodle-plugin-ci mustache
   - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit --coverage-text  --coverage-clover
-  - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
 
 after_success:
