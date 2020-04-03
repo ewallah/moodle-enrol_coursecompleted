@@ -9,6 +9,7 @@ services:
 
 addons:
   postgresql: "9.6"
+  firefox: "47.0.1"
   chrome: stable
   apt:
     packages:
@@ -27,7 +28,7 @@ env:
   - DB=pgsql MOODLE_BRANCH=master
   - DB=mysqli MOODLE_BRANCH=master
 
-matrix:
+jobs:
   include:
     - php: 7.2
       env: DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
@@ -63,6 +64,7 @@ script:
   - moodle-plugin-ci mustache
   - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit --coverage-text  --coverage-clover
+  - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
 
 after_success:
