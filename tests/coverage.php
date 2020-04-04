@@ -37,5 +37,5 @@ return new class extends phpunit_coverage_info {
     protected $excludelistfolders = ['tests', 'lang/en'];
 
     /** @var array The list of files relative to the plugin root to excludelist in coverage generation. */
-    protected $excludelistfiles = ['version.php', 'manage.php', 'settings.php'];
+    protected $excludelistfiles = ['version.php', 'settings.php'];
 };
