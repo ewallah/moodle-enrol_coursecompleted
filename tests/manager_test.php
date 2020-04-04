@@ -1,0 +1,146 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * coursecompleted enrolment manager tests.
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * coursecompleted enrolment manager tests.
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \enrol_coursecompleted_plugin
+ */
+class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
+
+    /** @var stdClass Instance. */
+    private $instance;
+
+    /** @var stdClass Student. */
+    private $student;
+
+    /** @var stdClass course. */
+    private $course;
+
+    /**
+     * Tests initial setup.
+     */
+    protected function setUp() {
+        global $CFG, $DB;
+        $CFG->enablecompletion = true;
+        $this->resetAfterTest(true);
+        $enabled = enrol_get_plugins(true);
+        unset($enabled['guest']);
+        unset($enabled['self']);
+        $enabled['coursecompleted'] = true;
+        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['shortname' => 'A1', 'enablecompletion' => 1]);
+        $this->course = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->setAdminUser();
+        $plugin = enrol_get_plugin('coursecompleted');
+        $id = $plugin->add_instance($course, ['customint1' => $this->course->id, 'roleid' => $studentrole->id]);
+        $this->instance = $DB->get_record('enrol', ['id' => $id]);
+        $this->student = $generator->create_user();
+        $manualplugin = enrol_get_plugin('manual');
+        $instance = $DB->get_record('enrol', ['courseid' => $this->course->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $manualplugin->enrol_user($instance, $this->student->id, $studentrole->id);
+        mark_user_dirty($this->student->id);
+    }
+
+    /**
+     * Test missing enrolid param.
+     */
+    public function test_manager_empty_param() {
+        global $CFG;
+        chdir($CFG->dirroot . '/enrol/coursecompleted');
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage('A required parameter (enrolid) was missing');
+        include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
+    }
+
+    /**
+     * Test manager without permission.
+     */
+    public function test_manager_wrong_permistion() {
+        global $CFG, $DB, $OUTPUT, $PAGE;
+        chdir($CFG->dirroot . '/enrol/coursecompleted');
+        $this->setUser($this->student);
+        $_POST['enrolid'] = $this->instance->id;
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage('Unsupported redirect detected, script execution terminated');
+        include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
+    }
+
+    /**
+     * Test manager bare.
+     */
+    public function test_manager_bare() {
+        global $CFG, $DB, $OUTPUT, $PAGE;
+        chdir($CFG->dirroot . '/enrol/coursecompleted');
+        $_POST['enrolid'] = $this->instance->id;
+        ob_start();
+        include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
+        $html = ob_get_clean();
+        $this->assertContains('No users found', $html);
+    }
+
+    /**
+     * Test manager bare when someone completed.
+     */
+    public function test_manager_bare_completed() {
+        global $CFG, $DB, $OUTPUT, $PAGE;
+        chdir($CFG->dirroot . '/enrol/coursecompleted');
+        $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
+        $ccompletion->mark_complete(time());
+        mark_user_dirty($this->student->id);
+        rebuild_course_cache($this->course->id);
+        $_POST['enrolid'] = $this->instance->id;
+        ob_start();
+        include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
+        $html = ob_get_clean();
+        $this->assertNotContains('No users found', $html);
+    }
+
+    /**
+     * Test manager enrol.
+     */
+    public function test_manager_enrol() {
+        global $CFG, $DB, $OUTPUT, $PAGE;
+        $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
+        $ccompletion->mark_complete(time());
+        mark_user_dirty($this->student->id);
+        rebuild_course_cache($this->course->id);
+        chdir($CFG->dirroot . '/enrol/coursecompleted');
+        $_POST['enrolid'] = $this->instance->id;
+        $_POST['action'] = 'enrol';
+        ob_start();
+        include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
+        $html = ob_get_clean();
+        $this->assertContains('Enrol users', $html);
+    }
+}

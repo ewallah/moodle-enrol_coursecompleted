@@ -46,7 +46,7 @@ before_install:
   - cd ../..
   - composer create-project -n --no-dev --prefer-dist blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
-  - google-chrome-stable --headless --disable-extensions --no-sandbox --remote-debugging-port=9222 --remote-debugging-address=127.0.0.1 &
+  - google-chrome-stable --headless --disable-extensions --no-sandbox --remote-debugging-port=9222 --remote-debugging-address=127.0.0.1 &>/dev/null &
 
 install:
   - moodle-plugin-ci install
@@ -66,6 +66,12 @@ script:
   - moodle-plugin-ci phpunit --coverage-text  --coverage-clover
   - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
-
+  - >
+        if [ "$MOODLE_BRANCH" = 'master' ];
+        then
+            php /home/travis/build/moodle/admin/tool/behat/cli/init.php -a="classic"
+            moodle-plugin-ci behat --suite="classic"
+            moodle-plugin-ci behat --suite="classic" --profile chrome
+        fi
 after_success:
   - moodle-plugin-ci coveralls-upload

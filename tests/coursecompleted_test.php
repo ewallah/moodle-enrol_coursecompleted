@@ -188,7 +188,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertNotEquals(0, $ueinstance->timeend);
         $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id2, 'userid' => $this->student->id]);
         $this->assertEquals(0, $ueinstance->timestart);
-        $this->assertEquals(time() + 2, $ueinstance->timeend);
+        $this->assertGreaterThan(time(), $ueinstance->timeend);
         sleep(1);
         $trace = new \null_progress_trace();
         $this->plugin->sync($trace);
@@ -346,35 +346,6 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $html = ob_get_clean();
         $this->assertContains('Required field', $html);
         $this->assertContains('Help with Completed course', $html);
-    }
-
-    /**
-     * Test manager bare.
-     */
-    public function test_manager_bare() {
-        global $CFG, $DB, $OUTPUT, $PAGE;
-        chdir($CFG->dirroot . '/enrol/coursecompleted');
-        $_POST['enrolid'] = $this->instance->id;
-        ob_start();
-        include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
-        $html = ob_get_clean();
-        $this->assertContains('No users found', $html);
-    }
-
-    /**
-     * Test manager enrol.
-     */
-    public function test_manager_enrol() {
-        global $CFG, $DB, $OUTPUT, $PAGE;
-        $ccompletion = new \completion_completion(['course' => $this->course2->id, 'userid' => $this->student->id]);
-        $ccompletion->mark_complete(time());
-        chdir($CFG->dirroot . '/enrol/coursecompleted');
-        $_POST['enrolid'] = $this->instance->id;
-        $_POST['action'] = 'enrol';
-        ob_start();
-        include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
-        $html = ob_get_clean();
-        $this->assertContains('Enrol users', $html);
     }
 
     /**
