@@ -54,6 +54,16 @@ class enrol_coursecompleted_observer {
                         }
                         $plugin->enrol_user($enrol, $event->relateduserid, $enrol->roleid,
                                         $enrol->enrolstartdate, $enrol->enrolenddate);
+                        if ($enrol->customint2 > 0) {
+                            $adhock = new \enrol_coursecompleted\task\send_welcome();
+                            $adhock->set_custom_data([
+                                'userid' => $event->relateduserid,
+                                'enrolid' => $enrol->id,
+                                'courseid' => $enrol->courseid,
+                                'completedid' => $enrol->customint1]);
+                            $adhock->set_component('enrol_coursecompleted');
+                            \core\task\manager::queue_adhoc_task($adhock);
+                        }
                         mark_user_dirty($event->relateduserid);
                     }
                 } else {

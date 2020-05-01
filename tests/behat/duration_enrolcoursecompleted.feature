@@ -57,7 +57,7 @@ Feature: Duration Enrolment on course completion
     Then I should see "Username 1"
     And I wait "3" seconds
     And I trigger cron
-    And I wait until the page is ready
+    And I run all adhoc tasks
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should not see "Username 1"
@@ -86,7 +86,7 @@ Feature: Duration Enrolment on course completion
     Then I should see "Username 1"
     And I wait "3" seconds
     And I trigger cron
-    And I wait until the page is ready
+    And I run all adhoc tasks
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should not see "Username 1"

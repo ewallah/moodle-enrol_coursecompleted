@@ -92,7 +92,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         global $DB;
         $generator = $this->getDataGenerator();
         $plugin = enrol_get_plugin('coursecompleted');
-        $student = $generator->create_user();
+        $studentid = $generator->create_user()->id;
         $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
         $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
@@ -100,13 +100,13 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 9999]);
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $student->id, $studentrole->id);
+        $manualplugin->enrol_user($instance, $studentid, $studentrole->id);
         $compevent = \core\event\course_completed::create([
             'objectid' => $course2->id,
-            'relateduserid' => $student->id,
+            'relateduserid' => $studentid,
             'context' => context_course::instance($course2->id),
             'courseid' => $course2->id,
-            'other' => ['relateduserid' => $student->id]]);
+            'other' => ['relateduserid' => $studentid]]);
         $observer = new enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
         $this->assertDebuggingCalled("Role does not exist");
@@ -124,5 +124,51 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $output = ob_get_contents();
         ob_end_clean();
         $this->assertContains('No expired enrol_coursecompleted enrolments detected', $output);
+    }
+
+    /**
+     * Test adhoc sending of welcome messages.
+     * @covers \enrol_coursecompleted\task\send_welcome
+     */
+    public function  test_adhoc_email_welcome_message() {
+        global $DB;
+        $generator = $this->getDataGenerator();
+        $sink = $this->redirectEmails();
+        $plugin = enrol_get_plugin('coursecompleted');
+        $studentid = $generator->create_user()->id;
+        $course = $generator->create_course(['shortname' => 'B0', 'enablecompletion' => 1]);
+        $courseid1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1])->id;
+        $courseid2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1])->id;
+        $courseid3 = $generator->create_course(['shortname' => 'B3', 'enablecompletion' => 1])->id;
+        $courseid4 = $generator->create_course(['shortname' => 'B4', 'enablecompletion' => 1])->id;
+        $plugin->add_instance($course, ['customint1' => $courseid1, 'roleid' => 5, 'customint2' => 0]);
+        $i2 = $plugin->add_instance($course, ['customint1' => $courseid2, 'roleid' => 5, 'customint2' => 1]);
+        $i3 = $plugin->add_instance($course, ['customint1' => $courseid3, 'customtext1' => 'boe', 'customint2' => 1]);
+        $i4 = $plugin->add_instance($course,
+           ['customint1' => $courseid4, 'customtext1' => '{$a->fullname} <b>boe</b>', 'customint2' => 1]);
+        $compevent = \core\event\course_completed::create([
+            'objectid' => $courseid1,
+            'relateduserid' => $studentid,
+            'context' => \context_course::instance($courseid1),
+            'courseid' => $courseid1,
+            'other' => ['relateduserid' => $studentid]]);
+        $observer = new \enrol_coursecompleted_observer();
+        $observer->enroluser($compevent);
+        $adhock = new \enrol_coursecompleted\task\send_welcome();
+        $adhock->set_custom_data(
+             ['userid' => $studentid, 'enrolid' => $i2, 'courseid' => $course->id, 'completedid' => $courseid2]);
+        $adhock->set_component('enrol_coursecompleted');
+        \core\task\manager::queue_adhoc_task($adhock);
+        $adhock->set_custom_data(
+              ['userid' => $studentid, 'enrolid' => $i3, 'courseid' => $course->id, 'completedid' => $courseid3]);
+        \core\task\manager::queue_adhoc_task($adhock);
+        $adhock->set_custom_data(
+              ['userid' => $studentid, 'enrolid' => $i4, 'courseid' => $course->id, 'completedid' => $courseid4]);
+        \core\task\manager::queue_adhoc_task($adhock);
+        $this->assertCount(3, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
+        phpunit_util::run_all_adhoc_tasks();
+        $this->assertCount(3, $sink->get_messages());
+        $sink->close();
+        $this->assertCount(0, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
     }
 }

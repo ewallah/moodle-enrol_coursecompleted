@@ -70,7 +70,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->setAdminUser();
         $this->plugin = enrol_get_plugin('coursecompleted');
-        $id = $this->plugin->add_instance($this->course1, ['customint1' => $this->course2->id, 'roleid' => $studentrole->id]);
+        $id = $this->plugin->add_instance($this->course1,
+            ['customint1' => $this->course2->id, 'customint2' => 1, 'roleid' => $studentrole->id]);
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
         $this->student = $generator->create_user();
         $manualplugin = enrol_get_plugin('manual');

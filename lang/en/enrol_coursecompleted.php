@@ -32,6 +32,16 @@ $string['coursecompleted:unenrol'] = 'Unenrol users from course';
 $string['coursecompleted:unenrolself'] = 'Unenrol self from the course';
 $string['compcourse'] = 'Completed course';
 $string['compcourse_help'] = 'Which course have to be completed.';
+$string['customwelcome'] = 'Custom welcome message';
+$string['customwelcome_help'] = 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
+
+The following placeholders may be included in the message:
+
+* Course name {$a->coursename}
++ Completed course name {$a->completed}
+* Link to user\'s profile page {$a->profileurl}
+* User email {$a->email}
+* User fullname {$a->fullname}';
 $string['pluginname'] = 'Course completed enrolment';
 $string['pluginname_desc'] = 'Course completed enrol plugin grants access to courses upon coursecompleted of a course.';
 $string['privacy:metadata'] = 'The Course completed enrolment plugin does not store any personal data.';
@@ -42,4 +52,11 @@ $string['status_help'] = 'This setting determines if the course completed enrolm
 $string['status_link'] = 'enrol/coursecompleted';
 $string['uponcompleting'] = 'Upon completing course {$a}';
 $string['usersenrolled'] = '{$a} Users enrolled';
+$string['welcome'] = 'Send course welcome message';
+$string['welcome_help'] = 'When a user is enrolled in a course by completing another course, a welcome message email may be sent.';
+$string['welcometocourse'] = 'Welcome to {$a->coursename}!
+
+Congratulations!
+
+You were automatically enrolled into {$a->coursename} because you completed {$a->completed}.';
 $string['willbeenrolled'] = 'You will be enrolled in this course when you complete course {$a}';

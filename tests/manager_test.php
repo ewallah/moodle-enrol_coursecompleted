@@ -86,10 +86,30 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
     /**
      * Test manager without permission.
      */
-    public function test_manager_wrong_permistion() {
-        global $CFG, $DB, $OUTPUT, $PAGE;
+    public function test_manager_wrong_permission() {
+        global $CFG, $DB;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $this->setUser($this->student);
+        $_POST['enrolid'] = $this->instance->id;
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage('Unsupported redirect detected, script execution terminated');
+        include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
+    }
+
+    /**
+     * Test manager wrong permission.
+     */
+    public function test_manager_wrong_permission2() {
+        global $CFG, $DB, $OUTPUT, $PAGE;
+        chdir($CFG->dirroot . '/enrol/coursecompleted');
+        $generator = $this->getDataGenerator();
+        $user = $generator->create_user();
+        $role = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $generator->enrol_user($user->id, $this->course->id, $role->shortname);
+        $context = context_course::instance($this->course->id);
+        assign_capability('enrol/coursecompleted:enrolpast', CAP_PROHIBIT, $role->id, $context);
+        assign_capability('enrol/coursecompleted:unenrol', CAP_PROHIBIT, $role->id, $context);
+        $this->setUser($user);
         $_POST['enrolid'] = $this->instance->id;
         $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage('Unsupported redirect detected, script execution terminated');

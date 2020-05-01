@@ -302,6 +302,15 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('course', 'customint1', get_string('course'), ['multiple' => false, 'includefrontpage' => false]);
         $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
         $mform->addHelpButton('customint1', 'compcourse', 'enrol_coursecompleted');
+
+        $mform->addElement('advcheckbox', 'customint2', get_string('welcome', 'enrol_coursecompleted'));
+        $mform->addHelpButton('customint2', 'welcome', 'enrol_coursecompleted');
+
+        $mform->addElement('textarea', 'customtext1',
+            get_string('customwelcome', 'enrol_coursecompleted'), ['cols' => '60', 'rows' => '8']);
+        $mform->addHelpButton('customtext1', 'customwelcome', 'enrol_coursecompleted');
+        $mform->disabledIf('customtext1', 'customint2', 'notchecked');
+
     }
 
     /**

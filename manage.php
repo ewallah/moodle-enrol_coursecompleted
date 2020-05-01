@@ -35,7 +35,10 @@ if ($instance = $DB->get_record('enrol', ['id' => $enrolid, 'enrol' => 'courseco
 }
 require_login($course);
 
-if (!has_capability('enrol/coursecompleted:enrolpast', $context) and has_capability('enrol/coursecompleted:unenrol', $context)) {
+$canenrol = has_capability('enrol/coursecompleted:enrolpast', $context);
+$canunenrol = has_capability('enrol/coursecompleted:unenrol', $context);
+
+if (!$canenrol and !$canunenrol) {
     // No need to invent new error strings here...
     require_capability('enrol/manual:enrol', $context);
     require_capability('enrol/manual:unenrol', $context);
