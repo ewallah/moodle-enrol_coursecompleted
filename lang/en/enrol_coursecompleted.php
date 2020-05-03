@@ -58,5 +58,5 @@ $string['welcometocourse'] = 'Welcome to {$a->coursename}!
 
 Congratulations!
 
-You were automatically enrolled into {$a->coursename} because you completed {$a->completed}.';
+After successfully completing {$a->completed}, you are now automatically enrolled in the following course {$a->coursename}.';
 $string['willbeenrolled'] = 'You will be enrolled in this course when you complete course {$a}';
