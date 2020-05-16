@@ -32,8 +32,7 @@ jobs:
   include:
     - php: 7.2
       env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
-    - php: 7.3
-      env: DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
+    - env: DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
     - php: 7.4
       env: DB=pgsql MOODLE_BRANCH=master
 
@@ -63,6 +62,7 @@ script:
   - moodle-plugin-ci phpunit --coverage-text  --coverage-clover
   - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
+  - moodle-plugin-ci behat --dump blocks/admin_bookmarks
   - php /home/travis/build/moodle/vendor/bin/behat --config /home/travis/build/moodledata/behat_moodledata/behatrun/behat/behat.yml --format progress --tags="@block_admin_bookmarks"
   - >
         if [ "$MOODLE_BRANCH" = 'master' ];
