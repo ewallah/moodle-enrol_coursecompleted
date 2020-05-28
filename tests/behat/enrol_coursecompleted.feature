@@ -130,6 +130,8 @@ Feature: Enrolment on course completion
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I click on "//a[@data-action='unenrol']" "xpath_element"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
     Then I should not see "Username 1"
     And I should not see "Teacher 1"
     When I am on "Course 2" course homepage
