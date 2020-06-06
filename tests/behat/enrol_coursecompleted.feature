@@ -124,8 +124,6 @@ Feature: Enrolment on course completion
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I click on "//a[@data-action='unenrol']" "xpath_element" in the "teacher1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
-    Then I should not see "Username 1"
-    And I should not see "Teacher 1"
     When I am on "Course 2" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
     And I wait until the page is ready
