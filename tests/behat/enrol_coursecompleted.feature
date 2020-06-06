@@ -54,8 +54,6 @@ Feature: Enrolment on course completion
     And I run all adhoc tasks
     And I am on "Course 2" course homepage
     And I navigate to course participants
-    And I open the autocomplete suggestions list
-    And I click on "Role: Student" item in the autocomplete list
     When I click on "//a[@data-action='editenrolment']" "xpath_element" in the "user1" "table_row"
     Then I should see "2030"
     And I should see "4"
@@ -130,10 +128,8 @@ Feature: Enrolment on course completion
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I click on "//a[@data-action='unenrol']" "xpath_element"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
-    And I am on "Course 2" course homepage
-    And I navigate to course participants
-    Then I should not see "Username 1"
-    And I should not see "Teacher 1"
+    Then I should not see "Username 1" in the "participants" "table"
+    And I should not see "Teacher 1" in the "participants" "table"
     When I am on "Course 2" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
     And I wait until the page is ready
