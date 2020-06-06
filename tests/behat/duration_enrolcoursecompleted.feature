@@ -44,8 +44,7 @@ Feature: Duration Enrolment on course completion
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     # Running completion task just after clicking sometimes fail, as record
@@ -62,8 +61,7 @@ Feature: Duration Enrolment on course completion
     And I navigate to course participants
     Then I should not see "Username 1"
     And I log out
-    And I log in as "user1"
-    And I am on "Course 2" course homepage
+    And I am on the "C2" "Course" page logged in as "user1"
     Then I should see "Enrolment options"
 
   Scenario: Course completion with end date set
@@ -73,8 +71,7 @@ Feature: Duration Enrolment on course completion
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     # Running completion task just after clicking sometimes fail, as record
@@ -91,6 +88,5 @@ Feature: Duration Enrolment on course completion
     And I navigate to course participants
     Then I should not see "Username 1"
     And I log out
-    And I log in as "user1"
-    And I am on "Course 2" course homepage
+    And I am on the "C2" "Course" page logged in as "user1"
     Then I should see "Enrolment options"

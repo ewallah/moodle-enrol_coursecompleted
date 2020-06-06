@@ -120,9 +120,9 @@ Feature: Enrolment on course completion
     And I log out
     When I am on the "C2" "Course" page logged in as "admin"
     And I navigate to course participants
-    When I click on "//a[@data-action='unenrol']" "xpath_element"
+    And I click on "//a[@data-action='unenrol']" "xpath_element" in the "user1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
-    And I click on "//a[@data-action='unenrol']" "xpath_element"
+    And I click on "//a[@data-action='unenrol']" "xpath_element" in the "teacher1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     Then I should not see "Username 1"
     And I should not see "Teacher 1"
