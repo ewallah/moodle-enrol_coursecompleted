@@ -14,6 +14,7 @@ Feature: Enrolment on course completion
     And the following "course enrolments" exist:
       | user    | course   | role           |
       | user1   | C1       | student        |
+      | user2   | C1       | student        |
       | teacher1| C1       | editingteacher |
       | teacher1| C2       | editingteacher |
     And I log in as "admin"
@@ -43,12 +44,14 @@ Feature: Enrolment on course completion
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    When I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     # Running completion task just after clicking sometimes fail, as record
     # should be created before the task runs.
+    And I wait "1" seconds
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
@@ -69,15 +72,13 @@ Feature: Enrolment on course completion
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    When I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
     And I log out
-    And I log in as "user1"
-    And I am on "Course 2" course homepage
+    When I am on the "C2" "Course" page logged in as "user1"
     Then I should see "You will be enrolled in this course when"
 
   Scenario: When a course is completed, a user is auto enrolled into another course
@@ -86,8 +87,7 @@ Feature: Enrolment on course completion
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    When I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     And I log out
@@ -95,8 +95,7 @@ Feature: Enrolment on course completion
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
     And I log out
-    And I log in as "user1"
-    And I am on "Course 1" course homepage
+    When I am on the "C1" "Course" page logged in as "user1"
     Then I should not see "You will be enrolled in this course when"
     And I am on "Course 2" course homepage
     Then I should not see "You will be enrolled in this course when"
@@ -107,8 +106,7 @@ Feature: Enrolment on course completion
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    When I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     And I log out
@@ -116,20 +114,18 @@ Feature: Enrolment on course completion
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
     And I log out
-    And I log in as "teacher1"
-    And I am on "Course 2" course homepage
+    When I am on the "C2" "Course" page logged in as "teacher1"
     And I navigate to course participants
     Then I should see "Username 1" in the "participants" "table"
     And I log out
-    And I log in as "admin"
-    And I am on "Course 2" course homepage
+    When I am on the "C2" "Course" page logged in as "admin"
     And I navigate to course participants
     When I click on "//a[@data-action='unenrol']" "xpath_element"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I click on "//a[@data-action='unenrol']" "xpath_element"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
-    Then I should not see "Username 1" in the "participants" "table"
-    And I should not see "Teacher 1" in the "participants" "table"
+    Then I should not see "Username 1"
+    And I should not see "Teacher 1"
     When I am on "Course 2" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
     And I wait until the page is ready
