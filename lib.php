@@ -57,7 +57,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array of pix_icon
      */
     public function get_info_icons(array $instances) {
-        global $DB, $OUTPUT, $USER;
+        global $DB;
         $arr = [];
         foreach ($instances as $instance) {
             if ($fullname = $DB->get_field('course', 'fullname', ['id' => $instance->customint1])) {
@@ -94,11 +94,14 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             foreach ($items as $key => $value) {
                 $i = $key + 1;
                 if ($value == $instance->courseid) {
-                    $arr[] = '<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i><strong class="fa-stack-1x text-light">' . $i . '</strong></span>';
+                    $str = '<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i>';
+                    $str .= '<strong class="fa-stack-1x text-light">' . $i . '</strong></span>';
                 } else {
-                    $str = '<span class="fa-stack fa-2x"><i class="fa fa-circle-o fa-stack-2x"></i><strong class="fa-stack-1x">' . $i . '</strong></span>';
-                    $arr[] = $this->build_courselink($value, $str);
+                    $str = '<span class="fa-stack fa-2x"><i class="fa fa-circle-o fa-stack-2x"></i>';
+                    $str .= '<strong class="fa-stack-1x">' . $i . '</strong></span>';
+                    $str = $this->build_courselink($value, $str);
                 }
+                $arr[] = $str;
                 $i++;
             }
             $str = implode('<span class="fa-stack fa-2x"><i class="fa fa-arrow-right fa-stack-1x"></i></span>', $arr);
@@ -394,9 +397,10 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     }
 
     /**
-     * Get coursename
+     * Build course link
      *
      * @param int $id Course id
+     * @param string $str svg image
      * @return string course name
      */
     private function build_courselink($id, $str) {
@@ -404,7 +408,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $return = '';
         if ($fullname = $DB->get_field('course', 'fullname', ['id' => $id])) {
             $name = format_string($fullname, true, ['context' => context_course::instance($id)]);
-            $return = html_writer::link(new moodle_url('/course/view.php', ['id' => $id]), $str);
+            $return = html_writer::link(new moodle_url('/course/view.php', ['id' => $id], ), $str, ['title' => $name]);
         }
         return $return;
     }

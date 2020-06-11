@@ -278,7 +278,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
               $this->assertCount(4, $this->plugin->build_course_path($record));
         }
     }
-        
+
     /**
      * Test library.
      * @covers \enrol_coursecompleted_plugin
