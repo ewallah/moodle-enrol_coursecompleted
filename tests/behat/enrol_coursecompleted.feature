@@ -5,7 +5,9 @@ Feature: Enrolment on course completion
     Given the following "courses" exist:
       | fullname | shortname | numsections | startdate  | enddate    | enablecompletion |
       | Course 1 | C1        | 1           | 957139200  | 960163200  | 1                |
-      | Course 2 | C2        | 1           | 2524644000 | 2529741600 | 0                |
+      | Course 2 | C2        | 1           | 2524644000 | 2529741600 | 1                |
+      | Course 3 | C3        | 1           | 2524644000 | 2529741600 | 1                |
+      | Course 4 | C4        | 1           | 2524644000 | 2529741600 | 1                |
     And the following "users" exist:
       | username | firstname | lastname |
       | user1    | Username  | 1        |
@@ -77,6 +79,27 @@ Feature: Enrolment on course completion
     And I follow "Click to mark user complete"
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
+    And I log out
+    When I am on the "C2" "Course" page logged in as "user1"
+    Then I should see "You will be enrolled in this course when"
+
+  Scenario: Learning path
+    When I set the following fields to these values:
+       | Course                    | Course 1   |
+    And I press "Add method"
+    And I am on "Course 3" course homepage
+    And I navigate to "Users > Enrolment methods" in current page administration
+    And I select "Course completed enrolment" from the "Add method" singleselect
+    And I set the following fields to these values:
+       | Course                    | Course 2   |
+    And I press "Add method"
+    And I am on "Course 4" course homepage
+    And I navigate to "Users > Enrolment methods" in current page administration
+    And I select "Course completed enrolment" from the "Add method" singleselect
+    And I set the following fields to these values:
+       | Course                    | Course 3   |
+    And I press "Add method"
+    And I am on "Course 4" course homepage
     And I log out
     When I am on the "C2" "Course" page logged in as "user1"
     Then I should see "You will be enrolled in this course when"

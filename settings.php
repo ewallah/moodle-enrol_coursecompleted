@@ -62,4 +62,6 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('enrol_coursecompleted/welcome',
         get_string('welcome', 'enrol_coursecompleted'), get_string('welcome_help', 'enrol_coursecompleted'), 1));
 
+    $settings->add(new admin_setting_configcheckbox('enrol_coursecompleted/svglearnpath',
+        get_string('svglearnpath', 'enrol_coursecompleted'), get_string('svglearnpath_help', 'enrol_coursecompleted'), 1));
 }
