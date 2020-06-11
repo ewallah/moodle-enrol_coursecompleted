@@ -21,6 +21,7 @@ cache:
   directories:
     - $HOME/.composer/cache
     - $HOME/.npm
+    - $HOME/.nvm
 
 php:
  - 7.3
