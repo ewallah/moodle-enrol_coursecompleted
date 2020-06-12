@@ -91,15 +91,15 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         if ($this->get_config('svglearnpath')) {
             $items = $this->build_course_path($instance);
             $arr = [];
-            foreach ($items as $key => $value) {
-                $i = $key + 1;
-                if ($value == $instance->courseid) {
-                    $str = '<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x"></i>';
+            $i = 1;
+            foreach ($items as $item) {
+                if ($item == $instance->customint1) {
+                    $str = '<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x text-dark"></i>';
                     $str .= '<strong class="fa-stack-1x text-light">' . $i . '</strong></span>';
                 } else {
                     $str = '<span class="fa-stack fa-2x"><i class="fa fa-circle-o fa-stack-2x"></i>';
                     $str .= '<strong class="fa-stack-1x">' . $i . '</strong></span>';
-                    $str = $this->build_courselink($value, $str);
+                    $str = $this->build_courselink($item, $str);
                 }
                 $arr[] = $str;
                 $i++;
@@ -408,7 +408,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $return = '';
         if ($fullname = $DB->get_field('course', 'fullname', ['id' => $id])) {
             $name = format_string($fullname, true, ['context' => context_course::instance($id)]);
-            $return = html_writer::link(new moodle_url('/course/view.php', ['id' => $id], ), $str, ['title' => $name]);
+            $return = html_writer::link(new moodle_url('/course/view.php', ['id' => $id]), $str, ['title' => $name]);
         }
         return $return;
     }
