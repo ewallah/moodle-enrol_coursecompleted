@@ -372,12 +372,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     private function search_parents($id) {
         global $DB;
-        $return = [$id];
+        $arr = [$id];
         if ($parents = $DB->get_records('enrol', ['enrol' => 'coursecompleted', 'courseid' => $id], '', 'customint1')) {
             $parentid = reset($parents)->customint1;
-            $return = array_merge([$id], $this->search_parents($parentid));
+            $arr = array_merge($arr, $this->search_parents($parentid));
         }
-        return $return;
+        return $arr;
     }
 
     /**
@@ -388,12 +388,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     private function search_children($id) {
         global $DB;
-        $return = [$id];
+        $arr = [$id];
         if ($children = $DB->get_records('enrol', ['enrol' => 'coursecompleted', 'customint1' => $id], '', 'courseid')) {
             $childid = reset($children)->courseid;
-            $return = array_merge($return, $this->search_children($childid));
+            $arr = array_merge($arr, $this->search_children($childid));
         }
-        return $return;
+        return $arr;
     }
 
     /**
@@ -405,11 +405,11 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     private function build_courselink($id, $str) {
         global $DB;
-        $return = '';
+        $str = '';
         if ($fullname = $DB->get_field('course', 'fullname', ['id' => $id])) {
             $name = format_string($fullname, true, ['context' => context_course::instance($id)]);
-            $return = html_writer::link(new moodle_url('/course/view.php', ['id' => $id]), $str, ['title' => $name]);
+            $str = html_writer::link(new moodle_url('/course/view.php', ['id' => $id]), $str, ['title' => $name]);
         }
-        return $return;
+        return $str;
     }
 }
