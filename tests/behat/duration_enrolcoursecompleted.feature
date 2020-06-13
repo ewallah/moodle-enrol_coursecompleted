@@ -47,11 +47,6 @@ Feature: Duration Enrolment on course completion
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
-    # Running completion task just after clicking sometimes fail, as record
-    # should be created before the task runs.
-    And I wait "1" seconds
-    And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
@@ -59,8 +54,9 @@ Feature: Duration Enrolment on course completion
     And I navigate to course participants
     Then I should see "Username 1"
     And I wait "3" seconds
-    And I trigger cron
+    And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
+    And I trigger cron
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should not see "Username 1"
@@ -83,15 +79,13 @@ Feature: Duration Enrolment on course completion
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
-    And I wait "1" seconds
-    And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should see "Username 1"
     And I wait "3" seconds
-    And I trigger cron
+    And I run the scheduled task "core\task\completion_regular_task"
     And I run all adhoc tasks
+    And I trigger cron
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should not see "Username 1"
