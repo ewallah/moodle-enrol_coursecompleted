@@ -55,8 +55,8 @@ Feature: Duration Enrolment on course completion
     Then I should see "Username 1"
     And I wait "3" seconds
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
     And I trigger cron
+    And I run all adhoc tasks
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should not see "Username 1"
@@ -84,8 +84,8 @@ Feature: Duration Enrolment on course completion
     Then I should see "Username 1"
     And I wait "3" seconds
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
     And I trigger cron
+    And I run all adhoc tasks
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should not see "Username 1"
