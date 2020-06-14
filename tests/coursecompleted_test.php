@@ -69,7 +69,11 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         global $CFG, $DB;
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
-        $this->enable_plugin();
+        $enabled = enrol_get_plugins(true);
+        unset($enabled['guest']);
+        unset($enabled['self']);
+        $enabled['coursecompleted'] = true;
+        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
         $generator = $this->getDataGenerator();
         $this->course1 = $generator->create_course(['shortname' => 'A1', 'enablecompletion' => 1]);
         $this->course2 = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
@@ -89,22 +93,6 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $instance = $DB->get_record('enrol', ['courseid' => $this->course1->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance, $this->student->id, $studentrole);
         mark_user_dirty($this->student->id);
-    }
-
-    /**
-     * Basic test.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
-     */
-    public function test_basics() {
-        $enabled = enrol_get_plugins(true);
-        unset($enabled['coursecompleted']);
-        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
-        $this->assertFalse(enrol_is_enabled('coursecompleted'));
-        $this->enable_plugin();
-        $this->assertTrue(enrol_is_enabled('coursecompleted'));
-        $this->assertNotEmpty($this->plugin);
-        $this->assertInstanceOf('enrol_coursecompleted_plugin', $this->plugin);
-        $this->assertEquals(ENROL_EXT_REMOVED_SUSPENDNOROLES, get_config('enrol_coursecompleted', 'expiredaction'));
     }
 
     /**
@@ -262,9 +250,9 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
      */
     public function test_instances() {
         global $DB;
-        $records = $DB->get_records('enrol', ['enrol' => '']);
+        $records = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
         foreach ($records as $record) {
-              $this->assertCount(4, $this->plugin->build_course_path($record));
+            $this->assertCount(4, $this->plugin->build_course_path($record));
         }
     }
 
@@ -463,17 +451,6 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertInstanceOf('\core\event\course_deleted', $event);
         $observer = new \enrol_coursecompleted_observer();
         $observer->coursedeleted($event);
-    }
-
-    /**
-     * Enable plugin.
-     */
-    protected function enable_plugin() {
-        $enabled = enrol_get_plugins(true);
-        unset($enabled['guest']);
-        unset($enabled['self']);
-        $enabled['coursecompleted'] = true;
-        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
     }
 }
 

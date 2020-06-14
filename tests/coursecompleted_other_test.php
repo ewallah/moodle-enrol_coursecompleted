@@ -52,6 +52,18 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
     }
 
     /**
+     * Basic test.
+     * @coversDefaultClass \enrol_coursecompleted_plugin
+     */
+    public function test_basics() {
+        $this->assertTrue(enrol_is_enabled('coursecompleted'));
+        $this->assertEquals(ENROL_EXT_REMOVED_SUSPENDNOROLES, get_config('enrol_coursecompleted', 'expiredaction'));
+        $plugin = enrol_get_plugin('coursecompleted');
+        $this->assertNotEmpty($plugin);
+        $this->assertInstanceOf('enrol_coursecompleted_plugin', $plugin);
+    }
+
+    /**
      * Test other files.
      * @coversDefaultClass \enrol_coursecompleted_plugin
      */
