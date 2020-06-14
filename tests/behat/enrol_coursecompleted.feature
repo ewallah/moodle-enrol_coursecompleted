@@ -3,22 +3,22 @@ Feature: Enrolment on course completion
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | numsections | startdate  | enddate    | enablecompletion |
-      | Course 1 | C1        | 1           | 957139200  | 960163200  | 1                |
-      | Course 2 | C2        | 1           | 2524644000 | 2529741600 | 1                |
-      | Course 3 | C3        | 1           | 2524644000 | 2529741600 | 1                |
-      | Course 4 | C4        | 1           | 2524644000 | 2529741600 | 1                |
+      | fullname | shortname | numsections | startdate | enddate | enablecompletion |
+      | Course 1 | C1 | 1 | ##yesterday## | ##tomorrow##| 1 |
+      | Course 2 | C2 | 1 | ##tomorrow## | ##last day of next month## | 1 |
+      | Course 3 | C3 | 1 | ##tomorrow## | ##last day of next month## | 1 |
+      | Course 4 | C4 | 1 | ##tomorrow## | ##last day of next month## | 1 |
     And the following "users" exist:
       | username | firstname | lastname |
-      | user1    | Username  | 1        |
-      | user2    | Username  | 2        |
-      | teacher1 | Teacher   | 1        |
+      | user1 | Username | 1 |
+      | user2 | Username | 2 |
+      | teacher1 | Teacher | 1 |
     And the following "course enrolments" exist:
-      | user    | course   | role           |
-      | user1   | C1       | student        |
-      | user2   | C1       | student        |
-      | teacher1| C1       | editingteacher |
-      | teacher1| C2       | editingteacher |
+      | user | course | role |
+      | user1 | C1 | student |
+      | user2 | C1 | student |
+      | teacher1| C1 | editingteacher |
+      | teacher1| C2 | editingteacher |
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Disable" "link" in the "Guest access" "table_row"
@@ -36,13 +36,13 @@ Feature: Enrolment on course completion
 
   Scenario: Duration
     When I set the following fields to these values:
-       | Course                    | Course 1   |
-       | id_enrolperiod_enabled    | 1          |
-       | id_enrolperiod_number     | 3 days     |
-       | id_enrolstartdate_enabled | 1          |
-       | id_enrolstartdate_day     | 1          |
-       | id_enrolstartdate_month   | 1          |
-       | id_enrolstartdate_year    | 2030       |
+       | Course | Course 1 |
+       | id_enrolperiod_enabled | 1 |
+       | id_enrolperiod_number | 3 days |
+       | id_enrolstartdate_enabled | 1 |
+       | id_enrolstartdate_day | 1 |
+       | id_enrolstartdate_month | 1 |
+       | id_enrolstartdate_year | 2030 |
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out
@@ -65,11 +65,11 @@ Feature: Enrolment on course completion
 
   Scenario: Later start date
     When I set the following fields to these values:
-       | Course                    | Course 1   |
-       | id_enrolperiod_enabled    | 1          |
-       | id_enrolperiod_number     | 3 days     |
-       | id_enrolstartdate_enabled | 1          |
-       | id_enrolstartdate_year    | 2030       |
+       | Course | Course 1 |
+       | id_enrolperiod_enabled | 1 |
+       | id_enrolperiod_number | 3 days|
+       | id_enrolstartdate_enabled | 1 |
+       | id_enrolstartdate_year | 2030 |
 
     And I press "Add method"
     And I am on "Course 2" course homepage
@@ -85,19 +85,19 @@ Feature: Enrolment on course completion
 
   Scenario: Learning path
     When I set the following fields to these values:
-       | Course                    | Course 1   |
+       | Course | Course 1 |
     And I press "Add method"
     And I am on "Course 3" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Course completed enrolment" from the "Add method" singleselect
     And I set the following fields to these values:
-       | Course                    | Course 2   |
+       | Course | Course 2 |
     And I press "Add method"
     And I am on "Course 4" course homepage
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Course completed enrolment" from the "Add method" singleselect
     And I set the following fields to these values:
-       | Course                    | Course 3   |
+       | Course | Course 3 |
     And I press "Add method"
     And I am on "Course 4" course homepage
     And I log out
@@ -106,7 +106,7 @@ Feature: Enrolment on course completion
 
   Scenario: When a course is completed, a user is auto enrolled into another course
     When I set the following fields to these values:
-       | Course                    | Course 1   |
+       | Course | Course 1 |
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out
@@ -125,7 +125,7 @@ Feature: Enrolment on course completion
 
   Scenario: Manage enrolled users
     When I set the following fields to these values:
-       | Course                    | Course 1   |
+       | Course | Course 1 |
     And I press "Add method"
     And I am on "Course 2" course homepage
     And I log out

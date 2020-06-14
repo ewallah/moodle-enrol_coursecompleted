@@ -92,17 +92,6 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
     }
 
     /**
-     * Enable plugin.
-     */
-    protected function enable_plugin() {
-        $enabled = enrol_get_plugins(true);
-        unset($enabled['guest']);
-        unset($enabled['self']);
-        $enabled['coursecompleted'] = true;
-        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
-    }
-
-    /**
      * Basic test.
      * @coversDefaultClass \enrol_coursecompleted_plugin
      */
@@ -474,6 +463,17 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertInstanceOf('\core\event\course_deleted', $event);
         $observer = new \enrol_coursecompleted_observer();
         $observer->coursedeleted($event);
+    }
+
+    /**
+     * Enable plugin.
+     */
+    protected function enable_plugin() {
+        $enabled = enrol_get_plugins(true);
+        unset($enabled['guest']);
+        unset($enabled['self']);
+        $enabled['coursecompleted'] = true;
+        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
     }
 }
 

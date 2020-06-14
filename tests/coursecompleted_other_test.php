@@ -98,6 +98,8 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->setAdminUser();
         $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 9999]);
+        $instance = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'coursecompleted'], '*', MUST_EXIST);
+        $this->assertCount(2, $plugin->build_course_path($instance));
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance, $studentid, $studentrole->id);

@@ -93,11 +93,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $arr = [];
             $i = 1;
             foreach ($items as $item) {
+                $str = '<span class="fa-stack fa-2x">';
                 if ($item == $instance->customint1) {
-                    $str = '<span class="fa-stack fa-2x"><i class="fa fa-circle fa-stack-2x text-dark"></i>';
+                    $str .= '<i class="fa fa-circle fa-stack-2x text-dark"></i>';
                     $str .= '<strong class="fa-stack-1x text-light">' . $i . '</strong></span>';
                 } else {
-                    $str = '<span class="fa-stack fa-2x"><i class="fa fa-circle-o fa-stack-2x"></i>';
+                    $str .= '<i class="fa fa-circle-o fa-stack-2x"></i>';
                     $str .= '<strong class="fa-stack-1x">' . $i . '</strong></span>';
                     $str = $this->build_courselink($item, $str);
                 }
@@ -400,15 +401,15 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * Build course link
      *
      * @param int $id Course id
-     * @param string $str svg image
+     * @param string $svg svg image
      * @return string course name
      */
-    private function build_courselink($id, $str) {
+    private function build_courselink($id, $svg) {
         global $DB;
         $str = '';
         if ($fullname = $DB->get_field('course', 'fullname', ['id' => $id])) {
             $name = format_string($fullname, true, ['context' => context_course::instance($id)]);
-            $str = html_writer::link(new moodle_url('/course/view.php', ['id' => $id]), $str, ['title' => $name]);
+            $str = html_writer::link(new moodle_url('/course/view.php', ['id' => $id]), $svg, ['title' => $name]);
         }
         return $str;
     }
