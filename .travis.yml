@@ -9,7 +9,7 @@ services:
   - mysql
 
 addons:
-  postgresql: 10
+  postgresql: "9.6.17"
   firefox: "47.0.1"
   chrome: stable
   apt:
@@ -33,11 +33,11 @@ env:
 jobs:
   include:
     - php: 7.2
-      env: DB=pgsql MOODLE_BRANCH=MOODLE_37_STABLE
-    - env: DB=pgsql MOODLE_BRANCH=MOODLE_38_STABLE
-    - env: DB=pgsql MOODLE_BRANCH=MOODLE_39_STABLE
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_39_STABLE
     - php: 7.4
-      env: DB=pgsql MOODLE_BRANCH=master
+      env: DB=mysqli MOODLE_BRANCH=master
 
 before_install:
   - phpenv config-rm xdebug.ini
