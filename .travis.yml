@@ -9,7 +9,7 @@ services:
   - mysql
 
 addons:
-  postgresql: stable
+  postgresql: 10
   firefox: "47.0.1"
   chrome: stable
   apt:
