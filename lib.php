@@ -94,7 +94,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $i = 1;
             foreach ($items as $item) {
                 $str = '<span class="fa-stack fa-2x">';
-                if ($item == $instance->customint1) {
+                if ($item == $instance->courseid) {
                     $str .= '<i class="fa fa-circle fa-stack-2x text-dark"></i>';
                     $str .= '<strong class="fa-stack-1x text-light">' . $i . '</strong></span>';
                 } else {
@@ -359,24 +359,27 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array $items
      */
     public function build_course_path(stdClass $instance) {
-        $parents = $this->search_parents($instance->courseid);
+        $parents = $this->search_parents($instance->customint1);
         $children = $this->search_children($instance->courseid);
-        $all = array_merge($parents, $children);
-        return array_unique($all);
+        return array_unique(array_merge($parents, $children));
     }
 
     /**
      * Search parents
      *
      * @param int $id
+     * @param int $level
      * @return array items
      */
-    private function search_parents($id) {
+    private function search_parents($id, $level = 1) {
         global $DB;
         $arr = [$id];
-        if ($parents = $DB->get_records('enrol', ['enrol' => 'coursecompleted', 'courseid' => $id], '', 'customint1')) {
-            $parentid = reset($parents)->customint1;
-            $arr = array_merge($arr, $this->search_parents($parentid));
+        if ($level < 5) {
+            $level++;
+            $params = ['enrol' => 'coursecompleted', 'courseid' => $id];
+            if ($parent = $DB->get_field('enrol', 'customint1', $params, IGNORE_MULTIPLE)) {
+                $arr = array_merge($arr, $this->search_parents($parent, $level));
+            }
         }
         return $arr;
     }
@@ -385,14 +388,18 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * Search children
      *
      * @param int $id
+     * @param int $level
      * @return array items
      */
-    private function search_children($id) {
+    private function search_children($id, $level = 1) {
         global $DB;
         $arr = [$id];
-        if ($children = $DB->get_records('enrol', ['enrol' => 'coursecompleted', 'customint1' => $id], '', 'courseid')) {
-            $childid = reset($children)->courseid;
-            $arr = array_merge($arr, $this->search_children($childid));
+        if ($level < 5) {
+            $level++;
+            $params = ['enrol' => 'coursecompleted', 'customint1' => $id];
+            if ($child = $DB->get_field('enrol', 'courseid', $params, IGNORE_MULTIPLE)) {
+                $arr = array_merge($arr, $this->search_children($child, $level));
+            }
         }
         return $arr;
     }
