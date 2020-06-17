@@ -92,7 +92,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
         $this->setUser($this->student);
         $_POST['enrolid'] = $this->instance->id;
         $this->expectException(\moodle_exception::class);
-        $this->expectExceptionMessage('Unsupported redirect detected, script execution terminated');
+        $this->expectExceptionMessage('Sorry, but you do not currently have permissions to do that (Enrol users).');
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
 
@@ -109,10 +109,11 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
         $context = context_course::instance($this->course->id);
         assign_capability('enrol/coursecompleted:enrolpast', CAP_PROHIBIT, $role->id, $context);
         assign_capability('enrol/coursecompleted:unenrol', CAP_PROHIBIT, $role->id, $context);
+         \core\session\manager::init_empty_session();
         $this->setUser($user);
         $_POST['enrolid'] = $this->instance->id;
         $this->expectException(\moodle_exception::class);
-        $this->expectExceptionMessage('Unsupported redirect detected, script execution terminated');
+        $this->expectExceptionMessage('Sorry, but you do not currently have permissions to do that (Enrol users).');
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
 

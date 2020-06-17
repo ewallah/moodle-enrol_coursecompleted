@@ -33,8 +33,6 @@ if ($instance = $DB->get_record('enrol', ['id' => $enrolid, 'enrol' => 'courseco
     $course = get_course($instance->courseid);
     $context = context_course::instance($course->id, MUST_EXIST);
 }
-require_login($course);
-
 $canenrol = has_capability('enrol/coursecompleted:enrolpast', $context);
 $canunenrol = has_capability('enrol/coursecompleted:unenrol', $context);
 
@@ -43,6 +41,7 @@ if (!$canenrol and !$canunenrol) {
     require_capability('enrol/manual:enrol', $context);
     require_capability('enrol/manual:unenrol', $context);
 }
+require_login($course);
 
 if (!$enrol = enrol_get_plugin('coursecompleted')) {
     throw new coding_exception('Can not instantiate enrol_coursecompleted');
