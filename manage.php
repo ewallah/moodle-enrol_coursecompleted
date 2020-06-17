@@ -39,7 +39,6 @@ $canunenrol = has_capability('enrol/coursecompleted:unenrol', $context);
 if (!$canenrol and !$canunenrol) {
     // No need to invent new error strings here...
     require_capability('enrol/manual:enrol', $context);
-    require_capability('enrol/manual:unenrol', $context);
 }
 require_login($course);
 
