@@ -60,29 +60,23 @@ class send_welcome extends \core\task\adhoc_task {
                     $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
                     $a->completed = format_string($complcourse->fullname, true, ['context' => $context2]);
                     $custom = $DB->get_field('enrol', 'customtext1', ['id' => $data->enrolid]);
-                    if (trim($custom) !== '') {
-                        $key = ['{$a->coursename}',  '$a->completed', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
-                        $value = [$a->coursename, $a->completed, $a->profileurl, fullname($user), $user->email];
+                    $key = ['{$a->coursename}',  '{$a->completed}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
+                    $value = [$a->coursename, $a->completed, $a->profileurl, fullname($user), $user->email];
+                    if (trim($custom) != '') {
                         $message = str_replace($key, $value, $custom);
-                        if (strpos($message, '<') === false) {
-                            // Plain text only.
-                            $messagetext = $message;
-                            $messagehtml = text_to_html($messagetext, null, false, true);
-                        } else {
-                            // This is most probably the tag/newline soup known as FORMAT_MOODLE.
-                            $messagehtml = format_text($message, FORMAT_MOODLE,
-                               ['context' => $context, 'para' => false, 'newlines' => true, 'filter' => true]);
-                            $messagetext = html_to_text($messagehtml);
-                        }
                     } else {
-                        $messagetext = get_string('welcometocourse', 'enrol_coursecompleted', $a);
-                        $messagehtml = text_to_html($messagetext, null, false, true);
+                        $message = get_string('welcometocourse', 'enrol_coursecompleted', $a);
                     }
-
-                    $subject = get_string('welcometocourse', 'enrol_coursecompleted',
-                        format_string($course->fullname, true, ['context' => $context]));
+                    if (strpos($message, '<') == false) {
+                        $messagehtml = $message;
+                    } else {
+                        // This is most probably the tag/newline soup known as FORMAT_MOODLE.
+                        $messagehtml = format_text($message, FORMAT_MOODLE,
+                           ['context' => $context, 'para' => false, 'newlines' => true, 'filter' => true]);
+                    }
+                    $subject = get_string('welcometocourse', 'moodle', $a->coursename);
                     // Directly emailing welcome message rather than using messaging.
-                    email_to_user($user, core_user::get_noreply_user(), $subject, $messagetext, $messagehtml);
+                    email_to_user($user, core_user::get_noreply_user(), $subject, $message, $messagehtml);
                 }
             }
         }

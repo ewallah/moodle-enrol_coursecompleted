@@ -181,8 +181,13 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         \core\task\manager::queue_adhoc_task($adhock);
         $this->assertCount(3, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
         phpunit_util::run_all_adhoc_tasks();
-        $this->assertCount(3, $sink->get_messages());
+        $messages = $sink->get_messages();
+        $this->assertCount(3, $messages);
         $sink->close();
+        foreach ($messages as $message) {
+            $this->assertNotContains('{a->', $message->header);
+            $this->assertNotContains('{a->', $message->body);
+        }
         $this->assertCount(0, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
     }
 }
