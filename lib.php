@@ -93,19 +93,19 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $arr = [];
             $i = 1;
             foreach ($items as $item) {
-                $str = '<span class="fa-stack fa-2x">';
                 if ($item == $instance->courseid) {
-                    $str .= '<i class="fa fa-circle fa-stack-2x text-dark"></i>';
-                    $str .= '<strong class="fa-stack-1x text-light">' . $i . '</strong></span>';
+                    $str = html_writer::span('', 'fa fa-circle fa-stack-2x text-dark');
+                    $str .= html_writer::tag('strong', $i, ['class' => 'fa-stack-1x text-light']);
                 } else {
-                    $str .= '<i class="fa fa-circle-o fa-stack-2x"></i>';
-                    $str .= '<strong class="fa-stack-1x">' . $i . '</strong></span>';
+                    $str = html_writer::span('', 'fa fa-circle-o fa-stack-2x');
+                    $str .= html_writer::tag('strong', $i, ['class' => 'fa-stack-1x']);
                     $str = $this->build_courselink($item, $str);
                 }
-                $arr[] = $str;
+                $arr[] = html_writer::span($str, 'fa-stack fa-2x');
                 $i++;
             }
-            $str = implode('<span class="fa-stack fa-2x"><i class="fa fa-arrow-right fa-stack-1x"></i></span>', $arr);
+            $arrow = html_writer::span(html_writer::span('', 'fa fa-arrow-right fa-stack-1x text-dark'), 'fa-stack fa-2x');
+            $str = implode($arrow, $arr);
         }
         if ($fullname = $DB->get_field('course', 'fullname', ['id' => $instance->customint1])) {
             $context = context_course::instance($instance->customint1);
