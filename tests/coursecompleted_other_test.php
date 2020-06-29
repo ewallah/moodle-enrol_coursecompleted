@@ -61,7 +61,6 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $plugin = enrol_get_plugin('coursecompleted');
         $this->assertNotEmpty($plugin);
         $this->assertInstanceOf('enrol_coursecompleted_plugin', $plugin);
-        $this->assertCount(1, enrol_coursecompleted_get_fontawesome_icon_map());
     }
 
     /**
