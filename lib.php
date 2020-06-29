@@ -421,3 +421,10 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         return $str;
     }
 }
+
+/**
+ * Get icon mapping for font-awesome.
+ */
+function enrol_coursecompleted_get_fontawesome_icon_map() {
+    return ['enrol_coursecompleted' => 'fa fa-long-arrow-right'];
+}

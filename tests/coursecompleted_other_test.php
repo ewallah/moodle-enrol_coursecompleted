@@ -61,6 +61,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $plugin = enrol_get_plugin('coursecompleted');
         $this->assertNotEmpty($plugin);
         $this->assertInstanceOf('enrol_coursecompleted_plugin', $plugin);
+        $this->assertCount(1, enrol_coursecompleted_get_fontawesome_icon_map());
     }
 
     /**
@@ -72,15 +73,6 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         include($CFG->dirroot . '/enrol/coursecompleted/db/tasks.php');
         include($CFG->dirroot . '/enrol/coursecompleted/db/access.php');
         include($CFG->dirroot . '/enrol/coursecompleted/db/events.php');
-    }
-
-    /**
-     * Test privacy.
-     * @covers \enrol_coursecompleted\privacy\provider
-     */
-    public function test_privacy() {
-        $privacy = new enrol_coursecompleted\privacy\provider();
-        $this->assertEquals($privacy->get_reason(), 'privacy:metadata');
     }
 
     /**

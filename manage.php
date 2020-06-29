@@ -42,10 +42,7 @@ if (!$canenrol and !$canunenrol) {
 }
 require_login($course);
 
-if (!$enrol = enrol_get_plugin('coursecompleted')) {
-    throw new coding_exception('Can not instantiate enrol_coursecompleted');
-}
-
+$enrol = enrol_get_plugin('coursecompleted');
 $instancename = $enrol->get_instance_name($instance);
 
 $PAGE->set_url('/enrol/coursecompleted/manage.php', ['enrolid' => $instance->id]);

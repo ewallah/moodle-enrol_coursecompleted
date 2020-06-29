@@ -51,10 +51,6 @@ install:
   - moodle-plugin-ci install
 
 script:
-  - moodle-plugin-ci phpunit --coverage-text --coverage-clover
-  - moodle-plugin-ci behat
-  - moodle-plugin-ci behat --profile chrome
-  - moodle-plugin-ci behat --dump /home/travis/build/moodle/blocks/admin_bookmarks
   - moodle-plugin-ci phplint
   - moodle-plugin-ci phpcpd
   - moodle-plugin-ci phpmd
@@ -62,17 +58,17 @@ script:
   - moodle-plugin-ci codechecker
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints
-  - moodle-plugin-ci mustache
+  - moodle-plugin-ci mustache 
   - moodle-plugin-ci grunt || true
+  - moodle-plugin-ci phpunit --coverage-text --coverage-clover
+  - moodle-plugin-ci behat
+  - moodle-plugin-ci behat --profile chrome
+  - php /home/travis/build/moodle/admin/tool/behat/cli/init.php -a="classic"
+  - moodle-plugin-ci behat --suite="classic"
+  - moodle-plugin-ci behat --suite="classic" --profile chrome
+  - moodle-plugin-ci behat --suite="classic" --profile chrome --dump /home/travis/build/moodle/blocks/admin_bookmarks
   - /home/travis/build/moodle/vendor/bin/phpunit "provider_testcase" /home/travis/build/moodle/privacy/tests/provider_test.php
   - /home/travis/build/moodle/vendor/bin/phpunit "tool_dataprivacy_expired_contexts_testcase" /home/travis/build/moodle/admin/tool/dataprivacy/tests/expired_contexts_test.php
-  - >
-        if [ "$MOODLE_BRANCH" = 'master' ];
-        then
-            php /home/travis/build/moodle/admin/tool/behat/cli/init.php -a="classic"
-            moodle-plugin-ci behat --suite="classic"
-            moodle-plugin-ci behat --suite="classic" --profile chrome
-        fi
 
 after_success:
   - moodle-plugin-ci coveralls-upload
