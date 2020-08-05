@@ -64,13 +64,16 @@ class enrol_coursecompleted_observer {
                             $adhock->set_component('enrol_coursecompleted');
                             \core\task\manager::queue_adhoc_task($adhock);
                         }
-                        $groups = array_values(groups_get_user_groups($enrol->customint1, $event->relateduserid));
-                        foreach ($groups as $group) {
-                            foreach ($group as $key => $value) {
-                                $groupnamea = groups_get_group_name($value);
-                                $groupnameb = groups_get_group_by_name($enrol->courseid, $groupnamea);
-                                if ($groupnameb) {
-                                    groups_add_member($groupnameb, $event->relateduserid);
+                        if ($enrol->customint3 > 0) {
+                            $groups = array_values(groups_get_user_groups($enrol->customint1, $event->relateduserid));
+                            foreach ($groups as $group) {
+                                $subs = array_values($group);
+                                foreach ($subs as $sub) {
+                                    $groupnamea = groups_get_group_name($sub);
+                                    $groupnameb = groups_get_group_by_name($enrol->courseid, $groupnamea);
+                                    if ($groupnameb) {
+                                        groups_add_member($groupnameb, $event->relateduserid);
+                                    }
                                 }
                             }
                         }

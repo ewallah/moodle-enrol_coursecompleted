@@ -42,6 +42,10 @@ The following placeholders may be included in the message:
 * Link to user\'s profile page {$a->profileurl}
 * User email {$a->email}
 * User fullname {$a->fullname}';
+$string['group'] = 'Keep group';
+$string['group_help'] = 'Try to add users to a group with the same name';
+$string['keepgroup'] = 'Default keep group setting';
+$string['keepgroup_help'] = 'Default try to add users to a group with the same name';
 $string['pluginname'] = 'Course completed enrolment';
 $string['pluginname_desc'] = 'Course completed enrol plugin grants access to courses upon coursecompleted of a course.';
 $string['privacy:metadata'] = 'The Course completed enrolment plugin does not store any personal data.';

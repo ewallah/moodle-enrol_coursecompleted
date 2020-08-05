@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir . '/grouplib.php');
+require_once($CFG->dirroot . '/group/lib.php');
 
 /**
  * coursecompleted enrolment plugin other tests.

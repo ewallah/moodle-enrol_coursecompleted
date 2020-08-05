@@ -25,6 +25,7 @@
 
 require_once("../../config.php");
 require_once($CFG->dirroot . '/enrol/coursecompleted/lib.php');
+global $DB, $OUTPUT, $PAGE;
 
 $enrolid = required_param('enrolid', PARAM_INT);
 $action = optional_param('action', '', PARAM_RAW);
@@ -65,6 +66,8 @@ if ($enrolid > 0) {
                 echo '.';
             }
             echo $br . $br . get_string('usersenrolled', 'enrol_coursecompleted', count($candidates));
+            $url = new moodle_url('/enrol/instances.php', ['id' => $course->id]);
+            echo $br . $br . $OUTPUT->continue_button($url);
         }
     } else {
         $cancelurl = new moodle_url('/enrol/instances.php', ['id' => $instance->courseid]);
