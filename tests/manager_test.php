@@ -88,7 +88,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
      * Test manager without permission.
      */
     public function test_manager_wrong_permission() {
-        global $CFG, $DB;
+        global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $this->setUser($this->student);
         $_POST['enrolid'] = $this->instance->id;
@@ -101,7 +101,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
      * Test manager wrong permission.
      */
     public function test_manager_wrong_permission2() {
-        global $CFG, $DB, $OUTPUT, $PAGE;
+        global $CFG, $DB;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
@@ -123,7 +123,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
      * Test manager bare.
      */
     public function test_manager_bare() {
-        global $CFG, $DB, $OUTPUT, $PAGE;
+        global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $_POST['enrolid'] = $this->instance->id;
         ob_start();
@@ -136,7 +136,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
      * Test manager bare when someone completed.
      */
     public function test_manager_bare_completed() {
-        global $CFG, $DB, $OUTPUT, $PAGE;
+        global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
@@ -153,7 +153,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
      * Test manager enrol.
      */
     public function test_manager_enrol() {
-        global $CFG, $DB, $OUTPUT, $PAGE;
+        global $CFG;
         $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
         mark_user_dirty($this->student->id);

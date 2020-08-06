@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * coursecompleted enrolment plugin.
+ * Coursecompleted enrolment plugin.
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * coursecompleted enrolment plugin.
+ * Coursecompleted enrolment plugin.
  *
  * @package   enrol_coursecompleted
  * @copyright 2017 eWallah (www.eWallah.net)
@@ -174,7 +174,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $merge = false;
         } else {
             $merge = ['courseid' => $course->id, 'enrol' => 'coursecompleted', 'roleid' => $data->roleid,
-                      'customint1' => $data->customint1];
+                      'customint1' => $data->customint1, 'customint2' => $data->customint2, 'customint3' => $data->customint3];
         }
         if ($merge && $instances = $DB->get_records('enrol', $merge, 'id')) {
             $instance = reset($instances);
@@ -316,14 +316,38 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
         $mform->addHelpButton('customint1', 'compcourse', 'enrol_coursecompleted');
 
-        $mform->addElement('advcheckbox', 'customint2', get_string('welcome', 'enrol_coursecompleted'));
+        $mform->addElement('advcheckbox', 'customint3', get_string('groups'), get_string('group', 'enrol_coursecompleted'));
+        $mform->addHelpButton('customint3', 'group', 'enrol_coursecompleted');
+        $mform->setDefault('customint3', $this->get_config('keepgroup'));
+
+        $mform->addElement('advcheckbox', 'customint2', get_string('categoryemail', 'admin'),
+             get_string('welcome', 'enrol_coursecompleted'));
         $mform->addHelpButton('customint2', 'welcome', 'enrol_coursecompleted');
+        $mform->setDefault('customint2', $this->get_config('welcome'));
 
         $mform->addElement('textarea', 'customtext1',
             get_string('customwelcome', 'enrol_coursecompleted'), ['cols' => '60', 'rows' => '8']);
         $mform->addHelpButton('customtext1', 'customwelcome', 'enrol_coursecompleted');
         $mform->disabledIf('customtext1', 'customint2', 'notchecked');
 
+    }
+
+    /**
+     * Add new instance of enrol plugin.
+     * @param object $course
+     * @param array $fields
+     * @return int id of new instance, null if can not be created
+     */
+    public function add_instance($course, array $fields = null) {
+        if ($fields) {
+            if (!isset($fields['customint2'])) {
+                $fields['customint2'] = $this->get_config('welcome', 1);
+            }
+            if (!isset($fields['customint3'])) {
+                $fields['customint3'] = $this->get_config('keepgroup', 1);
+            }
+        }
+        return parent::add_instance($course, $fields);
     }
 
     /**
