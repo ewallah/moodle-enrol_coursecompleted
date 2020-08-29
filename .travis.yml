@@ -7,20 +7,15 @@ dist: bionic
 
 services:
   - mysql
+  - postgresql
+  - docker
 
 addons:
   postgresql: "9.6"
-  firefox: "47.0.1"
-  chrome: stable
-  apt:
-    packages:
-      - openjdk-8-jre-headless
-      - chromium-chromedriver
 
 cache:
   directories:
     - $HOME/.composer/cache
-    - $HOME/.npm
     - $HOME/.nvm
 
 php:
@@ -41,11 +36,9 @@ jobs:
 
 before_install:
   - phpenv config-rm xdebug.ini
-  - nvm install 14.2.0
   - cd ../..
-  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^2
+  - composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
-  - google-chrome-stable --headless --disable-extensions --no-sandbox --remote-debugging-port=9222 --remote-debugging-address=127.0.0.1 &>/dev/null &
 
 install:
   - moodle-plugin-ci install
