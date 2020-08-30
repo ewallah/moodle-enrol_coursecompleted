@@ -97,7 +97,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test if user is enrolled after completing a course.
-     * @covers \enrol_coursecompleted_observer
+     * @coversDefaultClass \enrol_coursecompleted_observer
      */
     public function test_enrolled() {
         global $CFG, $PAGE;
@@ -216,7 +216,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test ue.
-     * @covers \enrol_coursecompleted_plugin
+     * @coversDefaultClass \enrol_coursecompleted_plugin
      */
     public function test_ue() {
         global $PAGE;
@@ -258,8 +258,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
 
     /**
      * Test library.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted_observer
+     * @coversDefaultClass \enrol_coursecompleted_plugin
+     * @coversDefaultClass \enrol_coursecompleted_observer
      */
     public function test_library() {
         global $DB;

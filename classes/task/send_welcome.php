@@ -25,12 +25,12 @@
 
 namespace enrol_coursecompleted\task;
 
+defined('MOODLE_INTERNAL') || die();
+
 use stdClass;
 use moodle_url;
 use html_writer;
 use core_user;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Process expirations task.

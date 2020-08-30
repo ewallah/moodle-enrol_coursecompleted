@@ -91,7 +91,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Test invalid role.
-     * @covers \enrol_coursecompleted_observer
+     * @coversDefaultClass \enrol_coursecompleted_observer
      */
     public function test_invalid_role() {
         global $DB;
@@ -121,7 +121,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Test group member.
-     * @covers \enrol_coursecompleted_observer
+     * @coversDefaultClass \enrol_coursecompleted_observer
      */
     public function test_groups_child() {
         global $DB;
@@ -167,7 +167,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Test expiration task.
-     * @covers \enrol_coursecompleted\task\process_expirations
+     * @coversDefaultClass \enrol_coursecompleted\task\process_expirations
      */
     public function test_task() {
         $task = new \enrol_coursecompleted\task\process_expirations;
@@ -181,7 +181,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
 
     /**
      * Test adhoc sending of welcome messages.
-     * @covers \enrol_coursecompleted\task\send_welcome
+     * @coversDefaultClass enrol_coursecompleted\task\send_welcome
      */
     public function  test_adhoc_email_welcome_message() {
         global $DB;
@@ -211,6 +211,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $adhock->set_custom_data(
              ['userid' => $studentid, 'enrolid' => $i2, 'courseid' => $course->id, 'completedid' => $courseid2]);
         $adhock->set_component('enrol_coursecompleted');
+        $adhock->execute();
         \core\task\manager::queue_adhoc_task($adhock);
         $adhock->set_custom_data(
               ['userid' => $studentid, 'enrolid' => $i3, 'courseid' => $course->id, 'completedid' => $courseid3]);
@@ -221,7 +222,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $this->assertCount(3, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
         phpunit_util::run_all_adhoc_tasks();
         $messages = $sink->get_messages();
-        $this->assertCount(3, $messages);
+        $this->assertCount(4, $messages);
         $sink->close();
         foreach ($messages as $message) {
             $this->assertNotContains('{a->', $message->header);
