@@ -41,7 +41,7 @@ class enrol_coursecompleted_observer {
      * @param \core\event\course_completed $event
      */
     public static function enroluser(\core\event\course_completed $event) {
-        global $DB;
+        global $CFG, $DB;
         $params = ['enrol' => 'coursecompleted', 'status' => 0, 'customint1' => $event->courseid];
         if ($enrols = $DB->get_records('enrol', $params)) {
             $plugin = \enrol_get_plugin('coursecompleted');
@@ -65,6 +65,7 @@ class enrol_coursecompleted_observer {
                             \core\task\manager::queue_adhoc_task($adhock);
                         }
                         if ($enrol->customint3 > 0) {
+                            require_once($CFG->dirroot . '/group/lib.php');
                             $groups = array_values(groups_get_user_groups($enrol->customint1, $event->relateduserid));
                             foreach ($groups as $group) {
                                 $subs = array_values($group);
@@ -72,7 +73,7 @@ class enrol_coursecompleted_observer {
                                     $groupnamea = groups_get_group_name($sub);
                                     $groupnameb = groups_get_group_by_name($enrol->courseid, $groupnamea);
                                     if ($groupnameb) {
-                                        groups_add_member($groupnameb, $event->relateduserid, 'enrol_coursecompleted');
+                                        groups_add_member($groupnameb, $event->relateduserid);
                                     }
                                 }
                             }
