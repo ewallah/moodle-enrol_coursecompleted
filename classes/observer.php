@@ -72,7 +72,7 @@ class enrol_coursecompleted_observer {
                                     $groupnamea = groups_get_group_name($sub);
                                     $groupnameb = groups_get_group_by_name($enrol->courseid, $groupnamea);
                                     if ($groupnameb) {
-                                        groups_add_member($groupnameb, $event->relateduserid);
+                                        groups_add_member($groupnameb, $event->relateduserid, 'enrol_coursecompleted');
                                     }
                                 }
                             }
