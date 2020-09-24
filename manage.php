@@ -58,8 +58,9 @@ echo $OUTPUT->heading(get_string('enrolusers', 'enrol'));
 
 if ($enrolid > 0) {
     $br = html_writer::empty_tag('br');
+    $condition = 'course = ? AND timecompleted > 0';
     if ($action === 'enrol') {
-        if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
+        if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$instance->customint1])) {
             foreach ($candidates as $candidate) {
                 $enrol->enrol_user($instance, $candidate, $instance->roleid, $instance->enrolstartdate, $instance->enrolenddate);
                 mark_user_dirty($candidate);
@@ -71,7 +72,7 @@ if ($enrolid > 0) {
         }
     } else {
         $cancelurl = new moodle_url('/enrol/instances.php', ['id' => $instance->courseid]);
-        if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', 'course = ?', [$instance->customint1])) {
+        if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$instance->customint1])) {
             $allusers = [];
             foreach ($candidates as $candidate) {
                 $userurl = new moodle_url('/user/view.php', ['course' => 1, 'id' => $candidate]);
