@@ -12,5 +12,5 @@
 
 * Maturity: Stable
 
-![travis](https://travis-ci.org/ewallah/moodle-enrol_coursecompleted.svg)
+![travis](https://travis-ci.com/ewallah/moodle-enrol_coursecompleted.svg)
 [![Coverage Status](https://coveralls.io/repos/github/ewallah/moodle-enrol_coursecompleted/badge.svg?branch=master)](https://coveralls.io/github/ewallah/moodle-enrol_coursecompleted?branch=master)

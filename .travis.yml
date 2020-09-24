@@ -43,9 +43,9 @@ before_install:
 
 install:
   - moodle-plugin-ci install
+  - cd moodle
 
 script:
-  - cd moodle
   - moodle-plugin-ci phplint
   - moodle-plugin-ci phpcpd
   - moodle-plugin-ci phpmd
@@ -62,8 +62,7 @@ script:
   - moodle-plugin-ci behat --suite="classic"
   - moodle-plugin-ci behat --suite="classic" --profile chrome
   - moodle-plugin-ci behat --suite="classic" --profile chrome blocks/admin_bookmarks
-  - vendor/bin/phpunit "provider_testcase" privacy/tests/provider_test.php
-  - vendor/bin/phpunit "tool_dataprivacy_expired_contexts_testcase" admin/tool/dataprivacy/tests/expired_contexts_test.php
+  - vendor/bin/phpunit --testsuite core_privacy_testsuite,tool_dataprivacy_testsuite
 
 after_success:
   - moodle-plugin-ci coveralls-upload
