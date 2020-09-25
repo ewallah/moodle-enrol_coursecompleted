@@ -444,4 +444,28 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         }
         return $str;
     }
+
+    /**
+     * Keep user in group
+     *
+     * @param stdClass $enrol Enrolment record
+     * @param int $userid User id
+     */
+    public static function keepingroup($enrol, $userid) {
+        global $CFG;
+        if ($enrol->customint3 > 0) {
+            require_once($CFG->dirroot . '/group/lib.php');
+            $groups = array_values(groups_get_user_groups($enrol->customint1, $userid));
+            foreach ($groups as $group) {
+                $subs = array_values($group);
+                foreach ($subs as $sub) {
+                    $groupnamea = groups_get_group_name($sub);
+                    $groupnameb = groups_get_group_by_name($enrol->courseid, $groupnamea);
+                    if ($groupnameb) {
+                        groups_add_member($groupnameb, $userid);
+                    }
+                }
+            }
+        }
+    }
 }

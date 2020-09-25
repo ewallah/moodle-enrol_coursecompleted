@@ -19,6 +19,13 @@ Feature: Enrolment on course completion
       | user2 | C1 | student |
       | teacher1| C1 | editingteacher |
       | teacher1| C2 | editingteacher |
+    And the following "groups" exist:
+      | name | description | course | idnumber |
+      | Group 1 | Group description | C1 | GROUP1 |
+      | Group 1 | Group description | C2 | GROUP2 |
+    And the following "group members" exist:
+      | user  | group |
+      | user1 | GROUP1|
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Disable" "link" in the "Guest access" "table_row"
@@ -156,6 +163,7 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should see "Username 1" in the "participants" "table"
+    And I should see "Group 1" in the "participants" "table"
     And I click on "[title='Course completion']" "css_element"
     Then I should see "Course 1"
     And I should see "Aggregation method"

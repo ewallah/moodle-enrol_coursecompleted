@@ -63,6 +63,7 @@ if ($enrolid > 0) {
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$instance->customint1])) {
             foreach ($candidates as $candidate) {
                 $enrol->enrol_user($instance, $candidate, $instance->roleid, $instance->enrolstartdate, $instance->enrolenddate);
+                \enrol_coursecompleted_plugin::keepingroup($instance, $candidate);
                 mark_user_dirty($candidate);
                 echo '.';
             }
