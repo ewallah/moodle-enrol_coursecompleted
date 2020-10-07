@@ -140,8 +140,6 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
-        mark_user_dirty($this->student->id);
-        rebuild_course_cache($this->course->id);
         $_POST['enrolid'] = $this->instance->id;
         ob_start();
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
@@ -156,8 +154,6 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
         global $CFG;
         $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
-        mark_user_dirty($this->student->id);
-        rebuild_course_cache($this->course->id);
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $_POST['enrolid'] = $this->instance->id;
         $_POST['action'] = 'enrol';
