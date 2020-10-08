@@ -31,7 +31,7 @@ jobs:
       env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
     - env: DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
     - env: DB=mysqli MOODLE_BRANCH=MOODLE_39_STABLE
-    - env: DB=mysqli MOODLE_BRANCH=MOODLE_310_STABLE
+    # Cron fails because language files not yet available - env: DB=mysqli MOODLE_BRANCH=MOODLE_310_STABLE
     - php: 7.4
       env: DB=mysqli MOODLE_BRANCH=master
 
