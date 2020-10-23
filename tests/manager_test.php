@@ -49,7 +49,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
     /**
      * Tests initial setup.
      */
-    protected function setUp() {
+    protected function setUp():void {
         global $CFG, $DB;
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
@@ -129,6 +129,6 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
         ob_start();
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
         $html = ob_get_clean();
-        $this->assertContains('No users found', $html);
+        $this->assertStringContainsString('No users found', $html);
     }
 }

@@ -44,7 +44,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
     /**
      * Tests initial setup.
      */
-    protected function setUp() {
+    protected function setUp():void {
         global $CFG;
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
@@ -176,7 +176,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $task->execute();
         $output = ob_get_contents();
         ob_end_clean();
-        $this->assertContains('No expired enrol_coursecompleted enrolments detected', $output);
+        $this->assertStringContainsString('No expired enrol_coursecompleted enrolments detected', $output);
     }
 
     /**
@@ -225,8 +225,8 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $this->assertCount(4, $messages);
         $sink->close();
         foreach ($messages as $message) {
-            $this->assertNotContains('{a->', $message->header);
-            $this->assertNotContains('{a->', $message->body);
+            $this->assertStringNotContainsString('{a->', $message->header);
+            $this->assertStringNotContainsString('{a->', $message->body);
         }
         $this->assertCount(0, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
     }

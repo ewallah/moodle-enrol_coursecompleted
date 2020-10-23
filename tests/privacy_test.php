@@ -22,6 +22,7 @@
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace enrol_coursecompleted\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +36,7 @@ use \core_privacy\tests\provider_testcase;
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class enrol_coursecompleted_privacy_testcase extends provider_testcase {
+class privacy_testcase extends provider_testcase {
 
     /**
      * Test returning metadata.
@@ -45,7 +46,6 @@ class enrol_coursecompleted_privacy_testcase extends provider_testcase {
         $collection = new \core_privacy\local\metadata\collection('enrol_coursecompleted');
         $reason = \enrol_coursecompleted\privacy\provider::get_reason($collection);
         $this->assertEquals($reason, 'privacy:metadata');
-        $str = 'does not store';
-        $this->assertContains($str, get_string($reason, 'enrol_coursecompleted'));
+        $this->assertStringContainsString('does not store', get_string($reason, 'enrol_coursecompleted'));
     }
 }
