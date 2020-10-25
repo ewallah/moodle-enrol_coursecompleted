@@ -19,7 +19,7 @@ cache:
     - $HOME/.nvm
 
 php:
- - 7.3
+ - 7.4
 
 env:
   - DB=pgsql MOODLE_BRANCH=master
@@ -27,13 +27,10 @@ env:
 
 jobs:
   include:
-    - php: 7.2
-      env: DB=mysqli MOODLE_BRANCH=MOODLE_37_STABLE
-    - env: DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
+    - php: 7.3
+      env: DB=mysqli MOODLE_BRANCH=MOODLE_38_STABLE
     - env: DB=mysqli MOODLE_BRANCH=MOODLE_39_STABLE
-    # Cron fails because language files not yet available - env: DB=mysqli MOODLE_BRANCH=MOODLE_310_STABLE
-    - php: 7.4
-      env: DB=mysqli MOODLE_BRANCH=master
+    - env: DB=mysqli MOODLE_BRANCH=MOODLE_310_STABLE
 
 before_install:
   - phpenv config-rm xdebug.ini
