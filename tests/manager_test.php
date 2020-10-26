@@ -138,6 +138,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
     public function test_manager_oldusers() {
         global $CFG;
         $this->setAdminUser();
+        $sink = $this->redirectEmails();
         $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
         chdir($CFG->dirroot . '/enrol/coursecompleted');
@@ -146,6 +147,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
         $html = ob_get_clean();
         $this->assertStringNotContainsString('No users found', $html);
+        $sink->close();
     }
 
     /**
@@ -154,6 +156,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
     public function test_manager_submit() {
         global $CFG;
         $this->setAdminUser();
+        $sink = $this->redirectEmails();
         $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
         chdir($CFG->dirroot . '/enrol/coursecompleted');
@@ -164,5 +167,6 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
         $html = ob_get_clean();
         $this->assertStringNotContainsString('No users found', $html);
+        $sink->close();
     }
 }

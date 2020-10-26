@@ -39,6 +39,7 @@ before_install:
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
+  - moodle-plugin-ci add-config '$CFG->skiplangupgrade = true;'
   - moodle-plugin-ci install
   - cd moodle
 
