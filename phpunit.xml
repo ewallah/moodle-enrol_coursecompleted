@@ -40,7 +40,6 @@
                 <exclude>
                     <directory suffix="_test.php">.</directory>
                     <file>version.php</file>
-                    <file>settings.php</file>
                 </exclude>
             </whitelist>
         </filter>

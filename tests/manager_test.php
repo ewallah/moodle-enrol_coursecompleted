@@ -176,4 +176,14 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
         $sink->close();
         $sank->close();
     }
+
+    /**
+     * Tests settings.
+     */
+    public function test_enrol_courescompleted_settings() {
+        global $ADMIN, $CFG;
+        require_once($CFG->dirroot . '/lib/adminlib.php');
+        $ADMIN = admin_get_root(true, true);
+        $this->assertTrue($ADMIN->fulltree);
+    }
 }
