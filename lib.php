@@ -35,6 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class enrol_coursecompleted_plugin extends enrol_plugin {
 
+    /** @var int instancecnt. */
+    private $instancecnt = 0;
+
     /**
      * Returns localised name of enrol instance
      *
@@ -467,5 +470,42 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 }
             }
         }
+    }
+
+    /**
+     * The enrol plugin has bulk operations that can be performed.
+     * @param course_enrolment_manager $manager
+     * @return array
+     */
+    public function get_bulk_operations(course_enrolment_manager $manager) {
+        global $CFG;
+        require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkdelete.php');
+        $context = $manager->get_context();
+        $bulkoperations = [];
+        if (has_capability("enrol/coursecompleted:unenrol", $context)) {
+            if ($this->cntinstances($manager) < 2) {
+                $bulkoperations['deleteselectedusers'] = new enrol_coursecompleted_bulkdelete($manager, $this);
+            }
+        }
+        return $bulkoperations;
+    }
+
+    /**
+     * Bulk operations can only be performed when there is only 1 instance.
+     * @param course_enrolment_manager $manager
+     * @return int
+     */
+    private function cntinstances(course_enrolment_manager $manager) {
+        if ($this->instancecnt == 0) {
+            $instances = array_values($manager->get_enrolment_instances(false));
+            $i = 0;
+            foreach ($instances as $instance) {
+                if ($instance->enrol === 'coursecompleted') {
+                    $i++;
+                }
+            }
+            $this->instancecnt = $i;
+        }
+        return $this->instancecnt;
     }
 }
