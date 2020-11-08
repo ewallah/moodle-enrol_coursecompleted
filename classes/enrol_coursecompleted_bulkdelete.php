@@ -38,7 +38,8 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
 class enrol_coursecompleted_bulkdelete extends enrol_bulk_enrolment_operation {
 
     /**
-     * Returns the title to display for this bulk operation.
+     * Returns the identifier for this bulk operation. This is the key used when the plugin
+     * returns an array containing all of the bulk operations it supports.
      *
      * @return string
      */
@@ -47,8 +48,7 @@ class enrol_coursecompleted_bulkdelete extends enrol_bulk_enrolment_operation {
     }
 
     /**
-     * Returns the identifier for this bulk operation. This is the key used when the plugin
-     * returns an array containing all of the bulk operations it supports.
+     * Returns the title to display for this bulk operation.
      *
      * @return string
      */
@@ -69,7 +69,6 @@ class enrol_coursecompleted_bulkdelete extends enrol_bulk_enrolment_operation {
         $data['title'] = $this->get_title();
         $data['message'] = get_string('confirmbulkdeleteenrolment', 'enrol_coursecompleted');
         $data['button'] = get_string('unenrolusers', 'enrol_coursecompleted');
-
         return new \enrol_coursecompleted\form\bulkdelete($defaultaction, $data);
     }
 
@@ -84,7 +83,6 @@ class enrol_coursecompleted_bulkdelete extends enrol_bulk_enrolment_operation {
         if (!has_capability("enrol/coursecompleted:unenrol", $manager->get_context())) {
             return false;
         }
-
         foreach ($users as $user) {
             foreach ($user->enrolments as $enrolment) {
                 $plugin = $enrolment->enrolmentplugin;
@@ -94,7 +92,6 @@ class enrol_coursecompleted_bulkdelete extends enrol_bulk_enrolment_operation {
                 }
             }
         }
-
         return true;
     }
 }
