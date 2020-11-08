@@ -112,7 +112,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $manager2 = new \course_enrolment_manager($PAGE, $this->course2);
         $this->assertCount(0, $manager2->get_user_enrolments($this->student->id));
         $this->assertTrue($this->plugin->has_bulk_operations($manager2));
-        $this->assertCount(1, $this->plugin->get_bulk_operations($manager2));
+        $this->assertCount(2, $this->plugin->get_bulk_operations($manager2));
         $compevent = \core\event\course_completed::create([
             'objectid' => $this->course2->id,
             'relateduserid' => $this->student->id,

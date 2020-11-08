@@ -230,44 +230,4 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         }
         $this->assertCount(0, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
     }
-
-    /**
-     * Test bulk deleted.
-     * @coversDefaultClass enrol_coursecompleted_bulkdelete
-     * @coversDefaultClass \enrol_coursecompleted\form\bulkdelete
-     */
-    public function test_bulkdeleted() {
-        global $CFG, $DB;
-        require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkdelete.php');
-        require_once($CFG->dirroot . '/enrol/coursecompleted/classes/form/bulkdelete.php');
-        $generator = $this->getDataGenerator();
-        $plugin = enrol_get_plugin('coursecompleted');
-        $studentid = $generator->create_user()->id;
-        $course1 = $generator->create_course(['shortname' => 'A1', 'enablecompletion' => 1]);
-        $course2 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
-        $generator->enrol_user($studentid, $course2->id);
-        $id = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'customint2' => 0]);
-        $instance = $DB->get_record('enrol', ['id' => $id]);
-        $plugin->enrol_user($instance, $studentid);
-        $page = new \moodle_page();
-        $manager = new \course_enrolment_manager($page, $course1);
-        $operation = new enrol_coursecompleted_bulkdelete($manager, $plugin);
-        $this->assertEquals('deleteselectedusers', $operation->get_identifier());
-        $this->assertEquals('Delete selected enrolments on course completion', $operation->get_title());
-        $enr = new stdClass();
-        $enr->enrolmentplugin = $plugin;
-        $enr->enrolmentinstance = $instance;
-        $user = new stdClass();
-        $user->id = $studentid;
-        $user->enrolments = [$enr];
-        $this->assertfalse($operation->process($manager, [$user], new stdClass()));
-        $this->setAdminUser();
-        $this->assertTrue($operation->process($manager, [$user] , new stdClass()));
-        try {
-            $operation->get_form(null, null);
-        } catch (Exception $e) {
-            $this->assertEquals('Undefined index: users', $e->getmessage());
-        }
-    }
-
 }

@@ -231,7 +231,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool
      */
     public function can_hide_show_instance($instance) {
-        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
+        return has_capability('enrol/coursecompleted:manage', \context_course::instance($instance->courseid));
     }
 
     /**
@@ -241,7 +241,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol others freely
      */
     public function allow_unenrol(stdClass $instance) {
-        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
+        return has_capability('enrol/coursecompleted:manage', \context_course::instance($instance->courseid));
     }
 
     /**
@@ -251,7 +251,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means it is possible to change enrol period and status in user_enrolments table
      */
     public function allow_manage(stdClass $instance) {
-        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
+        return has_capability('enrol/coursecompleted:manage', \context_course::instance($instance->courseid));
     }
 
     /**
@@ -500,11 +500,17 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function get_bulk_operations(course_enrolment_manager $manager) {
         global $CFG;
-        require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkdelete.php');
         $context = $manager->get_context();
         $bulkoperations = [];
-        if (has_capability("enrol/coursecompleted:unenrol", $context) && $this->has_bulk_operations($manager)) {
-            $bulkoperations['deleteselectedusers'] = new enrol_coursecompleted_bulkdelete($manager, $this);
+        if ($this->has_bulk_operations($manager)) {
+            if (has_capability("enrol/coursecompleted:manage", $context)) {
+                require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkedit.php');
+                $bulkoperations['editselectedusers'] = new enrol_coursecompleted_bulkedit($manager, $this);
+            }
+            if (has_capability("enrol/coursecompleted:unenrol", $context)) {
+                require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkdelete.php');
+                $bulkoperations['deleteselectedusers'] = new enrol_coursecompleted_bulkdelete($manager, $this);
+            }
         }
         return $bulkoperations;
     }
