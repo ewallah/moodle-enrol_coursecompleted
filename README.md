@@ -8,6 +8,7 @@
   is automatically enrolled in one or more courses. But it can also be used to give a user another role when he/she
   completes the course.
 * Administrators can also enrol users who completed past courses.
+* Administrators can bulk modify and delete users (works only when 1 instance is installed [MDL-66652](https://tracker.moodle.org/browse/MDL-66652)).
 * When a user is part of a group in the first course, the user will also be part of the group with the same name in the second course.
 
 * Maturity: Stable
