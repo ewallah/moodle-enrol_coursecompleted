@@ -40,7 +40,6 @@ before_install:
 
 install:
   - moodle-plugin-ci install
-  - moodle-plugin-ci add-config '$CFG->skiplangupgrade = true;'
   - cd moodle
 
 script:
@@ -56,11 +55,6 @@ script:
   - moodle-plugin-ci phpunit --coverage-text --coverage-clover
   - moodle-plugin-ci behat
   - moodle-plugin-ci behat --profile chrome
-  - php admin/tool/behat/cli/init.php -a="classic"
-  - moodle-plugin-ci behat --suite="classic"
-  - moodle-plugin-ci behat --suite="classic" --profile chrome
-  - moodle-plugin-ci behat -q --suite="classic" --profile chrome blocks/admin_bookmarks
-  - vendor/bin/phpunit --testsuite core_privacy_testsuite,tool_dataprivacy_testsuite > /dev/null
 
 after_success:
   - moodle-plugin-ci coveralls-upload
