@@ -35,6 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class enrol_coursecompleted_plugin extends enrol_plugin {
 
+    /** @var bool singleinstance. */
+    private $singleinstance = false;
+
     /**
      * Returns localised name of enrol instance
      *
@@ -228,7 +231,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool
      */
     public function can_hide_show_instance($instance) {
-        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
+        return has_capability('enrol/coursecompleted:manage', \context_course::instance($instance->courseid));
     }
 
     /**
@@ -238,7 +241,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means user with 'enrol/xxx:unenrol' may unenrol others freely
      */
     public function allow_unenrol(stdClass $instance) {
-        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
+        return has_capability('enrol/coursecompleted:manage', \context_course::instance($instance->courseid));
     }
 
     /**
@@ -248,7 +251,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool - true means it is possible to change enrol period and status in user_enrolments table
      */
     public function allow_manage(stdClass $instance) {
-        return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
+        return has_capability('enrol/coursecompleted:manage', \context_course::instance($instance->courseid));
     }
 
     /**
@@ -467,5 +470,48 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 }
             }
         }
+    }
+
+    /**
+     * Returns true if the plugin has one or more bulk operations that can be performed on
+     * user enrolments.
+     *
+     * @param course_enrolment_manager $manager
+     * @return bool
+     */
+    public function has_bulk_operations(course_enrolment_manager $manager) {
+        if ($this->singleinstance == false) {
+            $instances = array_values($manager->get_enrolment_instances(false));
+            $i = 0;
+            foreach ($instances as $instance) {
+                if ($instance->enrol === 'coursecompleted') {
+                    $i++;
+                }
+            }
+            $this->singleinstance = (bool)($i === 1);
+        }
+        return $this->singleinstance;
+    }
+
+    /**
+     * The enrol plugin has bulk operations that can be performed.
+     * @param course_enrolment_manager $manager
+     * @return array
+     */
+    public function get_bulk_operations(course_enrolment_manager $manager) {
+        global $CFG;
+        $context = $manager->get_context();
+        $bulkoperations = [];
+        if ($this->has_bulk_operations($manager)) {
+            if (has_capability("enrol/coursecompleted:manage", $context)) {
+                require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkedit.php');
+                $bulkoperations['editselectedusers'] = new enrol_coursecompleted_bulkedit($manager, $this);
+            }
+            if (has_capability("enrol/coursecompleted:unenrol", $context)) {
+                require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkdelete.php');
+                $bulkoperations['deleteselectedusers'] = new enrol_coursecompleted_bulkdelete($manager, $this);
+            }
+        }
+        return $bulkoperations;
     }
 }

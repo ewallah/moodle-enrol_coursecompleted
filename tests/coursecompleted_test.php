@@ -102,12 +102,17 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
     public function test_enrolled() {
         global $CFG, $PAGE;
         require_once($CFG->dirroot . '/enrol/locallib.php');
+        require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkdelete.php');
 
         $PAGE->set_url('/enrol/editinstance.php');
         $manager1 = new \course_enrolment_manager($PAGE, $this->course1);
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
+        $this->assertfalse($this->plugin->has_bulk_operations($manager1));
+        $this->assertCount(0, $this->plugin->get_bulk_operations($manager1));
         $manager2 = new \course_enrolment_manager($PAGE, $this->course2);
         $this->assertCount(0, $manager2->get_user_enrolments($this->student->id));
+        $this->assertTrue($this->plugin->has_bulk_operations($manager2));
+        $this->assertCount(2, $this->plugin->get_bulk_operations($manager2));
         $compevent = \core\event\course_completed::create([
             'objectid' => $this->course2->id,
             'relateduserid' => $this->student->id,

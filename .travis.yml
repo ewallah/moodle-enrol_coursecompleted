@@ -59,8 +59,8 @@ script:
   - php admin/tool/behat/cli/init.php -a="classic"
   - moodle-plugin-ci behat --suite="classic"
   - moodle-plugin-ci behat --suite="classic" --profile chrome
-  - moodle-plugin-ci behat --suite="classic" --profile chrome blocks/admin_bookmarks
-  - vendor/bin/phpunit --testsuite core_privacy_testsuite,tool_dataprivacy_testsuite
+  - moodle-plugin-ci behat -q --suite="classic" --profile chrome blocks/admin_bookmarks
+  - vendor/bin/phpunit --testsuite core_privacy_testsuite,tool_dataprivacy_testsuite > /dev/null
 
 after_success:
   - moodle-plugin-ci coveralls-upload

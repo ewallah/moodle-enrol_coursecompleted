@@ -167,3 +167,47 @@ Feature: Enrolment on course completion
     And I click on "[title='Course completion']" "css_element"
     Then I should see "Course 1"
     And I should see "Aggregation method"
+
+  Scenario: Bulk unenrol users
+    When I set the following fields to these values:
+       | Course | Course 1 |
+    And I press "Add method"
+    And I am on "Course 2" course homepage
+    And I log out
+    When I am on the "C1" "Course" page logged in as "teacher1"
+    And I navigate to "Reports > Course completion" in current page administration
+    And I follow "Click to mark user complete"
+    And I log out
+    And I log in as "admin"
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
+    And I click on "Select all" "checkbox"
+    And I set the field "With selected users..." to "Delete selected enrolments on course completion"
+    Then I should see "Delete selected enrolments on course completion"
+    And I press "Unenrol users"
+    Then I should not see "Username 1" in the "participants" "table"
+
+  Scenario: Bulk edit users
+    When I set the following fields to these values:
+       | Course | Course 1 |
+    And I press "Add method"
+    And I am on "Course 2" course homepage
+    And I log out
+    When I am on the "C1" "Course" page logged in as "teacher1"
+    And I navigate to "Reports > Course completion" in current page administration
+    And I follow "Click to mark user complete"
+    And I log out
+    And I log in as "admin"
+    And I run the scheduled task "core\task\completion_regular_task"
+    And I run all adhoc tasks
+    And I am on "Course 2" course homepage
+    And I navigate to course participants
+    And I click on "Select 'Username 1'" "checkbox"
+    And I set the field "With selected users..." to "Edit selected enrolments on course completion"
+    Then I should see "Edit selected enrolments on course completion"
+    And I set the field "Alter status" to "Suspended"
+    And I press "Save changes"
+    Then I should see "Username 1" in the "participants" "table"
+    And I should see "Suspended" in the "participants" "table"
