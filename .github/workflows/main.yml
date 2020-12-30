@@ -65,9 +65,6 @@ jobs:
            echo "$(cd vendor/bin; pwd)" >> $GITHUB_PATH
            sudo locale-gen en_AU.UTF-8
 
-      - name: add plugin
-        run: moodle-plugin-ci add-plugin --clone https://github.com/ewallah/moodle-local_aws.git --branch main
-
       - name: install Moodle
         run: moodle-plugin-ci install --db-host=127.0.0.1 --plugin this-plugin
         env:
