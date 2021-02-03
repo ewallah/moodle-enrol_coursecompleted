@@ -1,11 +1,11 @@
 name: Tests
 
-on: push
+on: [push, pull]
 
 jobs:
   ci:
     name: ci
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     services:
       postgres:
@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        moodle-branch: ['master', 'MOODLE_310_STABLE', 'MOODLE_39_STABLE', 'MOODLE_38_STABLE']
+        moodle-branch: ['master', 'MOODLE_311_STABLE', 'MOODLE_310_STABLE', 'MOODLE_39_STABLE']
         php: ['7.4', '7.3']
         database: ['mariadb', 'pgsql']
 
@@ -37,11 +37,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: this-plugin
-
-      - name: Install node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14.15.0'
 
       - name: setup PHP
         uses: shivammathur/setup-php@v2
@@ -105,10 +100,25 @@ jobs:
       - name: chrome
         run: moodle-plugin-ci behat --profile chrome
 
+      - name: firefox classic
+        run: moodle-plugin-ci behat --suite classic
+      
+      - name: chrome classic
+        run: moodle-plugin-ci behat  --suite classic --profile=chrome
+
+      - name: admin bookmarks
+        run: php admin/tool/behat/cli/run.php --profile=chrome --tags=@block_admin_bookmarks
+        if: matrix.moodle-branch == 'master'
+        working-directory: moodle
+
+      - name: privacy
+        run: vendor/bin/phpunit --colors --no-coverage --testsuite tool_dataprivacy_testsuite,tool_policy_testsuite,core_privacy_testsuite
+        if: matrix.moodle-branch == 'master'
+        working-directory: moodle
+
       - name: coveralls
         env:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: moodle-plugin-ci coveralls-upload
         if: matrix.moodle-branch == 'master'
-

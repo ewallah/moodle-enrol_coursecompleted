@@ -2,7 +2,8 @@
 Feature: Groups kept during enrolment on course completion
 
   Background:
-    Given the following "courses" exist:
+    Given I mark this test as slow setting a timeout factor of 4
+    And the following "courses" exist:
       | fullname | shortname | numsections | startdate | enddate | enablecompletion |
       | Course 1 | C1 | 1 | ##yesterday## | ##tomorrow##| 1 |
       | Course 2 | C2 | 1 | ##tomorrow## | ##last day of next month## | 1 |
@@ -98,11 +99,8 @@ Feature: Groups kept during enrolment on course completion
     And I navigate to "Reports > Course completion" in current page administration
     And I follow "Click to mark user complete"
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I trigger cron
+    And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
-    And I run all adhoc tasks
-    And I trigger cron
     And I am on "Course 4" course homepage
     And I navigate to course participants
     Then I should see "Username 1" in the "participants" "table"
