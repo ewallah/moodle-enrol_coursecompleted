@@ -29,7 +29,7 @@ jobs:
       fail-fast: false
       matrix:
         moodle-branch: ['master', 'MOODLE_311_STABLE', 'MOODLE_310_STABLE', 'MOODLE_39_STABLE']
-        php: ['7.4', '7.3']
+        php: ['7.4']
         database: ['mariadb', 'pgsql']
 
     steps:
@@ -42,7 +42,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, pgsql, mysqli,
+          extensions: mbstring, pgsql, mysqli, gd, zip
  
       - name: composer
         run: |
@@ -83,7 +83,6 @@ jobs:
 
       - name: grunt
         run: moodle-plugin-ci --ansi grunt
-        if: matrix.moodle-branch == 'master'
 
       - name: phpunit 
         run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
