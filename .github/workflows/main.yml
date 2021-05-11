@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   ci:
     name: ci
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     services:
       postgres:
@@ -42,69 +42,63 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, pgsql, mysqli
-          tools: composer, behat, phpunit, phpmd, phpcbf, phpcpd, psalm, phpcs
-          coverage: xdebug
-
-      - name: checkout moodle-plugin-ci
-        uses: actions/checkout@v2
-        with:
-          repository: moodlehq/moodle-plugin-ci
-          path: ci
-
-      - name: other
+          extensions: mbstring, pgsql, mysqli,
+ 
+      - name: composer
         run: |
-           cd ci
-           composer install
-           echo "$(cd bin; pwd)" >> $GITHUB_PATH
-           echo "$(cd vendor/bin; pwd)" >> $GITHUB_PATH
+           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
+           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
            sudo locale-gen en_AU.UTF-8
 
       - name: install Moodle
-        run: moodle-plugin-ci install --db-host=127.0.0.1 --plugin this-plugin
+        run: moodle-plugin-ci install -v  --db-user=root --db-pass=root --db-host=127.0.0.1 --plugin this-plugin
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
       
       - name: phplint
-        run: moodle-plugin-ci phplint
+        run: moodle-plugin-ci --ansi phplint
 
       - name: phpcpd
-        run: moodle-plugin-ci phpcpd
+        run: moodle-plugin-ci --ansi phpcpd
 
       - name: phpmd
-        run: moodle-plugin-ci phpmd
+        run: moodle-plugin-ci --ansi phpmd
+
+      - name: phpdoc
+        run: moodle-plugin-ci --ansi phpdoc
 
       - name: codechecker
-        run: moodle-plugin-ci codechecker
+        run: moodle-plugin-ci --ansi codechecker
 
       - name: validate
-        run: moodle-plugin-ci validate
+        run: moodle-plugin-ci --ansi validate
 
       - name: savepoints
-        run: moodle-plugin-ci savepoints
+        run: moodle-plugin-ci --ansi savepoints
 
       - name: mustache
-        run: moodle-plugin-ci mustache
+        run: moodle-plugin-ci --ansi mustache
 
       - name: grunt
-        run: moodle-plugin-ci grunt
+        run: moodle-plugin-ci --ansi grunt
         if: matrix.moodle-branch == 'master'
 
       - name: phpunit 
-        run: moodle-plugin-ci phpunit --coverage-text --coverage-clover
+        run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
 
       - name: firefox
-        run: moodle-plugin-ci behat
+        run: moodle-plugin-ci --ansi behat
       
       - name: chrome
-        run: moodle-plugin-ci behat --profile chrome
+        run: moodle-plugin-ci --ansi behat --profile chrome
 
       - name: firefox classic
-        run: moodle-plugin-ci behat --suite classic
+        run: moodle-plugin-ci --ansi behat --suite classic
       
       - name: chrome classic
-        run: moodle-plugin-ci behat  --suite classic --profile=chrome
+        run: moodle-plugin-ci --ansi behat --suite classic --profile=chrome
 
       - name: admin bookmarks
         run: php admin/tool/behat/cli/run.php --profile=chrome --tags=@block_admin_bookmarks
