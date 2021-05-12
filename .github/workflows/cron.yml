@@ -74,3 +74,9 @@ jobs:
      
       - name: chrome
         run: moodle-plugin-ci --ansi behat --profile chrome
+
+      - name: coveralls
+        env:
+          COVERALLS_RUN_LOCALLY: true
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: moodle-plugin-ci --ansi coveralls-upload
