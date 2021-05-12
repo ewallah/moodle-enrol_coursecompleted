@@ -30,4 +30,3 @@ $plugin->requires = 2020061500;
 $plugin->release = '3.9+';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'enrol_coursecompleted';
-$plugin->supported    = [39, 310, 311];
