@@ -90,7 +90,7 @@ class enrol_coursecompleted_bulk_testcase extends advanced_testcase {
         try {
             $operation->get_form(null, null);
         } catch (Exception $e) {
-            $this->assertEquals('Undefined index: users', $e->getmessage());
+            $this->assertStringContainsString('Undefined', $e->getmessage());
         }
     }
 
