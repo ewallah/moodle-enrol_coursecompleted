@@ -25,8 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2020112100;
-$plugin->requires = 2019111800;
-$plugin->release = '3.8+';
+$plugin->version = 2021051200;
+$plugin->requires = 2020061500;
+$plugin->release = '3.9+';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'enrol_coursecompleted';
+$plugin->supported    = [39, 310, 311];
