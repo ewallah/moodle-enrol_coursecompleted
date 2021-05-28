@@ -3,6 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="../../lib/phpunit/phpunit.xsd"
         bootstrap="../../lib/phpunit/bootstrap.php"
+        cacheResult="false"
         convertErrorsToExceptions="true"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
@@ -15,7 +16,6 @@
         stopOnSkipped="false"
         beStrictAboutTestsThatDoNotTestAnything="false"
         beStrictAboutOutputDuringTests="true"
-        testSuiteLoaderClass="phpunit_autoloader"
         >
 
     <php>

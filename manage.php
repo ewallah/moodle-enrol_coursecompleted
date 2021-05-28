@@ -63,10 +63,17 @@ if ($enrolid > 0) {
         require_sesskey();
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$instance->customint1])) {
             foreach ($candidates as $candidate) {
-                $enrol->enrol_user($instance, $candidate, $instance->roleid, $instance->enrolstartdate, $instance->enrolenddate);
-                \enrol_coursecompleted_plugin::keepingroup($instance, $candidate);
-                mark_user_dirty($candidate);
-                echo '.';
+                $user = \core_user::get_user($candidate);
+                if (!empty($user) && !$user->deleted) {
+                    $enrol->enrol_user($instance,
+                                       $candidate,
+                                       $instance->roleid,
+                                       $instance->enrolstartdate,
+                                       $instance->enrolenddate);
+                    \enrol_coursecompleted_plugin::keepingroup($instance, $candidate);
+                    mark_user_dirty($candidate);
+                    echo '.';
+                }
             }
             echo $br . $br . get_string('usersenrolled', 'enrol_coursecompleted', count($candidates));
             $url = new moodle_url('/enrol/instances.php', ['id' => $course->id]);
@@ -77,8 +84,11 @@ if ($enrolid > 0) {
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$instance->customint1])) {
             $allusers = [];
             foreach ($candidates as $candidate) {
-                $userurl = new moodle_url('/user/view.php', ['course' => 1, 'id' => $candidate]);
-                $allusers[] = html_writer::link($userurl, fullname(\core_user::get_user($candidate)));
+                $user = \core_user::get_user($candidate);
+                if (!empty($user) && !$user->deleted) {
+                    $userurl = new moodle_url('/user/view.php', ['course' => 1, 'id' => $candidate]);
+                    $allusers[] = html_writer::link($userurl, fullname($user));
+                }
             }
             $link = new moodle_url($PAGE->url, ['enrolid' => $enrolid, 'action' => 'enrol', 'sesskey' => sesskey()]);
             echo $OUTPUT->confirm( implode(', ', $allusers),
