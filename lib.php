@@ -89,7 +89,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        global $DB, $OUTPUT;
+        global $DB, $OUTPUT, $SESSION;
+
         $str = '';
         if ($this->get_config('svglearnpath')) {
             $items = $this->build_course_path($instance);
@@ -116,6 +117,30 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $link = html_writer::link(new moodle_url('/course/view.php', ['id' => $instance->customint1]), $name);
             $str = $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link . '<br/>' . $str));
         }
+
+        $continuebuttondefault = get_config('enrol_coursecompleted', 'showcontinuebutton');
+        if ($instance->customint4 == 1 || ($instance->customint4 == 0 && !empty($continuebuttondefault))) {
+            // Any wants url will be within the course so no longer of interest.
+            unset($SESSION->wantsurl);
+
+            // If there is a return url set then continue to there.
+            $url = optional_param('returnurl', 0, PARAM_LOCALURL);
+            if (empty($url)) {
+                // See if there is a referrer that is NOT a course enrol screen.
+                // We don't want these as the link renderred above can be used to navigate
+                // up the dependency tree.
+                $referrer = get_local_referer(false);
+                if (strpos($referrer, 'enrol/index.php') === false) {
+                    $url = $referrer;
+                }
+            }
+            if (empty($url)) {
+                // If neither of the above then send them to the home page.
+                $url = new moodle_url('/index.php');
+            }
+            $str .= $OUTPUT->continue_button($url);
+        }
+
         return $str;
     }
 
@@ -333,6 +358,14 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addHelpButton('customtext1', 'customwelcome', 'enrol_coursecompleted');
         $mform->disabledIf('customtext1', 'customint2', 'notchecked');
 
+        $mform->addElement('select', "customint4", get_string('showcontinuebuttoninstance', 'enrol_coursecompleted'),
+                [
+                        0  => get_string('showcontinuebutton:sitedefault', 'enrol_coursecompleted'),
+                        1 => get_string('showcontinuebutton:enabled', 'enrol_coursecompleted'),
+                        -1  => get_string('showcontinuebutton:disabled', 'enrol_coursecompleted')
+                ]);
+        $mform->addHelpButton('customint4', 'showcontinuebuttoninstance', 'enrol_coursecompleted');
+        $mform->setDefault('customint4', 0);
     }
 
     /**
