@@ -165,7 +165,7 @@ Feature: Enrolment on course completion
     Then I should see "Username 1" in the "participants" "table"
     And I should see "Group 1" in the "participants" "table"
     And I click on "[title='Course completion']" "css_element"
-    Then I should see "Course 1"
+    Then I should see "C1"
     And I should see "Aggregation method"
 
   Scenario: Bulk unenrol users

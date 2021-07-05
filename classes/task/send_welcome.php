@@ -51,14 +51,14 @@ class send_welcome extends \core\task\adhoc_task {
         global $CFG, $DB;
         $data = $this->get_custom_data();
         if ($user = \core_user::get_user($data->userid)) {
-            if ($course = $DB->get_record('course', ['id' => $data->courseid])) {
-                $context = \context_course::instance($course->id);
-                if ($complcourse = $DB->get_record('course', ['id' => $data->completedid])) {
-                    $context2 = \context_course::instance($complcourse->id);
+            if ($course = $DB->get_field('course', 'fullname', ['id' => $data->courseid])) {
+                if ($complcourse = $DB->get_field('course', 'fullname', ['id' => $data->completedid])) {
+                    $context = \context_course::instance($data->courseid);
+                    $context2 = \context_course::instance($data->completedid);
                     $a = new stdClass();
-                    $a->coursename = format_string($course->fullname, true, ['context' => $context]);
-                    $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
-                    $a->completed = format_string($complcourse->fullname, true, ['context' => $context2]);
+                    $a->coursename = format_string($course, true, ['context' => $context]);
+                    $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$data->courseid";
+                    $a->completed = format_string($complcourse, true, ['context' => $context2]);
                     $custom = $DB->get_field('enrol', 'customtext1', ['id' => $data->enrolid]);
                     $key = ['{$a->coursename}',  '{$a->completed}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
                     $value = [$a->coursename, $a->completed, $a->profileurl, fullname($user), $user->email];

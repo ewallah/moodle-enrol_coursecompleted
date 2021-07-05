@@ -131,13 +131,12 @@ class enrol_coursecompleted_bulkedit extends enrol_bulk_enrolment_operation {
         if ($DB->execute($sql, $params)) {
             foreach ($users as $user) {
                 foreach ($user->enrolments as $enrolment) {
-                    $enrolment->courseid  = $enrolment->enrolmentinstance->courseid;
-                    $enrolment->enrol     = 'coursecompleted';
+                    $courseid = $enrolment->enrolmentinstance->courseid;
                     // Trigger event.
                     $event = \core\event\user_enrolment_updated::create(
                         ['objectid' => $enrolment->id,
-                         'courseid' => $enrolment->courseid,
-                         'context' => \context_course::instance($enrolment->courseid),
+                         'courseid' => $courseid,
+                         'context' => \context_course::instance($courseid),
                          'relateduserid' => $user->id,
                          'other' => ['enrol' => 'coursecompleted']]);
                     $event->trigger();
