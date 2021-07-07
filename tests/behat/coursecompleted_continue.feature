@@ -59,7 +59,7 @@ Feature: Continue button in enrolment on course completion
     And ".fa-stack.fa-2x" "css_element" should exist
     When I click on ".fa-stack.fa-2x" "css_element"
     Then I should not see "DDD"
-    
+
   Scenario: Learning path hidden
     Given the following config values are set as admin:
       | svglearnpath | 0 | enrol_coursecompleted |
