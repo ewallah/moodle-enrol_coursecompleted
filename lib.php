@@ -118,8 +118,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $str = $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link . '<br/>' . $str));
         }
 
-        $continuebuttondefault = get_config('enrol_coursecompleted', 'showcontinuebutton');
-        if ($instance->customint4 == 1 || ($instance->customint4 == 0 && !empty($continuebuttondefault))) {
+        if ($this->get_config('showcontinuebutton')) {
             // Any wants url will be within the course so no longer of interest.
             unset($SESSION->wantsurl);
 
@@ -357,15 +356,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             get_string('customwelcome', 'enrol_coursecompleted'), ['cols' => '60', 'rows' => '8']);
         $mform->addHelpButton('customtext1', 'customwelcome', 'enrol_coursecompleted');
         $mform->disabledIf('customtext1', 'customint2', 'notchecked');
-
-        $mform->addElement('select', "customint4", get_string('showcontinuebuttoninstance', 'enrol_coursecompleted'),
-                [
-                        0  => get_string('showcontinuebutton:sitedefault', 'enrol_coursecompleted'),
-                        1 => get_string('showcontinuebutton:enabled', 'enrol_coursecompleted'),
-                        -1  => get_string('showcontinuebutton:disabled', 'enrol_coursecompleted')
-                ]);
-        $mform->addHelpButton('customint4', 'showcontinuebuttoninstance', 'enrol_coursecompleted');
-        $mform->setDefault('customint4', 0);
     }
 
     /**

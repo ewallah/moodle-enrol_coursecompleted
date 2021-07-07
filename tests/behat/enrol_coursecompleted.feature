@@ -1,4 +1,4 @@
-@enrol @ewallah @enrol_coursecompleted @javascript
+@enrol @ewallah @enrol_coursecompleted
 Feature: Enrolment on course completion
 
   Background:
@@ -19,13 +19,6 @@ Feature: Enrolment on course completion
       | user2 | C1 | student |
       | teacher1| C1 | editingteacher |
       | teacher1| C2 | editingteacher |
-    And the following "groups" exist:
-      | name | description | course | idnumber |
-      | Group 1 | Group description | C1 | GROUP1 |
-      | Group 1 | Group description | C2 | GROUP2 |
-    And the following "group members" exist:
-      | user  | group |
-      | user1 | GROUP1|
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Disable" "link" in the "Guest access" "table_row"
@@ -41,6 +34,7 @@ Feature: Enrolment on course completion
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Course completed enrolment" from the "Add method" singleselect
 
+  @javascript
   Scenario: Duration
     When I set the following fields to these values:
        | Course | Course 1 |
@@ -70,6 +64,7 @@ Feature: Enrolment on course completion
     Then I should see "2030"
     And I should see "4"
 
+  @javascript
   Scenario: Later start date
     When I set the following fields to these values:
        | Course | Course 1 |
@@ -89,27 +84,7 @@ Feature: Enrolment on course completion
     When I am on the "C2" "Course" page logged in as "user1"
     Then I should see "You will be enrolled in this course when"
 
-  Scenario: Learning path
-    When I set the following fields to these values:
-       | Course | Course 1 |
-    And I press "Add method"
-    And I am on "Course 3" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
-    And I select "Course completed enrolment" from the "Add method" singleselect
-    And I set the following fields to these values:
-       | Course | Course 2 |
-    And I press "Add method"
-    And I am on "Course 4" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
-    And I select "Course completed enrolment" from the "Add method" singleselect
-    And I set the following fields to these values:
-       | Course | Course 3 |
-    And I press "Add method"
-    And I am on "Course 4" course homepage
-    And I log out
-    When I am on the "C2" "Course" page logged in as "user1"
-    Then I should see "You will be enrolled in this course when"
-
+  @javascript
   Scenario: When a course is completed, a user is auto enrolled into another course
     When I set the following fields to these values:
        | Course | Course 1 |
@@ -129,6 +104,7 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     Then I should not see "You will be enrolled in this course when"
 
+  @javascript
   Scenario: Manage enrolled users
     When I set the following fields to these values:
        | Course | Course 1 |
@@ -163,11 +139,11 @@ Feature: Enrolment on course completion
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should see "Username 1" in the "participants" "table"
-    And I should see "Group 1" in the "participants" "table"
     And I click on "[title='Course completion']" "css_element"
     Then I should see "C1"
     And I should see "Aggregation method"
 
+  @javascript
   Scenario: Bulk unenrol users
     When I set the following fields to these values:
        | Course | Course 1 |
@@ -189,6 +165,7 @@ Feature: Enrolment on course completion
     And I press "Unenrol users"
     Then I should not see "Username 1" in the "participants" "table"
 
+  @javascript
   Scenario: Bulk edit users
     When I set the following fields to these values:
        | Course | Course 1 |

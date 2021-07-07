@@ -65,7 +65,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
     /**
      * Tests initial setup.
      */
-    protected function setUp():void {
+    protected function setUp(): void {
         global $CFG, $DB;
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
@@ -83,10 +83,12 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->setAdminUser();
         $this->plugin = enrol_get_plugin('coursecompleted');
         $id = $this->plugin->add_instance($this->course2,
-            ['customint1' => $this->course1->id, 'customint2' => 1, 'roleid' => $studentrole]);
+            ['customint1' => $this->course1->id, 'customint2' => 1, 'customint4' => 1, 'roleid' => $studentrole]);
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
-        $this->plugin->add_instance($this->course4, ['customint1' => $this->course3->id, 'roleid' => $studentrole]);
-        $this->plugin->add_instance($this->course3, ['customint1' => $this->course2->id, 'roleid' => $studentrole]);
+        $this->plugin->add_instance($this->course4,
+            ['customint1' => $this->course3->id, 'customint4' => 1, 'roleid' => $studentrole]);
+        $this->plugin->add_instance($this->course3,
+            ['customint1' => $this->course2->id, 'customint4' => 1, 'roleid' => $studentrole]);
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
         $this->student = $generator->create_user();
         $manualplugin = enrol_get_plugin('manual');
@@ -268,6 +270,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
      */
     public function test_library() {
         global $DB;
+        $this->plugin->set_config('showcontinuebutton', true);
         $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
         $this->assertEquals($this->plugin->get_name(), 'coursecompleted');
         $this->assertEquals($this->plugin->get_config('enabled'), null);
@@ -283,7 +286,7 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertCount(2, $this->plugin->get_action_icons($this->instance));
         $this->assertEquals('After completing course: A1', $this->plugin->get_instance_name($this->instance));
         $this->assertEquals('Enrolment by completion of course with id ' . $this->course1->id,
-           $this->plugin->get_description_text($this->instance));
+        $this->plugin->get_description_text($this->instance));
         $this->assertStringContainsString('Test course 1', $this->plugin->enrol_page_hook($this->instance));
         $arr = ['status' => 0, 'enrolenddate' => time(), 'enrolstartdate' => time() + 10000];
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
@@ -291,7 +294,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $this->assertEquals('Enrolment end date cannot be earlier than start date', $tmp['enrolenddate']);
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['shortname' => 'c1', 'enablecompletion' => 1]);
-        $tmp = $this->plugin->edit_instance_validation(['status' => 0, 'customint1' => $course->id], null, $this->instance, null);
+        $tmp = $this->plugin->edit_instance_validation(['status' => 0, 'customint1' => $course->id],
+            null, $this->instance, null);
         $this->assertEquals([], $tmp);
         $this->setUser(1);
         $this->assertStringContainsString('Test course 1', $this->plugin->enrol_page_hook($this->instance));

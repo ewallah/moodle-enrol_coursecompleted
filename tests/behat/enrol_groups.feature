@@ -1,4 +1,4 @@
-@enrol @ewallah @enrol_coursecompleted @javascript
+@enrol @ewallah @enrol_coursecompleted
 Feature: Groups kept during enrolment on course completion
 
   Background:
@@ -46,6 +46,7 @@ Feature: Groups kept during enrolment on course completion
     And I navigate to "Users > Enrolment methods" in current page administration
     And I select "Course completed enrolment" from the "Add method" singleselect
 
+  @javascript
   Scenario: User stays in same group after completing several courses
     When I set the following fields to these values:
        | Course | Course 1 |
