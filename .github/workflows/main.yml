@@ -17,7 +17,7 @@ jobs:
         ports:
           - 5432:5432
       mariadb:
-        image: mariadb
+        image: mariadb:10.5
         env:
           MYSQL_USER: 'root'
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
@@ -93,7 +93,7 @@ jobs:
         run: moodle-plugin-ci --ansi grunt
 
       - name: phpunit 
-        run: moodle-plugin-ci --ansi phpunit
+        run: moodle-plugin-ci --ansi phpunit --coverage-text || true
 
       - name: firefox
         run: moodle-plugin-ci --ansi behat
@@ -109,11 +109,9 @@ jobs:
 
       - name: admin bookmarks
         run: php admin/tool/behat/cli/run.php --profile=chrome --tags=@block_admin_bookmarks
-        if: matrix.moodle-branch == 'master'
         working-directory: moodle
 
       - name: privacy
         run: vendor/bin/phpunit --colors --no-coverage --testsuite tool_dataprivacy_testsuite,tool_policy_testsuite,core_privacy_testsuite
-        if: matrix.moodle-branch == 'master'
         working-directory: moodle
 
