@@ -70,7 +70,7 @@ jobs:
         run: moodle-plugin-ci --ansi grunt
 
       - name: phpunit 
-        run: moodle-plugin-ci --ansi phpunit --coverage-text
+        run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
      
       - name: chrome
         run: moodle-plugin-ci --ansi behat --profile chrome
