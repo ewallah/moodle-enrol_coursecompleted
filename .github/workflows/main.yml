@@ -45,7 +45,7 @@ jobs:
            sudo locale-gen en_AU.UTF-8
 
       - name: add plugin
-        run: moodle-plugin-ci add-plugin --clone https://github.com/emmarichardson/local_autogroup.git --branch main
+        run: moodle-plugin-ci add-plugin --clone https://github.com/emmarichardson/local_autogroup.git --branch master
 
       - name: install Moodle
         run: moodle-plugin-ci --ansi install --db-host=127.0.0.1 --plugin this-plugin
