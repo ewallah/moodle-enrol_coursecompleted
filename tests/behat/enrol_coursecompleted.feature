@@ -9,10 +9,10 @@ Feature: Enrolment on course completion
       | Course 3 | C3 | 1 | ##tomorrow## | ##last day of next month## | 1 |
       | Course 4 | C4 | 1 | ##tomorrow## | ##last day of next month## | 1 |
     And the following "users" exist:
-      | username | firstname | lastname |
-      | user1 | Username | 1 |
-      | user2 | Username | 2 |
-      | teacher1 | Teacher | 1 |
+      | username | firstname | lastname | timezone |
+      | user1 | Username | 1 | Asia/Tokyo |
+      | user2 | Username | 2 | Europe/Brussels |
+      | teacher1 | Teacher | 1 | America/Mexico_city |
     And the following "course enrolments" exist:
       | user | course | role |
       | user1 | C1 | student |
@@ -32,6 +32,9 @@ Feature: Enrolment on course completion
     And I click on "Disable" "link" in the "Self enrolment" "table_row"
     And I click on "Disable" "link" in the "Cohort sync" "table_row"
     And I click on "Enable" "link" in the "Course completed enrolment" "table_row"
+    And I navigate to "Location > Location settings" in site administration
+    Then I should see "Default: Australia/Perth"
+    And I set the field "Default timezone" to "Europe/Brussels"
     And I am on "Course 1" course homepage
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
