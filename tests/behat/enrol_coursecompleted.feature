@@ -8,6 +8,10 @@ Feature: Enrolment on course completion
       | Course 2 | C2 | 1 | ##tomorrow## | ##last day of next month## | 1 |
       | Course 3 | C3 | 1 | ##tomorrow## | ##last day of next month## | 1 |
       | Course 4 | C4 | 1 | ##tomorrow## | ##last day of next month## | 1 |
+    And the following "activities" exist:
+      | activity   | name   | intro                    | course | idnumber    | section | visible |
+      | page       | Page A | page description         | C1     | page1       | 0       | 1       |
+      | page       | Page B | page description         | C2     | page2       | 0       | 1       |
     And the following "users" exist:
       | username | firstname | lastname | timezone |
       | user1 | Username | 1 | Asia/Tokyo |
@@ -91,6 +95,7 @@ Feature: Enrolment on course completion
     And I log out
     When I am on the "C2" "Course" page logged in as "user1"
     Then I should see "You will be enrolled in this course when"
+    And I should not see "Page B"
 
   Scenario: Learning path
     When I set the following fields to these values:
@@ -112,6 +117,7 @@ Feature: Enrolment on course completion
     And I log out
     When I am on the "C2" "Course" page logged in as "user1"
     Then I should see "You will be enrolled in this course when"
+    And I should not see "Page B"
 
   Scenario: When a course is completed, a user is auto enrolled into another course
     When I set the following fields to these values:
@@ -129,8 +135,10 @@ Feature: Enrolment on course completion
     And I log out
     When I am on the "C1" "Course" page logged in as "user1"
     Then I should not see "You will be enrolled in this course when"
+    And I should see "Page A"
     And I am on "Course 2" course homepage
     Then I should not see "You will be enrolled in this course when"
+    And I should see "Page B"
 
   Scenario: Manage enrolled users
     When I set the following fields to these values:
