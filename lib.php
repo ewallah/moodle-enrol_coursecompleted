@@ -514,4 +514,37 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         }
         return $bulkoperations;
     }
+
+    /**
+     * Enrol all users who completed in the past.
+     * @param int $courseid
+     */
+    public static function enrol_past(int $courseid = 0) {
+        global $DB;
+        $params = ['enrol' => 'coursecompleted', 'status' => 0];
+        $condition = 'course = ? AND timecompleted > 0';
+        if (!$courseid == 0) {
+            $params['customint1'] = $courseid;
+        }
+        if ($enrols = $DB->get_records('enrol', $params)) {
+            $plugin = \enrol_get_plugin('coursecompleted');
+            foreach ($enrols as $enrol) {
+                if ($DB->record_exists('role', ['id' => $enrol->roleid]) && $DB->record_exists('course', ['id' => $enrol->courseid])) {
+                    if ($enrol->enrolperiod > 0) {
+                        $enrol->enrolenddate = max(time(), $enrol->enrolstartdate) + $enrol->enrolperiod;
+                    }
+                    if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$enrol->customint1])) {
+                        foreach ($candidates as $candidate) {
+                            $user = \core_user::get_user($candidate);
+                            if (!empty($user) && !$user->deleted) {
+                                $plugin->enrol_user($enrol, $user->id, $enrol->roleid, $enrol->enrolstartdate, $enrol->enrolenddate);
+                                enrol_coursecompleted_plugin::keepingroup($enrol, $user->id);
+                                mark_user_dirty($user->id);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

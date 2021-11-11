@@ -90,6 +90,33 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
     }
 
     /**
+     * Test static enrol from past.
+     * @coversDefaultClass \enrol_coursecompleted_plugin
+     */
+    public function test_static_past() {
+        global $CFG, $DB;
+        require_once($CFG->libdir.'/completionlib.php');
+        $generator = $this->getDataGenerator();
+        $plugin = enrol_get_plugin('coursecompleted');
+        $manualplugin = enrol_get_plugin('manual');
+        $studentid = $generator->create_user()->id;
+        $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
+        $instance = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $manualplugin->enrol_user($instance, $studentid, 5);
+        $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
+        $this->setAdminUser();
+        $completionauto = ['completion' => COMPLETION_TRACKING_AUTOMATIC];
+        $ccompletion = new completion_completion(['course' => $course1->id, 'userid' => $studentid]);
+        $ccompletion->mark_complete(time());
+        $ccompletion = new completion_completion(['course' => $course2->id, 'userid' => $studentid]);
+        $ccompletion->mark_complete(time());
+        mark_user_dirty($studentid);
+        $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'enrolperiod' => 300000]);
+        enrol_coursecompleted_plugin::enrol_past($course1->id);
+        enrol_coursecompleted_plugin::enrol_past($course2->id);
+    }
+
+    /**
      * Test invalid role.
      * @coversDefaultClass \enrol_coursecompleted_observer
      */
