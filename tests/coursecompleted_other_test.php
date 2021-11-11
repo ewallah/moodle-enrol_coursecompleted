@@ -105,7 +105,6 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $manualplugin->enrol_user($instance, $studentid, 5);
         $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
         $this->setAdminUser();
-        $completionauto = ['completion' => COMPLETION_TRACKING_AUTOMATIC];
         $ccompletion = new completion_completion(['course' => $course1->id, 'userid' => $studentid]);
         $ccompletion->mark_complete(time());
         $ccompletion = new completion_completion(['course' => $course2->id, 'userid' => $studentid]);
