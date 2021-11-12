@@ -78,41 +78,41 @@ class enrol_coursecompleted_bulkedit extends enrol_bulk_enrolment_operation {
      * @param course_enrolment_manager $manager
      * @param array $users
      * @param stdClass $properties The data returned by the form.
+     * @return bool
      */
     public function process(course_enrolment_manager $manager, array $users, stdClass $properties) {
         global $DB, $USER;
-        if (!has_capability("enrol/coursecompleted:manage", $manager->get_context())) {
+        $context = $manager->get_context();
+        if (!has_capability("enrol/coursecompleted:manage", $context)) {
             return false;
         }
-
-        $ueids = $instances = [];
+        $ueids = $updatesql = [];
         foreach ($users as $user) {
             foreach ($user->enrolments as $enrolment) {
                 $ueids[] = $enrolment->id;
-                if (!array_key_exists($enrolment->id, $instances)) {
-                    $instances[$enrolment->id] = $enrolment;
-                }
+                 $courseid = $enrolment->enrolmentinstance->courseid;
+                // Trigger event.
+                $event = \core\event\user_enrolment_updated::create(
+                    ['objectid' => $enrolment->id,
+                     'courseid' => $courseid,
+                     'context' => \context_course::instance($courseid),
+                     'relateduserid' => $user->id,
+                     'other' => ['enrol' => 'coursecompleted']]);
+                $event->trigger();
             }
         }
-
-        $status = $properties->status;
-        $timestart = $properties->timestart;
-        $timeend = $properties->timeend;
-
         list($ueidsql, $params) = $DB->get_in_or_equal($ueids, SQL_PARAMS_NAMED);
-
-        $updatesql = [];
-        if ($status == ENROL_USER_ACTIVE || $status == ENROL_USER_SUSPENDED) {
+        if ($properties->status == ENROL_USER_ACTIVE || $properties->status == ENROL_USER_SUSPENDED) {
             $updatesql[] = 'status = :status';
-            $params['status'] = (int)$status;
+            $params['status'] = (int)$properties->status;
         }
-        if (!empty($timestart)) {
+        if (!empty($properties->timestart)) {
             $updatesql[] = 'timestart = :timestart';
-            $params['timestart'] = (int)$timestart;
+            $params['timestart'] = (int)$properties->timestart;
         }
-        if (!empty($timeend)) {
+        if (!empty($properties->timeend)) {
             $updatesql[] = 'timeend = :timeend';
-            $params['timeend'] = (int)$timeend;
+            $params['timeend'] = (int)$properties->timeend;
         }
         if (empty($updatesql)) {
             return true;
@@ -126,25 +126,7 @@ class enrol_coursecompleted_bulkedit extends enrol_bulk_enrolment_operation {
 
         $updatesql = join(', ', $updatesql);
         $sql = "UPDATE {user_enrolments} SET $updatesql WHERE id $ueidsql";
-
-        $return = false;
-        if ($DB->execute($sql, $params)) {
-            foreach ($users as $user) {
-                foreach ($user->enrolments as $enrolment) {
-                    $courseid = $enrolment->enrolmentinstance->courseid;
-                    // Trigger event.
-                    $event = \core\event\user_enrolment_updated::create(
-                        ['objectid' => $enrolment->id,
-                         'courseid' => $courseid,
-                         'context' => \context_course::instance($courseid),
-                         'relateduserid' => $user->id,
-                         'other' => ['enrol' => 'coursecompleted']]);
-                    $event->trigger();
-                }
-            }
-            cache::make('core', 'coursecontacts')->delete($manager->get_context()->instanceid);
-            $return = true;
-        }
-        return $return;
+        cache::make('core', 'coursecontacts')->delete($context->instanceid);
+        return (bool)$DB->execute($sql, $params);
     }
 }

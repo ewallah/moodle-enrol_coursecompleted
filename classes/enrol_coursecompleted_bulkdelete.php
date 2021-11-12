@@ -78,6 +78,7 @@ class enrol_coursecompleted_bulkdelete extends enrol_bulk_enrolment_operation {
      * @param course_enrolment_manager $manager
      * @param array $users
      * @param stdClass $properties The data returned by the form.
+     * @return bool
      */
     public function process(course_enrolment_manager $manager, array $users, stdClass $properties) {
         if (!has_capability("enrol/coursecompleted:unenrol", $manager->get_context())) {
