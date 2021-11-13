@@ -45,21 +45,6 @@ jobs:
         with:
           path: this-plugin
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
-
-      - id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
       - name: setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -107,12 +92,8 @@ jobs:
       - name: grunt
         run: moodle-plugin-ci --ansi grunt
 
-      - name: prepare phpunit 
-        run: rm -f phpunit.xml && mv phpunit.xml.dist phpunit.xml
-        working-directory: moodle
-
       - name: phpunit 
-        run: moodle-plugin-ci --ansi phpunit --coverage-text
+        run: moodle-plugin-ci --ansi phpunit --coverage-text || moodle-plugin-ci --ansi phpunit
 
       - name: firefox
         run: moodle-plugin-ci --ansi behat
