@@ -49,7 +49,7 @@ jobs:
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: ${{ runner.os }}-node-
+          restore-keys: ${{ runner.os }}-node-
 
       - id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
