@@ -45,13 +45,28 @@ jobs:
         with:
           path: this-plugin
 
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+            restore-keys: ${{ runner.os }}-node-
+
+      - id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - uses: actions/cache@v2
+        with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
       - name: setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: mbstring, pgsql, mysqli, gd, xmlrpc,zip
+          extensions: mbstring, pgsql, mysqli, gd, xmlrpc, zip
           ini-values: max_input_vars=5000
- 
+     
       - name: composer
         run: |
            composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
@@ -75,7 +90,7 @@ jobs:
         run: moodle-plugin-ci --ansi phpmd
 
       - name: phpdoc
-        run: moodle-plugin-ci --ansi phpdoc || true
+        run: moodle-plugin-ci --ansi phpdoc
 
       - name: codechecker
         run: moodle-plugin-ci --ansi codechecker
@@ -93,7 +108,7 @@ jobs:
         run: moodle-plugin-ci --ansi grunt
 
       - name: phpunit 
-        run: moodle-plugin-ci --ansi phpunit --coverage-text || true
+        run: moodle-plugin-ci --ansi phpunit --coverage-text
 
       - name: firefox
         run: moodle-plugin-ci --ansi behat
