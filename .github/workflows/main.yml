@@ -107,6 +107,10 @@ jobs:
       - name: grunt
         run: moodle-plugin-ci --ansi grunt
 
+      - name: prepare phpunit 
+        run: rm -f phpunit.xml && mv phpunit.xml.dist phpunit.xml
+        working-directory: moodle
+
       - name: phpunit 
         run: moodle-plugin-ci --ansi phpunit --coverage-text
 
