@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace enrol_coursecompleted;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -39,7 +41,7 @@ require_once($CFG->dirroot . '/group/lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
-class enrol_coursecompleted_other_testcase extends advanced_testcase {
+class other_test extends \advanced_testcase {
 
     /**
      * Tests initial setup.
@@ -82,7 +84,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
      */
     public function test_invalid_instance() {
         $plugin = enrol_get_plugin('coursecompleted');
-        $tst = new stdClass();
+        $tst = new \stdClass();
         $tst->enrol = 'wrong';
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage('invalid enrol instance!');
@@ -105,14 +107,14 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $manualplugin->enrol_user($instance, $studentid, 5);
         $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
         $this->setAdminUser();
-        $ccompletion = new completion_completion(['course' => $course1->id, 'userid' => $studentid]);
+        $ccompletion = new \completion_completion(['course' => $course1->id, 'userid' => $studentid]);
         $ccompletion->mark_complete(time());
-        $ccompletion = new completion_completion(['course' => $course2->id, 'userid' => $studentid]);
+        $ccompletion = new \completion_completion(['course' => $course2->id, 'userid' => $studentid]);
         $ccompletion->mark_complete(time());
         mark_user_dirty($studentid);
         $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'enrolperiod' => 300000]);
-        enrol_coursecompleted_plugin::enrol_past($course1->id);
-        enrol_coursecompleted_plugin::enrol_past($course2->id);
+        \enrol_coursecompleted_plugin::enrol_past($course1->id);
+        \enrol_coursecompleted_plugin::enrol_past($course2->id);
     }
 
     /**
@@ -137,10 +139,10 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $compevent = \core\event\course_completed::create([
             'objectid' => $course2->id,
             'relateduserid' => $studentid,
-            'context' => context_course::instance($course2->id),
+            'context' => \context_course::instance($course2->id),
             'courseid' => $course2->id,
             'other' => ['relateduserid' => $studentid]]);
-        $observer = new enrol_coursecompleted_observer();
+        $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
         $this->assertDebuggingCalled("Role does not exist");
     }
@@ -155,7 +157,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $plugin = enrol_get_plugin('coursecompleted');
         $studentid = $generator->create_user()->id;
         $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->courseid = $course1->id;
         $data->idnumber = $course1->id . 'A';
         $data->name = 'A group';
@@ -180,10 +182,10 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
         $compevent = \core\event\course_completed::create([
             'objectid' => $course2->id,
             'relateduserid' => $studentid,
-            'context' => context_course::instance($course2->id),
+            'context' => \context_course::instance($course2->id),
             'courseid' => $course2->id,
             'other' => ['relateduserid' => $studentid]]);
-        $observer = new enrol_coursecompleted_observer();
+        $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
         $this->assertTrue(groups_is_member($groupid2, $studentid));
         rebuild_course_cache($course1->id, true);
@@ -246,7 +248,7 @@ class enrol_coursecompleted_other_testcase extends advanced_testcase {
               ['userid' => $studentid, 'enrolid' => $i4, 'courseid' => $course->id, 'completedid' => $courseid4]);
         \core\task\manager::queue_adhoc_task($adhock);
         $this->assertCount(3, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
-        phpunit_util::run_all_adhoc_tasks();
+        \phpunit_util::run_all_adhoc_tasks();
         $messages = $sink->get_messages();
         $this->assertCount(4, $messages);
         $sink->close();

@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        moodle-branch: ['master']
+        moodle-branch: ['MOODLE_311_STABLE']
         php: ['7.4']
         database: ['mysqli']
 
@@ -27,6 +27,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, mysqli, gd, zip
+          coverage: xdebug
 
       - name: composer
         run: |
@@ -43,37 +44,49 @@ jobs:
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
       
       - name: phplint
+        if: ${{ always() }}
         run: moodle-plugin-ci --ansi phplint
 
       - name: phpcpd
+        if: ${{ always() }}
         run: moodle-plugin-ci --ansi phpcpd
 
       - name: phpmd
+        if: ${{ always() }}
         run: moodle-plugin-ci --ansi phpmd
 
       - name: phpdoc
+        if: ${{ always() }}
         run: moodle-plugin-ci --ansi phpdoc
 
       - name: codechecker
+        if: ${{ always() }}
         run: moodle-plugin-ci --ansi codechecker
 
       - name: validate
+        if: ${{ always() }}
         run: moodle-plugin-ci --ansi validate
 
       - name: savepoints
+        if: ${{ always() }}
         run: moodle-plugin-ci --ansi savepoints
 
-      - name: mustache
-        run: moodle-plugin-ci --ansi mustache
-
       - name: grunt
+        if: ${{ always() }}
         run: moodle-plugin-ci --ansi grunt
 
-      - name: phpunit 
-        run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
-     
-      - name: chrome
-        run: moodle-plugin-ci --ansi behat --profile chrome
+      - name: mustache
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi mustache
+
+      - name: phpunit
+        continue-on-error: true
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi phpunit --coverage-text
+
+      - name: behat
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi behat --profile=chrome
 
       - name: coveralls
         env:

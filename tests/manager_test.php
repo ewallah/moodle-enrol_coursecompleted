@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace enrol_coursecompleted;
+
 defined('MOODLE_INTERNAL') || die();
 
 
@@ -35,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
-class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
+class manager_test extends \advanced_testcase {
 
     /** @var stdClass Instance. */
     private $instance;
@@ -107,7 +109,7 @@ class enrol_coursecompleted_manager_testcase extends \advanced_testcase {
         $user = $generator->create_user();
         $role = $DB->get_record('role', ['shortname' => 'editingteacher']);
         $generator->enrol_user($user->id, $this->course->id, $role->shortname);
-        $context = context_course::instance($this->course->id);
+        $context = \context_course::instance($this->course->id);
         assign_capability('enrol/coursecompleted:enrolpast', CAP_PROHIBIT, $role->id, $context);
         assign_capability('enrol/coursecompleted:unenrol', CAP_PROHIBIT, $role->id, $context);
         assign_capability('enrol/manual:enrol', CAP_ALLOW, $role->id, $context);

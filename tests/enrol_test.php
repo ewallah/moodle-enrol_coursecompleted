@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace enrol_coursecompleted;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -39,7 +41,7 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
-class enrol_coursecompleted_testcase extends \advanced_testcase {
+class enrol_test extends \advanced_testcase {
 
     /** @var stdClass Instance. */
     private $instance;
@@ -231,9 +233,9 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
            \core_completion\progress::get_course_progress_percentage($this->course1, $this->student->id));
         $this->runAdhocTasks();
         $this->setAdminUser();
-        $context = context_course::instance($this->course1->id);
+        $context = \context_course::instance($this->course1->id);
         $this->assertTrue(has_capability('report/completion:view', $context));
-        $url = new moodle_url('/user/index.php', ['id' => $this->course2->id]);
+        $url = new \moodle_url('/user/index.php', ['id' => $this->course2->id]);
         $PAGE->set_url($url);
         $manager = new \course_enrolment_manager($PAGE, $this->course2);
         $enrolments = $manager->get_user_enrolments($this->student->id);
@@ -395,8 +397,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
         $this->runAdhocTasks();
-        $bc = new backup_controller(backup::TYPE_1COURSE, $this->course2->id, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO,
-            backup::MODE_GENERAL, 2);
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $this->course2->id, \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL, 2);
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
@@ -404,23 +406,23 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();
-        $rc = new restore_controller('test-restore-course-event', $this->course2->id, backup::INTERACTIVE_NO,
-            backup::MODE_GENERAL, 2, backup::TARGET_NEW_COURSE);
+        $rc = new \restore_controller('test-restore-course-event', $this->course2->id, \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL, 2, \backup::TARGET_NEW_COURSE);
         $rc->execute_precheck();
         $rc->execute_plan();
         $newid = $rc->get_courseid();
         $rc->destroy();
         $this->assertEquals(4, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
         $this->assertTrue(is_enrolled(\context_course::instance($newid), $this->student->id));
-        $url = new moodle_url('/user/index.php', ['id' => $newid]);
+        $url = new \moodle_url('/user/index.php', ['id' => $newid]);
         $PAGE->set_url($url);
         $course = get_course($newid);
         $manager = new \course_enrolment_manager($PAGE, $course);
         $enrolments = $manager->get_user_enrolments($this->student->id);
         $this->assertCount(2, $enrolments);
         $this->assertCount(3, $manager->get_enrolment_instance_names());
-        $bc = new backup_controller(backup::TYPE_1COURSE, $this->course2->id, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO,
-            backup::MODE_GENERAL, 2);
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $this->course2->id, \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL, 2);
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
@@ -428,8 +430,8 @@ class enrol_coursecompleted_testcase extends \advanced_testcase {
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();
-        $rc = new restore_controller('test-restore-course-event', $newid, backup::INTERACTIVE_NO,
-            backup::MODE_GENERAL, 2, backup::TARGET_EXISTING_ADDING);
+        $rc = new \restore_controller('test-restore-course-event', $newid, \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL, 2, \backup::TARGET_EXISTING_ADDING);
         $rc->execute_precheck();
         $rc->execute_plan();
         $rc->destroy();
