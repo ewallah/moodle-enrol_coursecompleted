@@ -32,7 +32,7 @@ $action = optional_param('action', '', PARAM_RAW);
 
 if ($instance = $DB->get_record('enrol', ['id' => $enrolid, 'enrol' => 'coursecompleted'], '*', MUST_EXIST)) {
     $course = get_course($instance->courseid);
-    $context = context_course::instance($course->id, MUST_EXIST);
+    $context = \context_course::instance($course->id, MUST_EXIST);
 }
 $canenrol = has_capability('enrol/coursecompleted:enrolpast', $context);
 $canunenrol = has_capability('enrol/coursecompleted:unenrol', $context);
@@ -57,7 +57,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('enrolusers', 'enrol'));
 
 if ($enrolid > 0) {
-    $br = html_writer::empty_tag('br');
+    $br = \html_writer::empty_tag('br');
     $condition = 'course = ? AND timecompleted > 0';
     if ($action === 'enrol') {
         require_sesskey();
@@ -76,23 +76,23 @@ if ($enrolid > 0) {
                 }
             }
             echo $br . $br . get_string('usersenrolled', 'enrol_coursecompleted', count($candidates));
-            $url = new moodle_url('/enrol/instances.php', ['id' => $course->id]);
+            $url = new \moodle_url('/enrol/instances.php', ['id' => $course->id]);
             echo $br . $br . $OUTPUT->continue_button($url);
         }
     } else {
-        $cancelurl = new moodle_url('/enrol/instances.php', ['id' => $instance->courseid]);
+        $cancelurl = new \moodle_url('/enrol/instances.php', ['id' => $instance->courseid]);
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$instance->customint1])) {
             $allusers = [];
             foreach ($candidates as $candidate) {
                 $user = \core_user::get_user($candidate);
                 if (!empty($user) && !$user->deleted) {
-                    $userurl = new moodle_url('/user/view.php', ['course' => 1, 'id' => $candidate]);
-                    $allusers[] = html_writer::link($userurl, fullname($user));
+                    $userurl = new \moodle_url('/user/view.php', ['course' => 1, 'id' => $candidate]);
+                    $allusers[] = \html_writer::link($userurl, fullname($user));
                 }
             }
-            $link = new moodle_url($PAGE->url, ['enrolid' => $enrolid, 'action' => 'enrol', 'sesskey' => sesskey()]);
-            echo $OUTPUT->confirm( implode(', ', $allusers),
-                new single_button($link, get_string('manual:enrol', 'enrol_manual')), $cancelurl , get_string('cancel'));
+            $link = new \moodle_url($PAGE->url, ['enrolid' => $enrolid, 'action' => 'enrol', 'sesskey' => sesskey()]);
+            echo $OUTPUT->confirm(implode(', ', $allusers), new \single_button($link, get_string('manual:enrol', 'enrol_manual')),
+                $cancelurl);
         } else {
             echo $OUTPUT->box(get_string('nousersfound')) . $br . $OUTPUT->single_button($cancelurl, get_string('cancel'));
         }
