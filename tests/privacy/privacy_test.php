@@ -24,8 +24,6 @@
  */
 namespace enrol_coursecompleted\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 use \core_privacy\tests\provider_testcase;
 
 /**

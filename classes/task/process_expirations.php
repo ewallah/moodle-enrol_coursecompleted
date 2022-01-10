@@ -25,8 +25,6 @@
 
 namespace enrol_coursecompleted\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Process expirations task.
  *

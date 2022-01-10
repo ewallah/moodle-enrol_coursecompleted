@@ -25,9 +25,6 @@
 
 namespace enrol_coursecompleted;
 
-defined('MOODLE_INTERNAL') || die();
-
-
 /**
  * coursecompleted enrolment manager tests.
  *

@@ -25,8 +25,6 @@
 
 namespace enrol_coursecompleted\task;
 
-defined('MOODLE_INTERNAL') || die();
-
 use stdClass;
 use moodle_url;
 use html_writer;

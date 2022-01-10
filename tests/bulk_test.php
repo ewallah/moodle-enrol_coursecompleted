@@ -25,8 +25,6 @@
 
 namespace enrol_coursecompleted;
 
-defined('MOODLE_INTERNAL') || die();
-
 use stdClass;
 
 /**
