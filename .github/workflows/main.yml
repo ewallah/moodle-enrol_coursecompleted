@@ -51,7 +51,8 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: mbstring, pgsql, mysqli, gd, xmlrpc, zip
           ini-values: max_input_vars=5000
-     
+          coverage: xdebug
+
       - name: composer
         run: |
            composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
@@ -103,7 +104,6 @@ jobs:
         run: moodle-plugin-ci --ansi mustache
 
       - name: phpunit
-        continue-on-error: true
         if: ${{ always() }}
         run: moodle-plugin-ci --ansi phpunit --coverage-text
 
