@@ -40,7 +40,7 @@ $string['customwelcome_help'] = 'A custom welcome message may be added as plain 
 The following placeholders may be included in the message:
 
 * Course name {$a->coursename}
-+ Completed course name {$a->completed}
+* Completed course name {$a->completed}
 * Link to user\'s profile page {$a->profileurl}
 * User email {$a->email}
 * User fullname {$a->fullname}';
