@@ -17,7 +17,7 @@ jobs:
         ports:
           - 5432:5432
       mariadb:
-        image: mariadb:10.5
+        image: mariadb:10
         env:
           MYSQL_USER: 'root'
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
