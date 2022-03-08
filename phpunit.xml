@@ -39,8 +39,12 @@
         </include>
         <exclude>
             <directory suffix="_test.php">.</directory>
+            <directory suffix=".php">lang</directory>
+            <directory suffix=".php">db</directory>
             <file>tests/coverage.php</file>
             <file>version.php</file>
+            <file>manage.php</file>
+            <file>settings.php</file>
         </exclude>
     </coverage>
 </phpunit>

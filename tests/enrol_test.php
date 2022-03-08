@@ -99,7 +99,7 @@ class enrol_test extends \advanced_testcase {
 
     /**
      * Test if user is enrolled after completing a course.
-     * @coversDefaultClass \enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted_observer
      */
     public function test_enrolled() {
         global $CFG, $PAGE;
@@ -206,7 +206,7 @@ class enrol_test extends \advanced_testcase {
 
     /**
      * Test if user is enrolled after completing a course.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_completion() {
         global $PAGE;
@@ -223,7 +223,7 @@ class enrol_test extends \advanced_testcase {
 
     /**
      * Test ue.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_ue() {
         global $PAGE;
@@ -247,6 +247,10 @@ class enrol_test extends \advanced_testcase {
                 $this->assertEquals('Edit enrolment', $actions[0]->get_title());
                 $this->assertEquals('Unenrol', $actions[1]->get_title());
                 $this->assertEquals('Course completion', $actions[2]->get_title());
+                $this->assertTrue($this->plugin->has_bulk_operations($manager));
+                $operations = $this->plugin->get_bulk_operations($manager, null);
+                $this->assertCount(2, $operations);
+
             }
         }
     }
@@ -265,8 +269,8 @@ class enrol_test extends \advanced_testcase {
 
     /**
      * Test library.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
-     * @coversDefaultClass \enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_observer
      */
     public function test_library() {
         global $DB;
@@ -359,7 +363,7 @@ class enrol_test extends \advanced_testcase {
 
     /**
      * Test access.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_access() {
         global $DB;
@@ -389,7 +393,7 @@ class enrol_test extends \advanced_testcase {
 
     /**
      * Test backup.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_backup() {
         global $CFG, $DB, $PAGE;

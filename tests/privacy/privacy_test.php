@@ -33,11 +33,13 @@ use \core_privacy\tests\provider_testcase;
  * @copyright 2017 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \enrol_coursecompleted\privacy\provider
  */
 class privacy_test extends provider_testcase {
 
     /**
      * Test returning metadata.
+     * @covers \enrol_coursecompleted\privacy\provider
      */
     public function test_get_metadata() {
         $this->resetAfterTest(true);

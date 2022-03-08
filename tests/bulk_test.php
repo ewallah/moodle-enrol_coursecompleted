@@ -34,6 +34,7 @@ use stdClass;
  * @copyright 2017 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \enrol_coursecompleted
  */
 class bulk_test extends \advanced_testcase {
 
@@ -59,8 +60,8 @@ class bulk_test extends \advanced_testcase {
 
     /**
      * Test bulk deleted.
-     * @coversDefaultClass enrol_coursecompleted_bulkdelete
-     * @coversDefaultClass \enrol_coursecompleted\form\bulkdelete
+     * @covers \enrol_coursecompleted_bulkdelete
+     * @covers \enrol_coursecompleted\form\bulkdelete
      */
     public function test_bulkdeleted() {
         global $CFG, $DB;
@@ -95,8 +96,8 @@ class bulk_test extends \advanced_testcase {
 
     /**
      * Test bulk edit.
-     * @coversDefaultClass enrol_coursecompleted_bulkedit
-     * @coversDefaultClass \enrol_coursecompleted\form\bulkedit
+     * @covers \enrol_coursecompleted_bulkedit
+     * @covers \enrol_coursecompleted\form\bulkedit
      */
     public function test_bulkedit() {
         global $CFG, $DB;

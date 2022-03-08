@@ -57,7 +57,7 @@ class other_test extends \advanced_testcase {
 
     /**
      * Basic test.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_basics() {
         $this->assertTrue(enrol_is_enabled('coursecompleted'));
@@ -69,7 +69,7 @@ class other_test extends \advanced_testcase {
 
     /**
      * Test other files.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_files() {
         global $CFG;
@@ -80,7 +80,7 @@ class other_test extends \advanced_testcase {
 
     /**
      * Test invalid instance.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_invalid_instance() {
         $plugin = enrol_get_plugin('coursecompleted');
@@ -93,7 +93,7 @@ class other_test extends \advanced_testcase {
 
     /**
      * Test static enrol from past.
-     * @coversDefaultClass \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_static_past() {
         global $CFG, $DB;
@@ -119,7 +119,7 @@ class other_test extends \advanced_testcase {
 
     /**
      * Test invalid role.
-     * @coversDefaultClass \enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted_observer
      */
     public function test_invalid_role() {
         global $DB;
@@ -149,7 +149,8 @@ class other_test extends \advanced_testcase {
 
     /**
      * Test group member.
-     * @coversDefaultClass \enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_groups_child() {
         global $DB;
@@ -195,7 +196,7 @@ class other_test extends \advanced_testcase {
 
     /**
      * Test expiration task.
-     * @coversDefaultClass \enrol_coursecompleted\task\process_expirations
+     * @covers \enrol_coursecompleted\task\process_expirations
      */
     public function test_task() {
         $task = new \enrol_coursecompleted\task\process_expirations;
@@ -209,7 +210,7 @@ class other_test extends \advanced_testcase {
 
     /**
      * Test adhoc sending of welcome messages.
-     * @coversDefaultClass enrol_coursecompleted\task\send_welcome
+     * @covers \enrol_coursecompleted\task\send_welcome
      */
     public function  test_adhoc_email_welcome_message() {
         global $DB;

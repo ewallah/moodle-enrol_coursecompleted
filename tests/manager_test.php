@@ -74,6 +74,7 @@ class manager_test extends \advanced_testcase {
 
     /**
      * Test missing enrolid param.
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_empty_param() {
         global $CFG;
@@ -85,6 +86,7 @@ class manager_test extends \advanced_testcase {
 
     /**
      * Test manager without permission.
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_wrong_permission() {
         global $CFG;
@@ -98,6 +100,7 @@ class manager_test extends \advanced_testcase {
 
     /**
      * Test manager wrong permission.
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_wrong_permission2() {
         global $CFG, $DB;
@@ -120,6 +123,7 @@ class manager_test extends \advanced_testcase {
 
     /**
      * Test manager bare.
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_bare() {
         global $CFG;
@@ -133,6 +137,7 @@ class manager_test extends \advanced_testcase {
 
     /**
      * Test manager oldusers.
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_oldusers() {
         global $CFG;
@@ -154,6 +159,7 @@ class manager_test extends \advanced_testcase {
 
     /**
      * Test submit manager oldusers.
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_submit() {
         global $CFG;
@@ -178,6 +184,7 @@ class manager_test extends \advanced_testcase {
 
     /**
      * Tests settings.
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_enrol_courescompleted_settings() {
         global $ADMIN, $CFG;
