@@ -29,8 +29,7 @@ Feature: Duration Enrolment on course completion
 
   @javascript
   Scenario: Course completion with duration set
-    When I am on "Course 2" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
+    Given I am on the "Course 2" "enrolment methods" page
     And I select "Course completed enrolment" from the "Add method" singleselect
     And I set the following fields to these values:
        | Course                  | Course 1 |
@@ -41,7 +40,8 @@ Feature: Duration Enrolment on course completion
     And I am on "Course 2" course homepage
     And I log out
     And I am on the "C1" "Course" page logged in as "teacher1"
-    And I navigate to "Reports > Course completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Course completion" from the "Report type" singleselect
     And I follow "Click to mark user complete"
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"

@@ -40,14 +40,15 @@ Feature: Groups kept during enrolment on course completion
     And I log out
 
     When I am on the "C2" "Course" page logged in as "teacher1"
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 2" "enrolment methods" page
     And I select "Course completed enrolment" from the "Add method" singleselect
     When I set the following fields to these values:
        | Course | Course 1 |
     And I press "Add method"
 
     When I am on "Course 1" course homepage
-    And I navigate to "Reports > Course completion" in current page administration
+    And I navigate to "Reports" in current page administration
+    And I select "Course completion" from the "Report type" singleselect
     And I follow "Click to mark user complete"
     And I run the scheduled task "core\task\completion_regular_task"
     And I wait "1" seconds

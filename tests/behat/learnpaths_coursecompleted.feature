@@ -23,20 +23,17 @@ Feature: Learnpaths with course completion enrolment
 
   @javascript
   Scenario: Learning paths with course completion enrolments
-    When I am on "Course 2" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
+    Given I am on the "Course 2" "enrolment methods" page
     And I select "Course completed enrolment" from the "Add method" singleselect
     And I set the following fields to these values:
        | Course | Course 1 |
     And I press "Add method"
-    And I am on "Course 3" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 3" "enrolment methods" page
     And I select "Course completed enrolment" from the "Add method" singleselect
     And I set the following fields to these values:
        | Course | Course 2 |
     And I press "Add method"
-    And I am on "Course 4" course homepage
-    And I navigate to "Users > Enrolment methods" in current page administration
+    And I am on the "Course 4" "enrolment methods" page
     And I select "Course completed enrolment" from the "Add method" singleselect
     And I set the following fields to these values:
        | Course | Course 3 |
