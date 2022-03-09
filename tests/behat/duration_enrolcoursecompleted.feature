@@ -56,5 +56,6 @@ Feature: Duration Enrolment on course completion
     And I navigate to course participants
     Then I should see "Not current"
     And I log out
-    And I am on the "C2" "Course" page logged in as "user1"
+    And I log in as "user1"
+    And I am on the "C2" "Course" page
     Then I should see "You will be enrolled in this course when you complete course"
