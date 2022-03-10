@@ -119,8 +119,8 @@ Feature: Enrolment on course completion
     Then I should see "2030"
     And I log out
     And I log in as "user1"
-    When I am on the "C2" "Course" page
-    And I wait "1" seconds
+    And I am on course index
+    And I follow "Course 2"
     Then I should see "You will be enrolled in this course when"
 
   Scenario: Manage enrolled users

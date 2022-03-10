@@ -57,7 +57,6 @@ Feature: Duration Enrolment on course completion
     Then I should see "Not current"
     And I log out
     And I log in as "user1"
-    And I am on the "C2" "Course" page
-    And I wait to be redirected
-    And I wait "1" seconds
+    And I am on course index
+    And I follow "Course 2"
     Then I should see "You will be enrolled in this course when you complete course"
