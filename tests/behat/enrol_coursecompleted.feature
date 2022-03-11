@@ -118,10 +118,10 @@ Feature: Enrolment on course completion
     When I click on "//a[@data-action='editenrolment']" "xpath_element" in the "user1" "table_row"
     Then I should see "2030"
     And I log out
-    And I log in as "user1"
+    And I log in as "guest"
     And I am on course index
     And I follow "Course 2"
-    Then I should see "You will be enrolled in this course when"
+    Then I should see "You will be enrolled in this course when you complete course"
 
   Scenario: Manage enrolled users
     When I set the following fields to these values:
