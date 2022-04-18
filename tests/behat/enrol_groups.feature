@@ -48,7 +48,7 @@ Feature: Groups kept during enrolment on course completion
 
     When I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
-    And I select "Course completion" from the "Report type" singleselect
+    And I click on "Course completion" "link" in the "region-main" "region"
     And I follow "Click to mark user complete"
     And I run the scheduled task "core\task\completion_regular_task"
     And I wait "1" seconds
