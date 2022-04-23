@@ -28,8 +28,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        moodle-branch: ['master']
-        php: ['8.0']
+        moodle-branch: ['MOODLE_400_STABLE', 'master']
+        php: ['8.0', '7.4']
         database: ['mariadb', 'pgsql']
 
     steps:
@@ -98,7 +98,7 @@ jobs:
 
       - name: phpunit
         if: ${{ always() }}
-        run: moodle-plugin-ci --ansi phpunit --coverage-text
+        run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
 
       - name: firefox
         if: ${{ always() }}
@@ -115,3 +115,20 @@ jobs:
       - name: chrome classic
         if: ${{ always() }}
         run: moodle-plugin-ci --ansi behat --suite classic --profile=chrome
+
+      - name: admin bookmarks
+        if: ${{ always() }}
+        run: php admin/tool/behat/cli/run.php --profile=chrome --tags=@block_admin_bookmarks
+        working-directory: moodle
+
+      - name: privacy
+        if: ${{ always() }}
+        run: vendor/bin/phpunit --colors --no-coverage --testsuite tool_dataprivacy_testsuite,tool_policy_testsuite,core_privacy_testsuite
+        working-directory: moodle
+
+      - name: coveralls
+        env:
+          COVERALLS_RUN_LOCALLY: true
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: moodle-plugin-ci --ansi coveralls-upload
+
