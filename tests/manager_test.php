@@ -124,6 +124,8 @@ class manager_test extends \advanced_testcase {
     /**
      * Test manager bare.
      * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted\form\bulkedit
+     * @covers \enrol_coursecompleted\form\bulkdelete
      */
     public function test_manager_bare() {
         global $CFG;
