@@ -28,5 +28,5 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->requires = 2022041900;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'enrol_coursecompleted';
-$plugin->release = 'v4.0.0';
-$plugin->version = 2022042300;
+$plugin->release = 'v4.0.1';
+$plugin->version = 2022072400;
