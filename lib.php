@@ -295,7 +295,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
         $mform->setDefault('status', $this->get_config('status'));
 
-        $role = ($instance and isset($instance->roleid)) ? $instance->roleid : $this->get_config('roleid');
+        $role = ($instance && isset($instance->roleid)) ? $instance->roleid : $this->get_config('roleid');
         $roles = get_default_enrol_roles($context, $role);
         $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_paypal'), $roles);
         $mform->setDefault('roleid', $this->get_config('roleid'));
@@ -305,7 +305,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->setDefault('enrolperiod', $this->get_config('enrolperiod'));
         $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_paypal');
 
-        $start = ($instance and isset($instance->customint1)) ? get_course($instance->customint1)->startdate : time();
+        $start = ($instance && isset($instance->customint1)) ? get_course($instance->customint1)->startdate : time();
         $arr = ['optional' => true, 'defaulttime' => $start];
         $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_paypal'), $arr);
         $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_paypal');
@@ -371,8 +371,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             if (!empty($data['enrolenddate']) && $data['enrolenddate'] < $data['enrolstartdate']) {
                 $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
             }
-            if (empty($data['customint1']) or
-                $data['customint1'] == 1 or
+            if (empty($data['customint1']) ||
+                $data['customint1'] == 1 ||
                 !$DB->record_exists('course', ['id' => $data['customint1']])) {
                 $errors['customint'] = get_string('error_nonexistingcourse', 'tool_generator');
             }

@@ -37,7 +37,7 @@ if ($instance = $DB->get_record('enrol', ['id' => $enrolid, 'enrol' => 'courseco
 $canenrol = has_capability('enrol/coursecompleted:enrolpast', $context);
 $canunenrol = has_capability('enrol/coursecompleted:unenrol', $context);
 
-if (!$canenrol and !$canunenrol) {
+if (!$canenrol && !$canunenrol) {
     // No need to invent new error strings here...
     require_capability('enrol/manual:enrol', $context);
 }
