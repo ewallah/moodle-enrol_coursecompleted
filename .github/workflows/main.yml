@@ -113,8 +113,9 @@ jobs:
         env:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          github-token: ${{ secrets.github_token }}'
         uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
 
       - name: firefox
         if: ${{ always() }}
