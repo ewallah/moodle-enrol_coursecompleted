@@ -43,7 +43,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, pgsql, mysqli, gd, xmlrpc, zip
-          ini-values: max_input_vars=5000, opcache.enable_cli=1, opcache.jit=tracing, opcache.jit_buffer_size=64M
+          ini-values: max_input_vars=5000, opcache.enable_cli=1
           coverage: xdebug
 
       - name: composer
@@ -58,7 +58,12 @@ jobs:
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-      
+
+      - name: npm security
+        if: ${{ always() }}
+        run: npm audit fix || true
+        working-directory: moodle
+
       - name: phplint
         if: ${{ always() }}
         run: moodle-plugin-ci --ansi phplint
