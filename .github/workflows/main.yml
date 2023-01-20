@@ -59,6 +59,11 @@ jobs:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
+      - name: npm coveralls
+        if: ${{ always() }}
+        run: npm install coveralls --save-dev
+        working-directory: moodle
+
       - name: npm security
         if: ${{ always() }}
         run: npm audit fix || true
@@ -108,7 +113,7 @@ jobs:
         env:
           COVERALLS_RUN_LOCALLY: true
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: moodle-plugin-ci --ansi coveralls-upload
+        uses: coverallsapp/github-action@master
 
       - name: firefox
         if: ${{ always() }}
