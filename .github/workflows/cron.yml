@@ -42,7 +42,6 @@ jobs:
            echo $(cd ci/bin; pwd) >> $GITHUB_PATH
            echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
            sudo locale-gen en_AU.UTF-8
-           sed -i 's/phpdbg -d memory_limit=-1 -qrr//g' ci/src/Command/PHPUnitCommand.php
            sudo systemctl start mysql.service
            echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 

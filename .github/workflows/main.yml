@@ -43,7 +43,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, pgsql, mysqli, gd, xmlrpc, zip
-          ini-values: max_input_vars=5000
+          ini-values: max_input_vars=5000, opcache.enable_cli=1, opcache.jit=tracing, opcache.jit_buffer_size=64M
           coverage: xdebug
 
       - name: composer
@@ -52,7 +52,6 @@ jobs:
            echo $(cd ci/bin; pwd) >> $GITHUB_PATH
            echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
            sudo locale-gen en_AU.UTF-8
-           sed -i 's/phpdbg -d memory_limit=-1 -qrr//g' ci/src/Command/PHPUnitCommand.php
 
       - name: install Moodle
         run: moodle-plugin-ci --ansi install --db-host=127.0.0.1 --plugin this-plugin
