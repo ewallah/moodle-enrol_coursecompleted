@@ -59,16 +59,6 @@ jobs:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
-      - name: npm coveralls
-        if: ${{ always() }}
-        run: npm install coveralls --save-dev
-        working-directory: moodle
-
-      - name: npm security
-        if: ${{ always() }}
-        run: npm audit fix || true
-        working-directory: moodle
-
       - name: phplint
         if: ${{ always() }}
         run: moodle-plugin-ci --ansi phplint
@@ -107,16 +97,7 @@ jobs:
 
       - name: phpunit
         if: ${{ always() }}
-        run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
-
-      - name: coveralls
-        env:
-          COVERALLS_RUN_LOCALLY: true
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          path-to-lcov: coverage.xml
+        run: moodle-plugin-ci --ansi phpunit --coverage-text
 
       - name: firefox
         if: ${{ always() }}
