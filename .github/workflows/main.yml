@@ -43,7 +43,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: mbstring, pgsql, mysqli, gd, xmlrpc, zip
-          ini-values: max_input_vars=5000, opcache.enable_cli=1
+          ini-values: max_input_vars=5000
           coverage: xdebug
 
       - name: composer
