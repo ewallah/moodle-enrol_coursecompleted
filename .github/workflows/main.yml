@@ -114,3 +114,9 @@ jobs:
       - name: chrome classic
         if: ${{ always() }}
         run: moodle-plugin-ci --ansi behat --suite classic --profile=chrome
+
+      - name: coveralls
+        if: ${{ always() }}
+        run: moodle-plugin-ci coveralls-upload
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
