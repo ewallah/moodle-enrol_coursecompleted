@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template enrol_coursecompleted/learnpath
+
+    Example context (json):
+    {
+        "coursetitle": "Course 1",
+        "coureurl": "http:/example.com",
+        "hasdata": true,
+        "items": [
+            {
+                "first": true,
+                "title": "Course title",
+                "href": "http://example.com/",
+                "seqnumber": "3",
+                "course": false
+            },
+            {
+                "first": true,
+                "title": "Course title",
+                "href": "http://example.com/",
+                "seqnumber": "3",
+                "course": false
+            }
+        ]
+    }
+}}
+
+<p>
+{{#str}} willbeenrolled, enrol_coursecompleted, <a href="{{courseurl}}" title="{{coursetitle}}">{{coursetitle}}</a>{{/str}}
+{{#hasdata}}
+    <span class="float-right">
+    {{#items}}
+        {{^first}}
+        <span class="fa-stack fa-2x">
+            <span class="fa fa-arrow-right fa-stack-1x text-dark"></span>
+        </span>
+        {{/first}}
+        <span class="fa-stack fa-2x">
+            {{#course}}
+                <span class="fa fa-circle fa-stack-2x text-dark"></span>
+                <strong class="fa-stack-1x text-light">{{seqnumber}}</strong>
+            {{/course}}
+            {{^course}}
+                <a href="{{href}}" title="{{{title}}}">
+                    <span class="fa fa-circle-o fa-stack-2x"></span>
+                    <strong class="fa-stack-1x">{{seqnumber}}</strong>
+                </a>
+            {{/course}}
+        </span>
+    {{/items}}
+    </span>
+{{/hasdata}}
+</p>

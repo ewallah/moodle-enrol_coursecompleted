@@ -27,7 +27,6 @@ namespace enrol_coursecompleted\task;
 
 use stdClass;
 use moodle_url;
-use html_writer;
 use core_user;
 
 /**

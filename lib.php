@@ -88,34 +88,32 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        global $DB, $OUTPUT;
-        $str = '';
+        global $OUTPUT;
+        $data = [];
         if ($this->get_config('svglearnpath')) {
             $items = $this->build_course_path($instance);
-            $arr = [];
             $i = 1;
             foreach ($items as $item) {
-                if ($item == $instance->courseid) {
-                    $str = html_writer::span('', 'fa fa-circle fa-stack-2x text-dark');
-                    $str .= html_writer::tag('strong', $i, ['class' => 'fa-stack-1x text-light']);
-                } else {
-                    $str = html_writer::span('', 'fa fa-circle-o fa-stack-2x');
-                    $str .= html_writer::tag('strong', $i, ['class' => 'fa-stack-1x']);
-                    $str = $this->build_courselink($item, $str);
-                }
-                $arr[] = html_writer::span($str, 'fa-stack fa-2x');
+                $course = get_course($item);
+                $context = context_course::instance($item);
+                $data[] = [
+                    'first' => ($i == 1),
+                    'course' => $item == $instance->courseid,
+                    'title' => format_string($course->fullname, true, ['context' => $context]),
+                    'href' => new moodle_url('/enrol/index.php', ['id' => $item]),
+                    'seqnumber' => $i];
                 $i++;
             }
-            $arrow = html_writer::span(html_writer::span('', 'fa fa-arrow-right fa-stack-1x text-dark'), 'fa-stack fa-2x');
-            $str = implode($arrow, $arr);
         }
-        if ($fullname = $DB->get_field('course', 'fullname', ['id' => $instance->customint1])) {
-            $context = context_course::instance($instance->customint1);
-            $name = format_string($fullname, true, ['context' => $context]);
-            $link = html_writer::link(new moodle_url('/course/view.php', ['id' => $instance->customint1]), $name);
-            $str = $OUTPUT->box(get_string('willbeenrolled', 'enrol_coursecompleted', $link . '<br/>' . $str));
-        }
-        return $str;
+        $course = get_course($instance->customint1);
+        $context = context_course::instance($instance->customint1);
+        $rdata = [
+            'coursetitle' => format_string($course->fullname, true, ['context' => $context]),
+            'coureurl' => new moodle_url('/enrol/index.php', ['id' => $instance->customint1]),
+            'hasdata' => count($data) > 1,
+            'items' => $data];
+        $str = $OUTPUT->render_from_template('enrol_coursecompleted/learnpath', $rdata);
+        return $OUTPUT->box($str);
     }
 
     /**
@@ -430,23 +428,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             }
         }
         return $arr;
-    }
-
-    /**
-     * Build course link
-     *
-     * @param int $id Course id
-     * @param string $svg svg image
-     * @return string course name
-     */
-    private function build_courselink($id, $svg) {
-        global $DB;
-        $str = '';
-        if ($fullname = $DB->get_field('course', 'fullname', ['id' => $id])) {
-            $name = format_string($fullname, true, ['context' => context_course::instance($id)]);
-            $str = html_writer::link(new moodle_url('/course/view.php', ['id' => $id]), $svg, ['title' => $name]);
-        }
-        return $str;
     }
 
     /**

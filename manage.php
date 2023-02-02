@@ -57,7 +57,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('enrolusers', 'enrol'));
 
 if ($enrolid > 0) {
-    $br = \html_writer::empty_tag('br');
+    $br = '<br>';
     $condition = 'course = ? AND timecompleted > 0';
     if ($action === 'enrol') {
         require_sesskey();
@@ -86,8 +86,7 @@ if ($enrolid > 0) {
             foreach ($candidates as $candidate) {
                 $user = \core_user::get_user($candidate);
                 if (!empty($user) && !$user->deleted) {
-                    $userurl = new \moodle_url('/user/view.php', ['course' => 1, 'id' => $candidate]);
-                    $allusers[] = \html_writer::link($userurl, fullname($user));
+                    $allusers[] = fullname($user);
                 }
             }
             $link = new \moodle_url($PAGE->url, ['enrolid' => $enrolid, 'action' => 'enrol', 'sesskey' => sesskey()]);
