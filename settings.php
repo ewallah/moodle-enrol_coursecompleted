@@ -37,9 +37,9 @@ if ($ADMIN->fulltree) {
         get_string('defaultenrol', 'enrol'), get_string('defaultenrol_desc', 'enrol'), 0));
 
     if (!during_initial_install()) {
-        $options = [ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol'),
+        $options = [ENROL_EXT_REMOVED_KEEP => get_string('extremovedkeep', 'enrol'),
                     ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
-                    ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol')];
+                    ENROL_EXT_REMOVED_UNENROL => get_string('extremovedunenrol', 'enrol')];
         $settings->add(new admin_setting_configselect('enrol_coursecompleted/expiredaction',
                                                        get_string('expiredaction', 'enrol_paypal'),
                                                        get_string('expiredaction_help', 'enrol_paypal'),

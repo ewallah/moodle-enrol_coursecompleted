@@ -40,30 +40,31 @@
         ]
     }
 }}
-
-<p>
-{{#str}} willbeenrolled, enrol_coursecompleted, <a href="{{courseurl}}" title="{{coursetitle}}">{{coursetitle}}</a>{{/str}}
-{{#hasdata}}
-    <span class="float-right">
-    {{#items}}
-        {{^first}}
-        <span class="fa-stack fa-2x">
-            <span class="fa fa-arrow-right fa-stack-1x text-dark"></span>
+<div>
+    <p>
+    {{#str}} willbeenrolled, enrol_coursecompleted, <a href="{{courseurl}}" title="{{coursetitle}}">{{coursetitle}}</a>{{/str}}
+    {{#hasdata}}
+        <span class="float-right">
+        {{#items}}
+            {{^first}}
+            <span class="fa-stack fa-2x">
+                <span class="fa fa-arrow-right fa-stack-1x text-dark"></span>
+            </span>
+            {{/first}}
+            <span class="fa-stack fa-2x">
+                {{#course}}
+                    <span class="fa fa-circle fa-stack-2x text-dark"></span>
+                    <strong class="fa-stack-1x text-light">{{seqnumber}}</strong>
+                {{/course}}
+                {{^course}}
+                    <a href="{{href}}" title="{{{title}}}">
+                        <span class="fa fa-circle-o fa-stack-2x"></span>
+                        <strong class="fa-stack-1x">{{seqnumber}}</strong>
+                    </a>
+                {{/course}}
+            </span>
+        {{/items}}
         </span>
-        {{/first}}
-        <span class="fa-stack fa-2x">
-            {{#course}}
-                <span class="fa fa-circle fa-stack-2x text-dark"></span>
-                <strong class="fa-stack-1x text-light">{{seqnumber}}</strong>
-            {{/course}}
-            {{^course}}
-                <a href="{{href}}" title="{{{title}}}">
-                    <span class="fa fa-circle-o fa-stack-2x"></span>
-                    <strong class="fa-stack-1x">{{seqnumber}}</strong>
-                </a>
-            {{/course}}
-        </span>
-    {{/items}}
-    </span>
-{{/hasdata}}
-</p>
+    {{/hasdata}}
+    </p>
+</div>
