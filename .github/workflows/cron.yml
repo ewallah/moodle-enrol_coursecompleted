@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         moodle-branch: ['master']
-        php: ['8.0']
+        php: ['8.1']
         database: ['mysqli']
 
     steps:
