@@ -31,10 +31,12 @@ jobs:
         moodle-branch: ['MOODLE_400_STABLE', 'MOODLE_401_STABLE', 'MOODLE_402_STABLE', 'master']
         php: ['8.0']
         database: ['mariadb', 'pgsql']
+        composer: ['^3']
         include:
           - php: '8.1'
             moodle-branch: 'MOODLE_402_STABLE'
             database: pgsql
+            composer: ['dev-master']
 
     steps:
       - name: checkout plugin
@@ -52,7 +54,7 @@ jobs:
 
       - name: composer
         run: |
-           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ${{ matrix.composer }}
            echo $(cd ci/bin; pwd) >> $GITHUB_PATH
            echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
            sudo locale-gen en_AU.UTF-8

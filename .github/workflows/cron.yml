@@ -30,20 +30,13 @@ jobs:
           ini-values: max_input_vars=5000
           coverage: xdebug
 
-      - name: cache composer
-        uses: actions/cache@v2
-        with:
-          path: ~/.composer/cache/
-          key: composer-cache
-
       - name: composer
         run: |
-           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci dev-master
            echo $(cd ci/bin; pwd) >> $GITHUB_PATH
            echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
            sudo locale-gen en_AU.UTF-8
            sudo systemctl start mysql.service
-           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 
       - name: install Moodle
         run: moodle-plugin-ci install --db-user=root --db-pass=root --db-host=127.0.0.1 --plugin this-plugin
