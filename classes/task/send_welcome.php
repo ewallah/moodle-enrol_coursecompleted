@@ -59,7 +59,7 @@ class send_welcome extends \core\task\adhoc_task {
                     $custom = $DB->get_field('enrol', 'customtext1', ['id' => $data->enrolid]);
                     $key = ['{$a->coursename}',  '{$a->completed}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
                     $value = [$a->coursename, $a->completed, $a->profileurl, fullname($user), $user->email];
-                    if (trim($custom) != '') {
+                    if ($custom != '') {
                         $message = str_replace($key, $value, $custom);
                     } else {
                         $message = get_string('welcometocourse', 'enrol_coursecompleted', $a);
