@@ -37,6 +37,10 @@ jobs:
             moodle-branch: 'MOODLE_402_STABLE'
             database: 'pgsql'
             composer: 'dev-master'
+          - php: '7.4'
+            moodle-branch: 'MOODLE_400_STABLE'
+            database: 'pgsql'
+            composer: '^3'
 
     steps:
       - name: checkout plugin
