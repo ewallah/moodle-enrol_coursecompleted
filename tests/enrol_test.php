@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/enrol/locallib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
@@ -69,6 +70,7 @@ class enrol_test extends \advanced_testcase {
      */
     protected function setUp():void {
         global $CFG, $DB;
+
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
         $enabled = enrol_get_plugins(true);
