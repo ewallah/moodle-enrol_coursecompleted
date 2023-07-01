@@ -71,5 +71,4 @@ $string['welcometocourse'] = 'Welcome to {$a->coursename}!
 Congratulations!
 
 After successfully completing {$a->completed}, you are now automatically enrolled in the following course {$a->coursename}.';
-$string['willbeenrolled'] = 'You will be enrolled in this course when you complete course {$a}';
-$string['coursecompletedprereqmsg'] = 'Choose and complete required course(s) first.<br/>Click on the circles to choose a pre-requisite course.<br/>';
+$string['willbeenrolled'] = 'You will be enrolled in this course when you complete course {$a}<br/>Choose and complete required course(s) first.<br/>Click on the circles to choose a pre-requisite course.';
