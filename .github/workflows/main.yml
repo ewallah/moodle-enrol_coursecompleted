@@ -103,7 +103,7 @@ jobs:
         run: moodle-plugin-ci --ansi savepoints
 
       - name: grunt
-        if: ${{ always() }}
+        if: ${{ matrix.moodle-branch == 'master' }}
         run: moodle-plugin-ci --ansi grunt
 
       - name: mustache
@@ -131,7 +131,7 @@ jobs:
         run: moodle-plugin-ci --ansi behat --suite classic --profile=chrome
 
       - name: coveralls
-        if: ${{ always() }}
+        if: ${{ matrix.moodle-branch == 'master' }}
         run: moodle-plugin-ci coveralls-upload
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
