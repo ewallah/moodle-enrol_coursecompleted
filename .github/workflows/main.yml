@@ -31,11 +31,11 @@ jobs:
       fail-fast: false
       matrix:
         moodle-branch: ['MOODLE_400_STABLE', 'MOODLE_401_STABLE', 'MOODLE_402_STABLE', 'master']
-        php: ['8.0']
+        php: ['8.1']
         database: ['mariadb', 'pgsql']
         include:
-          - php: '8.1'
-            moodle-branch: 'MOODLE_402_STABLE'
+          - php: '8.2'
+            moodle-branch: 'master'
             database: 'pgsql'
           - php: '7.4'
             moodle-branch: 'MOODLE_400_STABLE'
@@ -115,6 +115,17 @@ jobs:
         if: ${{ always() }}
         run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
 
+      - name: privacy
+        if: ${{ always() }}
+        run: vendor/bin/phpunit --colors --no-coverage --testsuite tool_dataprivacy_testsuite,tool_policy_testsuite,core_privacy_testsuite
+        working-directory: moodle
+
+      - name: coveralls
+        if: ${{ always() }}
+        run: moodle-plugin-ci coveralls-upload
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: firefox
         if: ${{ always() }}
         run: moodle-plugin-ci --ansi behat
@@ -125,14 +136,18 @@ jobs:
 
       - name: firefox classic
         if: ${{ always() }}
-        run: moodle-plugin-ci --ansi behat --suite classic
+        run: moodle-plugin-ci --ansi behat --suite="classic"
       
       - name: chrome classic
         if: ${{ always() }}
-        run: moodle-plugin-ci --ansi behat --suite classic --profile=chrome
+        run: moodle-plugin-ci --ansi behat --suite="classic" --profile chrome
 
-      - name: coveralls
-        if: ${{ matrix.moodle-branch == 'master' }}
-        run: moodle-plugin-ci coveralls-upload
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: admin bookmarks
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi behat --auto-rerun=0 --profile chrome blocks/admin_bookmarks
+        working-directory: moodle
+
+      - name: admin xmldb
+        if: ${{ always() }}
+        run: moodle-plugin-ci --ansi behat --auto-rerun=0 --profile chrome admin/tool/xmldb
+        working-directory: moodle
