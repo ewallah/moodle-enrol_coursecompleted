@@ -404,7 +404,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $level++;
             $params = ['enrol' => 'coursecompleted', 'courseid' => $id];
             if ($parent = $DB->get_field('enrol', 'customint1', $params, IGNORE_MULTIPLE)) {
-                $arr = array_merge($arr, $this->search_parents($parent, $level));
+                $arr = array_merge($this->search_parents($parent, $level), $arr);
             }
         }
         return $arr;
