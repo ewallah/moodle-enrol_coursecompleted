@@ -109,7 +109,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $context = context_course::instance($instance->customint1);
         $rdata = [
             'coursetitle' => format_string($course->fullname, true, ['context' => $context]),
-            'coureurl' => new moodle_url('/course/view.php', ['id' => $instance->customint1]),
+            'courseurl' => new moodle_url('/course/view.php', ['id' => $instance->customint1]),
             'hasdata' => count($data) > 1,
             'items' => $data];
         $str = $OUTPUT->render_from_template('enrol_coursecompleted/learnpath', $rdata);
