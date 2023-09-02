@@ -52,7 +52,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           ini-values: max_input_vars=5000
-          tools: composer:v2.6
+          tools: composer:v2.5
           coverage: pcov
 
       - name: npm cache
