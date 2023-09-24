@@ -117,12 +117,15 @@ class enrol_test extends \advanced_testcase {
         $this->assertCount(0, $manager2->get_user_enrolments($this->student->id));
         $this->assertTrue($this->plugin->has_bulk_operations($manager2));
         $this->assertCount(2, $this->plugin->get_bulk_operations($manager2));
-        $compevent = \core\event\course_completed::create([
-            'objectid' => $this->course2->id,
-            'relateduserid' => $this->student->id,
-            'context' => \context_course::instance($this->course1->id),
-            'courseid' => $this->course1->id,
-            'other' => ['relateduserid' => $this->student->id]]);
+        $compevent = \core\event\course_completed::create(
+            [
+                'objectid' => $this->course2->id,
+                'relateduserid' => $this->student->id,
+                'context' => \context_course::instance($this->course1->id),
+                'courseid' => $this->course1->id,
+                'other' => ['relateduserid' => $this->student->id],
+            ]
+        );
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
         $this->assertTrue(is_enrolled(\context_course::instance($this->course1->id), $this->student->id));
@@ -165,12 +168,15 @@ class enrol_test extends \advanced_testcase {
         $this->assertCount(0, $manager2->get_user_enrolments($this->student->id));
         $manager3 = new \course_enrolment_manager($PAGE, $course3);
         $this->assertCount(1, $manager3->get_user_enrolments($this->student->id));
-        $compevent = \core\event\course_completed::create([
-            'objectid' => $course1->id,
-            'relateduserid' => $this->student->id,
-            'context' => \context_course::instance($course3->id),
-            'courseid' => $course3->id,
-            'other' => ['relateduserid' => $this->student->id]]);
+        $compevent = \core\event\course_completed::create(
+            [
+                'objectid' => $course1->id,
+                'relateduserid' => $this->student->id,
+                'context' => \context_course::instance($course3->id),
+                'courseid' => $course3->id,
+                'other' => ['relateduserid' => $this->student->id],
+            ]
+        );
         mark_user_dirty($this->student->id);
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
@@ -318,12 +324,15 @@ class enrol_test extends \advanced_testcase {
         $this->assertfalse($this->plugin->can_hide_show_instance($this->instance));
         $this->assertfalse($this->plugin->can_delete_instance($this->instance));
         $this->assertStringContainsString('Test course 1', $this->plugin->enrol_page_hook($this->instance));
-        $compevent = \core\event\course_completed::create([
-            'objectid' => $this->course2->id,
-            'relateduserid' => $this->student->id,
-            'context' => \context_course::instance($this->course2->id),
-            'courseid' => $this->course2->id,
-            'other' => ['relateduserid' => $this->student->id]]);
+        $compevent = \core\event\course_completed::create(
+            [
+                'objectid' => $this->course2->id,
+                'relateduserid' => $this->student->id,
+                'context' => \context_course::instance($this->course2->id),
+                'courseid' => $this->course2->id,
+                'other' => ['relateduserid' => $this->student->id],
+            ]
+        );
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
         $tmp = $this->plugin->enrol_page_hook($this->instance);

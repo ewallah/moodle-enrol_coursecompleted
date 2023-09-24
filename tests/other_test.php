@@ -136,12 +136,15 @@ class other_test extends \advanced_testcase {
         $manualplugin = enrol_get_plugin('manual');
         $instance = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
         $manualplugin->enrol_user($instance, $studentid, $studentrole->id);
-        $compevent = \core\event\course_completed::create([
-            'objectid' => $course2->id,
-            'relateduserid' => $studentid,
-            'context' => \context_course::instance($course2->id),
-            'courseid' => $course2->id,
-            'other' => ['relateduserid' => $studentid]]);
+        $compevent = \core\event\course_completed::create(
+            [
+                'objectid' => $course2->id,
+                'relateduserid' => $studentid,
+                'context' => \context_course::instance($course2->id),
+                'courseid' => $course2->id,
+                'other' => ['relateduserid' => $studentid],
+            ]
+        );
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
         $this->assertDebuggingCalled("Role does not exist");
@@ -180,12 +183,15 @@ class other_test extends \advanced_testcase {
         $manualplugin->enrol_user($instance, $studentid, $studentrole->id);
         groups_add_member($groupid2, $studentid);
         rebuild_course_cache($course2->id, true);
-        $compevent = \core\event\course_completed::create([
-            'objectid' => $course2->id,
-            'relateduserid' => $studentid,
-            'context' => \context_course::instance($course2->id),
-            'courseid' => $course2->id,
-            'other' => ['relateduserid' => $studentid]]);
+        $compevent = \core\event\course_completed::create(
+            [
+                'objectid' => $course2->id,
+                'relateduserid' => $studentid,
+                'context' => \context_course::instance($course2->id),
+                'courseid' => $course2->id,
+                'other' => ['relateduserid' => $studentid],
+            ]
+        );
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
         $this->assertTrue(groups_is_member($groupid2, $studentid));
@@ -228,12 +234,15 @@ class other_test extends \advanced_testcase {
         $i3 = $plugin->add_instance($course, ['customint1' => $courseid3, 'customtext1' => 'boe', 'customint2' => 1]);
         $i4 = $plugin->add_instance($course,
            ['customint1' => $courseid4, 'customtext1' => '{$a->fullname} <b>boe</b>', 'customint2' => 1]);
-        $compevent = \core\event\course_completed::create([
-            'objectid' => $courseid1,
-            'relateduserid' => $studentid,
-            'context' => \context_course::instance($courseid1),
-            'courseid' => $courseid1,
-            'other' => ['relateduserid' => $studentid]]);
+        $compevent = \core\event\course_completed::create(
+            [
+                'objectid' => $courseid1,
+                'relateduserid' => $studentid,
+                'context' => \context_course::instance($courseid1),
+                'courseid' => $courseid1,
+                'other' => ['relateduserid' => $studentid],
+            ]
+        );
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
         $adhock = new \enrol_coursecompleted\task\send_welcome();

@@ -96,22 +96,26 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             foreach ($items as $item) {
                 $course = get_course($item);
                 $context = context_course::instance($item);
-                $data[] = [
-                    'first' => ($i == 1),
-                    'course' => $item == $instance->courseid,
-                    'title' => format_string($course->fullname, true, ['context' => $context]),
-                    'href' => new moodle_url('/course/view.php', ['id' => $item]),
-                    'seqnumber' => $i];
+                $data[] =
+                    [
+                        'first' => ($i == 1),
+                        'course' => $item == $instance->courseid,
+                        'title' => format_string($course->fullname, true, ['context' => $context]),
+                        'href' => new moodle_url('/course/view.php', ['id' => $item]),
+                        'seqnumber' => $i,
+                    ];
                 $i++;
             }
         }
         $course = get_course($instance->customint1);
         $context = context_course::instance($instance->customint1);
-        $rdata = [
-            'coursetitle' => format_string($course->fullname, true, ['context' => $context]),
-            'courseurl' => new moodle_url('/course/view.php', ['id' => $instance->customint1]),
-            'hasdata' => count($data) > 1,
-            'items' => $data];
+        $rdata =
+            [
+                'coursetitle' => format_string($course->fullname, true, ['context' => $context]),
+                'courseurl' => new moodle_url('/course/view.php', ['id' => $instance->customint1]),
+                'hasdata' => count($data) > 1,
+                'items' => $data,
+            ];
         $str = $OUTPUT->render_from_template('enrol_coursecompleted/learnpath', $rdata);
         return $OUTPUT->box($str);
     }
@@ -173,8 +177,14 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
             $merge = false;
         } else {
-            $merge = ['courseid' => $course->id, 'enrol' => 'coursecompleted', 'roleid' => $data->roleid,
-                      'customint1' => $data->customint1, 'customint2' => $data->customint2, 'customint3' => $data->customint3];
+            $merge = [
+                'courseid' => $course->id,
+                'enrol' => 'coursecompleted',
+                'roleid' => $data->roleid,
+                'customint1' => $data->customint1,
+                'customint2' => $data->customint2,
+                'customint3' => $data->customint3,
+            ];
         }
         if ($merge && $instances = $DB->get_records('enrol', $merge, 'id')) {
             $instance = reset($instances);
