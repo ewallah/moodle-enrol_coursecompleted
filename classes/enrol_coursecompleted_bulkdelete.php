@@ -66,7 +66,7 @@ class enrol_coursecompleted_bulkdelete extends enrol_bulk_enrolment_operation {
      * @return enrol_coursecompleted_deleteselectedusers_form
      */
     public function get_form($defaultaction = null, $defaultcustomdata = null) {
-        $data = array($defaultcustomdata) ? $defaultcustomdata : [];
+        $data = is_array($defaultcustomdata) ? $defaultcustomdata : [];
         $data['title'] = $this->get_title();
         $data['message'] = get_string('confirmbulkdeleteenrolment', 'enrol_coursecompleted');
         $data['button'] = get_string('unenrolusers', 'enrol_coursecompleted');

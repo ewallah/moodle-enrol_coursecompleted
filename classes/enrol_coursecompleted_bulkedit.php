@@ -67,7 +67,7 @@ class enrol_coursecompleted_bulkedit extends enrol_bulk_enrolment_operation {
      * @return enrol_coursecompleted_deleteselectedusers_form
      */
     public function get_form($defaultaction = null, $defaultcustomdata = null) {
-        $data = array($defaultcustomdata) ? $defaultcustomdata : [];
+        $data = is_array($defaultcustomdata) ? $defaultcustomdata : [];
         $data['title'] = $this->get_title();
         $data['message'] = get_string('confirmbulkediteenrolment', 'enrol_coursecompleted');
         $data['button'] = get_string('editusers', 'enrol_coursecompleted');
@@ -92,14 +92,17 @@ class enrol_coursecompleted_bulkedit extends enrol_bulk_enrolment_operation {
         foreach ($users as $user) {
             foreach ($user->enrolments as $enrolment) {
                 $ueids[] = $enrolment->id;
-                 $courseid = $enrolment->enrolmentinstance->courseid;
+                $courseid = $enrolment->enrolmentinstance->courseid;
                 // Trigger event.
                 $event = \core\event\user_enrolment_updated::create(
-                    ['objectid' => $enrolment->id,
-                     'courseid' => $courseid,
-                     'context' => \context_course::instance($courseid),
-                     'relateduserid' => $user->id,
-                     'other' => ['enrol' => 'coursecompleted']]);
+                    [
+                        'objectid' => $enrolment->id,
+                        'courseid' => $courseid,
+                        'context' => \context_course::instance($courseid),
+                        'relateduserid' => $user->id,
+                        'other' => ['enrol' => 'coursecompleted'],
+                    ]
+                );
                 $event->trigger();
             }
         }
