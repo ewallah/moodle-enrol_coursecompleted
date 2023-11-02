@@ -102,6 +102,6 @@ jobs:
 
       - name: coveralls
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci coveralls-upload
+        run: moodle-plugin-ci coveralls-upload || true
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
