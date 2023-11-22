@@ -103,7 +103,7 @@ class enrol_test extends \advanced_testcase {
      * Test if user is enrolled after completing a course.
      * @covers \enrol_coursecompleted_observer
      */
-    public function test_enrolled() {
+    public function test_enrolled(): void {
         global $CFG, $PAGE;
         require_once($CFG->dirroot . '/enrol/locallib.php');
         require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkdelete.php');
@@ -138,7 +138,7 @@ class enrol_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted_plugin
      * @covers \enrol_coursecompleted_observer
      */
-    public function test_time_enrolled() {
+    public function test_time_enrolled(): void {
         global $CFG, $DB, $PAGE;
         require_once($CFG->dirroot . '/enrol/locallib.php');
 
@@ -216,7 +216,7 @@ class enrol_test extends \advanced_testcase {
      * Test if user is enrolled after completing a course.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_completion() {
+    public function test_completion(): void {
         global $PAGE;
         $manager = new \course_enrolment_manager($PAGE, $this->course2);
         $this->assertCount(0, $manager->get_user_enrolments($this->student->id));
@@ -233,7 +233,7 @@ class enrol_test extends \advanced_testcase {
      * Test ue.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_ue() {
+    public function test_ue(): void {
         global $PAGE;
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
@@ -267,7 +267,7 @@ class enrol_test extends \advanced_testcase {
      * Test instances.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_instances() {
+    public function test_instances(): void {
         global $DB;
         $records = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
         foreach ($records as $record) {
@@ -280,7 +280,7 @@ class enrol_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted_plugin
      * @covers \enrol_coursecompleted_observer
      */
-    public function test_library() {
+    public function test_library(): void {
         global $DB;
         $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
         $this->assertEquals($this->plugin->get_name(), 'coursecompleted');
@@ -353,7 +353,7 @@ class enrol_test extends \advanced_testcase {
      * Test form.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_form() {
+    public function test_form(): void {
         $page = new \moodle_page();
         $context = \context_course::instance($this->course1->id);
         $page->set_context($context);
@@ -376,7 +376,7 @@ class enrol_test extends \advanced_testcase {
      * Test access.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_access() {
+    public function test_access(): void {
         global $DB;
         $context = \context_course::instance($this->course2->id);
         $this->assertTrue(has_capability('enrol/coursecompleted:config', $context));
@@ -406,7 +406,7 @@ class enrol_test extends \advanced_testcase {
      * Test backup.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_backup() {
+    public function test_backup(): void {
         global $CFG, $DB, $PAGE;
         $this->assertEquals(3, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
@@ -459,7 +459,7 @@ class enrol_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted_observer
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_deletedcourse() {
+    public function test_deletedcourse(): void {
         $sink = $this->redirectEvents();
         ob_start();
         delete_course($this->course1->id, false);

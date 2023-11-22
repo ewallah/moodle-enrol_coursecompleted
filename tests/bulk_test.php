@@ -63,7 +63,7 @@ class bulk_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted_bulkdelete
      * @covers \enrol_coursecompleted\form\bulkdelete
      */
-    public function test_bulkdeleted() {
+    public function test_bulkdeleted(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkdelete.php');
         require_once($CFG->dirroot . '/enrol/coursecompleted/classes/form/bulkdelete.php');
@@ -99,7 +99,7 @@ class bulk_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted_bulkedit
      * @covers \enrol_coursecompleted\form\bulkedit
      */
-    public function test_bulkedit() {
+    public function test_bulkedit(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/enrol/coursecompleted/classes/enrol_coursecompleted_bulkedit.php');
         require_once($CFG->dirroot . '/enrol/coursecompleted/classes/form/bulkedit.php');

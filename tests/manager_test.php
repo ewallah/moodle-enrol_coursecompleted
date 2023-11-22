@@ -76,7 +76,7 @@ class manager_test extends \advanced_testcase {
      * Test missing enrolid param.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_manager_empty_param() {
+    public function test_manager_empty_param(): void {
         global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $this->expectException(\moodle_exception::class);
@@ -88,7 +88,7 @@ class manager_test extends \advanced_testcase {
      * Test manager without permission.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_manager_wrong_permission() {
+    public function test_manager_wrong_permission(): void {
         global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $this->setUser($this->student);
@@ -102,7 +102,7 @@ class manager_test extends \advanced_testcase {
      * Test manager wrong permission.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_manager_wrong_permission2() {
+    public function test_manager_wrong_permission2(): void {
         global $CFG, $DB;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $generator = $this->getDataGenerator();
@@ -127,7 +127,7 @@ class manager_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted\form\bulkedit
      * @covers \enrol_coursecompleted\form\bulkdelete
      */
-    public function test_manager_bare() {
+    public function test_manager_bare(): void {
         global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $_POST['enrolid'] = $this->instance->id;
@@ -141,7 +141,7 @@ class manager_test extends \advanced_testcase {
      * Test manager oldusers.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_manager_oldusers() {
+    public function test_manager_oldusers(): void {
         global $CFG;
         $this->preventResetByRollback();
         $this->setAdminUser();
@@ -163,7 +163,7 @@ class manager_test extends \advanced_testcase {
      * Test submit manager oldusers.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_manager_submit() {
+    public function test_manager_submit(): void {
         global $CFG;
         $this->preventResetByRollback();
         $this->setAdminUser();
@@ -188,7 +188,7 @@ class manager_test extends \advanced_testcase {
      * Tests settings.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_enrol_courescompleted_settings() {
+    public function test_enrol_courescompleted_settings(): void {
         global $ADMIN, $CFG;
         require_once($CFG->dirroot . '/lib/adminlib.php');
         $ADMIN = admin_get_root(true, true);

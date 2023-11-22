@@ -59,7 +59,7 @@ class other_test extends \advanced_testcase {
      * Basic test.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_basics() {
+    public function test_basics(): void {
         $this->assertTrue(enrol_is_enabled('coursecompleted'));
         $this->assertEquals(ENROL_EXT_REMOVED_SUSPENDNOROLES, get_config('enrol_coursecompleted', 'expiredaction'));
         $plugin = enrol_get_plugin('coursecompleted');
@@ -71,7 +71,7 @@ class other_test extends \advanced_testcase {
      * Test other files.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_files() {
+    public function test_files(): void {
         global $CFG;
         include($CFG->dirroot . '/enrol/coursecompleted/db/tasks.php');
         include($CFG->dirroot . '/enrol/coursecompleted/db/access.php');
@@ -82,7 +82,7 @@ class other_test extends \advanced_testcase {
      * Test invalid instance.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_invalid_instance() {
+    public function test_invalid_instance(): void {
         $plugin = enrol_get_plugin('coursecompleted');
         $tst = new \stdClass();
         $tst->enrol = 'wrong';
@@ -95,7 +95,7 @@ class other_test extends \advanced_testcase {
      * Test static enrol from past.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_static_past() {
+    public function test_static_past(): void {
         global $CFG, $DB;
         require_once($CFG->libdir.'/completionlib.php');
         $generator = $this->getDataGenerator();
@@ -121,7 +121,7 @@ class other_test extends \advanced_testcase {
      * Test invalid role.
      * @covers \enrol_coursecompleted_observer
      */
-    public function test_invalid_role() {
+    public function test_invalid_role(): void {
         global $DB;
         $generator = $this->getDataGenerator();
         $plugin = enrol_get_plugin('coursecompleted');
@@ -155,7 +155,7 @@ class other_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted_observer
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_groups_child() {
+    public function test_groups_child(): void {
         global $DB;
         $generator = $this->getDataGenerator();
         $plugin = enrol_get_plugin('coursecompleted');
@@ -204,7 +204,7 @@ class other_test extends \advanced_testcase {
      * Test expiration task.
      * @covers \enrol_coursecompleted\task\process_expirations
      */
-    public function test_task() {
+    public function test_task(): void {
         $task = new \enrol_coursecompleted\task\process_expirations;
         $this->assertEquals('Course completed enrolment expiry task', $task->get_name());
         ob_start();
@@ -218,7 +218,7 @@ class other_test extends \advanced_testcase {
      * Test adhoc sending of welcome messages.
      * @covers \enrol_coursecompleted\task\send_welcome
      */
-    public function  test_adhoc_email_welcome_message() {
+    public function  test_adhoc_email_welcome_message(): void {
         global $DB;
         $generator = $this->getDataGenerator();
         $sink = $this->redirectEmails();
