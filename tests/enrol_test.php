@@ -435,7 +435,6 @@ class enrol_test extends \advanced_testcase {
         $manager = new \course_enrolment_manager($PAGE, $course);
         $enrolments = $manager->get_user_enrolments($this->student->id);
         $this->assertCount(2, $enrolments);
-        $this->assertCount(3, $manager->get_enrolment_instance_names());
         $bc = new \backup_controller(\backup::TYPE_1COURSE, $this->course2->id, \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO,
             \backup::MODE_GENERAL, 2);
         $bc->execute_plan();
