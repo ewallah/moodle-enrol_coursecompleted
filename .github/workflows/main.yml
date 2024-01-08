@@ -37,9 +37,6 @@ jobs:
           - php: '8.2'
             moodle-branch: 'main'
             database: 'pgsql'
-          - php: '7.4'
-            moodle-branch: 'MOODLE_400_STABLE'
-            database: 'pgsql'
 
     steps:
       - name: checkout plugin
@@ -53,14 +50,6 @@ jobs:
           php-version: ${{ matrix.php }}
           ini-values: max_input_vars=5000
           coverage: pcov
-
-      - name: npm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
-          restore-keys: |
-            node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
 
       - name: composer
         run: |
