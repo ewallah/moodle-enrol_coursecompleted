@@ -68,7 +68,7 @@ class enrol_test extends \advanced_testcase {
     /**
      * Tests initial setup.
      */
-    protected function setUp():void {
+    protected function setUp(): void {
         global $CFG, $DB;
 
         $CFG->enablecompletion = true;

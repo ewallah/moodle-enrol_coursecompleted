@@ -49,7 +49,7 @@ class bulk_test extends \advanced_testcase {
     /**
      * Tests initial setup.
      */
-    protected function setUp():void {
+    protected function setUp(): void {
         global $CFG;
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);

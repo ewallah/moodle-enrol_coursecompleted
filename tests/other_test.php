@@ -46,7 +46,7 @@ class other_test extends \advanced_testcase {
     /**
      * Tests initial setup.
      */
-    protected function setUp():void {
+    protected function setUp(): void {
         global $CFG;
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
@@ -218,7 +218,7 @@ class other_test extends \advanced_testcase {
      * Test adhoc sending of welcome messages.
      * @covers \enrol_coursecompleted\task\send_welcome
      */
-    public function  test_adhoc_email_welcome_message(): void {
+    public function test_adhoc_email_welcome_message(): void {
         global $DB;
         $generator = $this->getDataGenerator();
         $sink = $this->redirectEmails();
