@@ -34,7 +34,7 @@ namespace enrol_coursecompleted;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
-class manager_test extends \advanced_testcase {
+final class manager_test extends \advanced_testcase {
 
     /** @var stdClass Instance. */
     private $instance;

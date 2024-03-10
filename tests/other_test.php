@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/group/lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
-class other_test extends \advanced_testcase {
+final class other_test extends \advanced_testcase {
 
     /**
      * Tests initial setup.
