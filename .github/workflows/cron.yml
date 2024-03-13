@@ -29,14 +29,6 @@ jobs:
           ini-values: max_input_vars=5000
           coverage: pcov
 
-      - name: npm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
-          restore-keys: |
-            node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
-
       - name: composer
         run: |
            composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci
@@ -54,10 +46,6 @@ jobs:
       - name: phplint
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi phplint
-
-      - name: phpcpd
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi phpcpd
 
       - name: phpmd
         if: ${{ !cancelled() }}
