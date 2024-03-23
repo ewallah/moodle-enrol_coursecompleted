@@ -52,8 +52,8 @@ if ($ADMIN->fulltree) {
         $student = get_archetype_roles('student');
         $student = reset($student);
         $settings->add(new admin_setting_configselect('enrol_coursecompleted/roleid',
-                                                      get_string('defaultrole', 'enrol_paypal'),
-                                                      get_string('defaultrole_desc', 'enrol_paypal'),
+                                                      get_string('defaultrole', 'enrol_coursecompleted'),
+                                                      get_string('defaultrole_desc', 'enrol_coursecompleted'),
                                                       $student->id,
                                                       $options));
     }

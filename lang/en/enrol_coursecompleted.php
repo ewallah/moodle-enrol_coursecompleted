@@ -44,6 +44,8 @@ The following placeholders may be included in the message:
 * Link to user\'s profile page {$a->profileurl}
 * User email {$a->email}
 * User fullname {$a->fullname}';
+$string['defaultrole'] = 'Default role assignment';
+$string['defaultrole_desc'] = 'Select the role to assign to users when they are enrolled.';
 $string['deleteselectedusers'] = 'Delete selected enrolments on course completion';
 $string['editselectedusers'] = 'Edit selected enrolments on course completion';
 $string['editusers'] = 'Change user enrolments';
