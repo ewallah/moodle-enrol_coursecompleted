@@ -34,7 +34,6 @@ namespace enrol_coursecompleted\task;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class process_expirations extends \core\task\scheduled_task {
-
     /**
      * Name for this task.
      *

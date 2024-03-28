@@ -36,7 +36,6 @@ use core_privacy\tests\provider_testcase;
  * @coversDefaultClass \enrol_coursecompleted\privacy\provider
  */
 final class privacy_test extends provider_testcase {
-
     /**
      * Test returning metadata.
      * @covers \enrol_coursecompleted\privacy\provider

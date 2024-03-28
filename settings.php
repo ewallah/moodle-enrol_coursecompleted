@@ -26,15 +26,24 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-
     // General settings.
-    $settings->add(new admin_setting_heading('enrol_coursecompleted_settings', '',
-         get_string('pluginname_desc', 'enrol_coursecompleted')));
+    $settings->add(new admin_setting_heading(
+        'enrol_coursecompleted_settings',
+        '',
+        get_string('pluginname_desc', 'enrol_coursecompleted')
+    ));
     // Enrol instance defaults.
-    $settings->add(new admin_setting_heading('enrol_coursecompleted_defaults',
-        get_string('enrolinstancedefaults', 'admin'), get_string('enrolinstancedefaults_desc', 'admin')));
-    $settings->add(new admin_setting_configcheckbox('enrol_coursecompleted/defaultenrol',
-        get_string('defaultenrol', 'enrol'), get_string('defaultenrol_desc', 'enrol'), 0));
+    $settings->add(new admin_setting_heading(
+        'enrol_coursecompleted_defaults',
+        get_string('enrolinstancedefaults', 'admin'),
+        get_string('enrolinstancedefaults_desc', 'admin')
+    ));
+    $settings->add(new admin_setting_configcheckbox(
+        'enrol_coursecompleted/defaultenrol',
+        get_string('defaultenrol', 'enrol'),
+        get_string('defaultenrol_desc', 'enrol'),
+        0
+    ));
 
     if (!during_initial_install()) {
         $options = [
@@ -42,30 +51,48 @@ if ($ADMIN->fulltree) {
             ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
             ENROL_EXT_REMOVED_UNENROL => get_string('extremovedunenrol', 'enrol'),
         ];
-        $settings->add(new admin_setting_configselect('enrol_coursecompleted/expiredaction',
-                                                       get_string('expiredaction', 'enrol_paypal'),
-                                                       get_string('expiredaction_help', 'enrol_paypal'),
-                                                       ENROL_EXT_REMOVED_SUSPENDNOROLES,
-                                                       $options));
+        $settings->add(new admin_setting_configselect(
+            'enrol_coursecompleted/expiredaction',
+            get_string('expiredaction', 'enrol_paypal'),
+            get_string('expiredaction_help', 'enrol_paypal'),
+            ENROL_EXT_REMOVED_SUSPENDNOROLES,
+            $options
+        ));
 
         $options = get_default_enrol_roles(context_system::instance());
         $student = get_archetype_roles('student');
         $student = reset($student);
-        $settings->add(new admin_setting_configselect('enrol_coursecompleted/roleid',
-                                                      get_string('defaultrole', 'enrol_coursecompleted'),
-                                                      get_string('defaultrole_desc', 'enrol_coursecompleted'),
-                                                      $student->id,
-                                                      $options));
+        $settings->add(new admin_setting_configselect(
+            'enrol_coursecompleted/roleid',
+            get_string('defaultrole', 'enrol_coursecompleted'),
+            get_string('defaultrole_desc', 'enrol_coursecompleted'),
+            $student->id,
+            $options
+        ));
     }
-    $settings->add(new admin_setting_configduration('enrol_coursecompleted/enrolperiod',
-                                                    get_string('enrolperiod', 'enrol_paypal'),
-                                                    get_string('enrolperiod_desc', 'enrol_paypal'),
-                                                    0));
-    $settings->add(new admin_setting_configcheckbox('enrol_coursecompleted/welcome',
-        get_string('welcome', 'enrol_coursecompleted'), get_string('welcome_help', 'enrol_coursecompleted'), 1));
+    $settings->add(new admin_setting_configduration(
+        'enrol_coursecompleted/enrolperiod',
+        get_string('enrolperiod', 'enrol_paypal'),
+        get_string('enrolperiod_desc', 'enrol_paypal'),
+        0
+    ));
+    $settings->add(new admin_setting_configcheckbox(
+        'enrol_coursecompleted/welcome',
+        get_string('welcome', 'enrol_coursecompleted'),
+        get_string('welcome_help', 'enrol_coursecompleted'),
+        1
+    ));
 
-    $settings->add(new admin_setting_configcheckbox('enrol_coursecompleted/svglearnpath',
-        get_string('svglearnpath', 'enrol_coursecompleted'), get_string('svglearnpath_help', 'enrol_coursecompleted'), 1));
-    $settings->add(new admin_setting_configcheckbox('enrol_coursecompleted/keepgroup',
-        get_string('keepgroup', 'enrol_coursecompleted'), get_string('keepgroup_help', 'enrol_coursecompleted'), 1));
+    $settings->add(new admin_setting_configcheckbox(
+        'enrol_coursecompleted/svglearnpath',
+        get_string('svglearnpath', 'enrol_coursecompleted'),
+        get_string('svglearnpath_help', 'enrol_coursecompleted'),
+        1
+    ));
+    $settings->add(new admin_setting_configcheckbox(
+        'enrol_coursecompleted/keepgroup',
+        get_string('keepgroup', 'enrol_coursecompleted'),
+        get_string('keepgroup_help', 'enrol_coursecompleted'),
+        1
+    ));
 }

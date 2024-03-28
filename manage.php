@@ -65,11 +65,13 @@ if ($enrolid > 0) {
             foreach ($candidates as $candidate) {
                 $user = \core_user::get_user($candidate);
                 if (!empty($user) && !$user->deleted) {
-                    $enrol->enrol_user($instance,
-                                       $candidate,
-                                       $instance->roleid,
-                                       $instance->enrolstartdate,
-                                       $instance->enrolenddate);
+                    $enrol->enrol_user(
+                        $instance,
+                        $candidate,
+                        $instance->roleid,
+                        $instance->enrolstartdate,
+                        $instance->enrolenddate
+                    );
                     \enrol_coursecompleted_plugin::keepingroup($instance, $candidate);
                     mark_user_dirty($candidate);
                     echo '.';
@@ -90,8 +92,11 @@ if ($enrolid > 0) {
                 }
             }
             $link = new \moodle_url($PAGE->url, ['enrolid' => $enrolid, 'action' => 'enrol', 'sesskey' => sesskey()]);
-            echo $OUTPUT->confirm(implode(', ', $allusers), new \single_button($link, get_string('manual:enrol', 'enrol_manual')),
-                $cancelurl);
+            echo $OUTPUT->confirm(
+                implode(', ', $allusers),
+                new \single_button($link, get_string('manual:enrol', 'enrol_manual')),
+                $cancelurl
+            );
         } else {
             echo $OUTPUT->box(get_string('nousersfound')) . $br . $OUTPUT->single_button($cancelurl, get_string('cancel'));
         }

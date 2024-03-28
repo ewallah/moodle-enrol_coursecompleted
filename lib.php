@@ -33,7 +33,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_coursecompleted_plugin extends enrol_plugin {
-
     /** @var bool singleinstance. */
     private $singleinstance = false;
 
@@ -138,7 +137,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                     new pix_icon('a/search', ''),
                     get_string('pluginname', 'report_completion'),
                     new moodle_url('/report/completion/index.php', ['course' => $id]),
-                    ['class' => 'originlink', 'rel' => $ue->id]);
+                    ['class' => 'originlink', 'rel' => $ue->id]
+                );
             }
         }
         return $actions;
@@ -332,8 +332,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addHelpButton('customint3', 'group', 'enrol_coursecompleted');
         $mform->setDefault('customint3', $this->get_config('keepgroup'));
 
-        $mform->addElement('advcheckbox', 'customint2', get_string('categoryemail', 'admin'),
-             get_string('welcome', 'enrol_coursecompleted'));
+        $mform->addElement(
+            'advcheckbox',
+            'customint2',
+            get_string('categoryemail', 'admin'),
+            get_string('welcome', 'enrol_coursecompleted')
+        );
         $mform->addHelpButton('customint2', 'welcome', 'enrol_coursecompleted');
         $mform->setDefault('customint2', $this->get_config('welcome'));
 
@@ -341,7 +345,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('textarea', 'customtext1', get_string('customwelcome', 'enrol_coursecompleted'), $arr);
         $mform->addHelpButton('customtext1', 'customwelcome', 'enrol_coursecompleted');
         $mform->disabledIf('customtext1', 'customint2', 'notchecked');
-
     }
 
     /**
@@ -379,9 +382,11 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             if (!empty($data['enrolenddate']) && $data['enrolenddate'] < $data['enrolstartdate']) {
                 $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
             }
-            if (empty($data['customint1']) ||
+            if (
+                empty($data['customint1']) ||
                 $data['customint1'] == 1 ||
-                !$DB->record_exists('course', ['id' => $data['customint1']])) {
+                !$DB->record_exists('course', ['id' => $data['customint1']])
+            ) {
                 $errors['customint'] = get_string('error_nonexistingcourse', 'tool_generator');
             }
         }
@@ -521,8 +526,10 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $plugin = \enrol_get_plugin('coursecompleted');
             $condition = 'course = ? AND timecompleted > 0';
             foreach ($enrols as $enrol) {
-                if ($DB->record_exists('role', ['id' => $enrol->roleid]) &&
-                    $DB->record_exists('course', ['id' => $enrol->courseid])) {
+                if (
+                    $DB->record_exists('role', ['id' => $enrol->roleid]) &&
+                    $DB->record_exists('course', ['id' => $enrol->courseid])
+                ) {
                     if ($enrol->enrolperiod > 0) {
                         $enrol->enrolenddate = max(time(), $enrol->enrolstartdate) + $enrol->enrolperiod;
                     }

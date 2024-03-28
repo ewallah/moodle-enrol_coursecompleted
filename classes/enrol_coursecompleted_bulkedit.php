@@ -38,7 +38,6 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_coursecompleted_bulkedit extends enrol_bulk_enrolment_operation {
-
     /**
      * Returns the identifier for this bulk operation. This is the key used when the plugin
      * returns an array containing all of the bulk operations it supports.
@@ -106,7 +105,7 @@ class enrol_coursecompleted_bulkedit extends enrol_bulk_enrolment_operation {
                 $event->trigger();
             }
         }
-        list($ueidsql, $params) = $DB->get_in_or_equal($ueids, SQL_PARAMS_NAMED);
+        [$ueidsql, $params] = $DB->get_in_or_equal($ueids, SQL_PARAMS_NAMED);
         if ($properties->status == ENROL_USER_ACTIVE || $properties->status == ENROL_USER_SUSPENDED) {
             $updatesql[] = 'status = :status';
             $params['status'] = (int)$properties->status;

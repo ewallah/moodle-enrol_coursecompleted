@@ -37,7 +37,6 @@ use stdClass;
  * @coversDefaultClass \enrol_coursecompleted
  */
 final class bulk_test extends \advanced_testcase {
-
     /**
      * Setup to ensure that fixtures are loaded.
      */
@@ -90,7 +89,7 @@ final class bulk_test extends \advanced_testcase {
         $user->enrolments = [$enr];
         $this->assertfalse($operation->process($manager, [$user], new stdClass()));
         $this->setAdminUser();
-        $this->assertTrue($operation->process($manager, [$user] , new stdClass()));
+        $this->assertTrue($operation->process($manager, [$user], new stdClass()));
         $this->assertNotEmpty($operation->get_form(null, ['users' => [$user]]));
     }
 
@@ -131,11 +130,11 @@ final class bulk_test extends \advanced_testcase {
         $properties->timeend = time() + 1000;
         $this->assertfalse($operation->process($manager, [$user], $properties));
         $this->setAdminUser();
-        $this->assertTrue($operation->process($manager, [$user] , $properties));
+        $this->assertTrue($operation->process($manager, [$user], $properties));
         $properties->status = 99;
         $properties->timestart = null;
         $properties->timeend = null;
-        $this->assertTrue($operation->process($manager, [$user] , $properties));
+        $this->assertTrue($operation->process($manager, [$user], $properties));
         $this->assertNotEmpty($operation->get_form(null, ['users' => [$user]]));
     }
 }

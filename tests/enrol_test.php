@@ -43,7 +43,6 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
 final class enrol_test extends \advanced_testcase {
-
     /** @var stdClass Instance. */
     private $instance;
 
@@ -86,8 +85,10 @@ final class enrol_test extends \advanced_testcase {
         $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
         $this->setAdminUser();
         $this->plugin = enrol_get_plugin('coursecompleted');
-        $id = $this->plugin->add_instance($this->course2,
-            ['customint1' => $this->course1->id, 'customint2' => 1, 'roleid' => $studentrole]);
+        $id = $this->plugin->add_instance(
+            $this->course2,
+            ['customint1' => $this->course1->id, 'customint2' => 1, 'roleid' => $studentrole]
+        );
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
         $this->plugin->add_instance($this->course4, ['customint1' => $this->course3->id, 'roleid' => $studentrole]);
         $this->plugin->add_instance($this->course3, ['customint1' => $this->course2->id, 'roleid' => $studentrole]);
@@ -222,8 +223,10 @@ final class enrol_test extends \advanced_testcase {
         $this->assertCount(0, $manager->get_user_enrolments($this->student->id));
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
-        $this->assertEquals('100',
-           \core_completion\progress::get_course_progress_percentage($this->course1, $this->student->id));
+        $this->assertEquals(
+            '100',
+            \core_completion\progress::get_course_progress_percentage($this->course1, $this->student->id)
+        );
         $this->runAdhocTasks();
         $manager = new \course_enrolment_manager($PAGE, $this->course2);
         $this->assertCount(1, $manager->get_user_enrolments($this->student->id));
@@ -237,8 +240,10 @@ final class enrol_test extends \advanced_testcase {
         global $PAGE;
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
-        $this->assertEquals('100',
-           \core_completion\progress::get_course_progress_percentage($this->course1, $this->student->id));
+        $this->assertEquals(
+            '100',
+            \core_completion\progress::get_course_progress_percentage($this->course1, $this->student->id)
+        );
         $this->runAdhocTasks();
         $this->setAdminUser();
         $context = \context_course::instance($this->course1->id);
@@ -258,7 +263,6 @@ final class enrol_test extends \advanced_testcase {
                 $this->assertTrue($this->plugin->has_bulk_operations($manager));
                 $operations = $this->plugin->get_bulk_operations($manager, null);
                 $this->assertCount(2, $operations);
-
             }
         }
     }
@@ -296,8 +300,10 @@ final class enrol_test extends \advanced_testcase {
         $this->assertCount(1, $this->plugin->get_info_icons([$this->instance]));
         $this->assertCount(2, $this->plugin->get_action_icons($this->instance));
         $this->assertEquals('After completing course: A1', $this->plugin->get_instance_name($this->instance));
-        $this->assertEquals('Enrolment by completion of course with id ' . $this->course1->id,
-           $this->plugin->get_description_text($this->instance));
+        $this->assertEquals(
+            'Enrolment by completion of course with id ' . $this->course1->id,
+            $this->plugin->get_description_text($this->instance)
+        );
         $this->assertStringContainsString('Test course 1', $this->plugin->enrol_page_hook($this->instance));
         $arr = ['status' => 0, 'enrolenddate' => time(), 'enrolstartdate' => time() + 10000];
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
@@ -412,8 +418,14 @@ final class enrol_test extends \advanced_testcase {
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
         $this->runAdhocTasks();
-        $bc = new \backup_controller(\backup::TYPE_1COURSE, $this->course2->id, \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL, 2);
+        $bc = new \backup_controller(
+            \backup::TYPE_1COURSE,
+            $this->course2->id,
+            \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL,
+            2
+        );
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
@@ -421,8 +433,14 @@ final class enrol_test extends \advanced_testcase {
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();
-        $rc = new \restore_controller('test-restore-course-event', $this->course2->id, \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL, 2, \backup::TARGET_NEW_COURSE);
+        $rc = new \restore_controller(
+            'test-restore-course-event',
+            $this->course2->id,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL,
+            2,
+            \backup::TARGET_NEW_COURSE
+        );
         $rc->execute_precheck();
         $rc->execute_plan();
         $newid = $rc->get_courseid();
@@ -435,8 +453,14 @@ final class enrol_test extends \advanced_testcase {
         $manager = new \course_enrolment_manager($PAGE, $course);
         $enrolments = $manager->get_user_enrolments($this->student->id);
         $this->assertCount(2, $enrolments);
-        $bc = new \backup_controller(\backup::TYPE_1COURSE, $this->course2->id, \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL, 2);
+        $bc = new \backup_controller(
+            \backup::TYPE_1COURSE,
+            $this->course2->id,
+            \backup::FORMAT_MOODLE,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL,
+            2
+        );
         $bc->execute_plan();
         $results = $bc->get_results();
         $file = $results['backup_destination'];
@@ -444,8 +468,14 @@ final class enrol_test extends \advanced_testcase {
         $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
         $file->extract_to_pathname($fp, $filepath);
         $bc->destroy();
-        $rc = new \restore_controller('test-restore-course-event', $newid, \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL, 2, \backup::TARGET_EXISTING_ADDING);
+        $rc = new \restore_controller(
+            'test-restore-course-event',
+            $newid,
+            \backup::INTERACTIVE_NO,
+            \backup::MODE_GENERAL,
+            2,
+            \backup::TARGET_EXISTING_ADDING
+        );
         $rc->execute_precheck();
         $rc->execute_plan();
         $rc->destroy();
@@ -466,8 +496,10 @@ final class enrol_test extends \advanced_testcase {
         $events = $sink->get_events();
         $sink->close();
         $this->assertEquals('Deleted course ' . $this->course1->id, $this->plugin->get_instance_name($this->instance));
-        $this->assertEquals('Enrolment by completion of course with id ' . $this->course1->id,
-            $this->plugin->get_description_text($this->instance));
+        $this->assertEquals(
+            'Enrolment by completion of course with id ' . $this->course1->id,
+            $this->plugin->get_description_text($this->instance)
+        );
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\course_deleted', $event);
         $observer = new \enrol_coursecompleted_observer();

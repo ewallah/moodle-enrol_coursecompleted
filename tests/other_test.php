@@ -42,7 +42,6 @@ require_once($CFG->dirroot . '/group/lib.php');
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
 final class other_test extends \advanced_testcase {
-
     /**
      * Tests initial setup.
      */
@@ -97,7 +96,7 @@ final class other_test extends \advanced_testcase {
      */
     public function test_static_past(): void {
         global $CFG, $DB;
-        require_once($CFG->libdir.'/completionlib.php');
+        require_once($CFG->libdir . '/completionlib.php');
         $generator = $this->getDataGenerator();
         $plugin = enrol_get_plugin('coursecompleted');
         $manualplugin = enrol_get_plugin('manual');
@@ -205,7 +204,7 @@ final class other_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted\task\process_expirations
      */
     public function test_task(): void {
-        $task = new \enrol_coursecompleted\task\process_expirations;
+        $task = new \enrol_coursecompleted\task\process_expirations();
         $this->assertEquals('Course completed enrolment expiry task', $task->get_name());
         ob_start();
         $task->execute();
@@ -232,8 +231,10 @@ final class other_test extends \advanced_testcase {
         $plugin->add_instance($course, ['customint1' => $courseid1, 'roleid' => 5, 'customint2' => 0]);
         $i2 = $plugin->add_instance($course, ['customint1' => $courseid2, 'roleid' => 5, 'customint2' => 1]);
         $i3 = $plugin->add_instance($course, ['customint1' => $courseid3, 'customtext1' => 'boe', 'customint2' => 1]);
-        $i4 = $plugin->add_instance($course,
-           ['customint1' => $courseid4, 'customtext1' => '{$a->fullname} <b>boe</b>', 'customint2' => 1]);
+        $i4 = $plugin->add_instance(
+            $course,
+            ['customint1' => $courseid4, 'customtext1' => '{$a->fullname} <b>boe</b>', 'customint2' => 1]
+        );
         $compevent = \core\event\course_completed::create(
             [
                 'objectid' => $courseid1,
@@ -247,15 +248,18 @@ final class other_test extends \advanced_testcase {
         $observer->enroluser($compevent);
         $adhock = new \enrol_coursecompleted\task\send_welcome();
         $adhock->set_custom_data(
-             ['userid' => $studentid, 'enrolid' => $i2, 'courseid' => $course->id, 'completedid' => $courseid2]);
+            ['userid' => $studentid, 'enrolid' => $i2, 'courseid' => $course->id, 'completedid' => $courseid2]
+        );
         $adhock->set_component('enrol_coursecompleted');
         $adhock->execute();
         \core\task\manager::queue_adhoc_task($adhock);
         $adhock->set_custom_data(
-              ['userid' => $studentid, 'enrolid' => $i3, 'courseid' => $course->id, 'completedid' => $courseid3]);
+            ['userid' => $studentid, 'enrolid' => $i3, 'courseid' => $course->id, 'completedid' => $courseid3]
+        );
         \core\task\manager::queue_adhoc_task($adhock);
         $adhock->set_custom_data(
-              ['userid' => $studentid, 'enrolid' => $i4, 'courseid' => $course->id, 'completedid' => $courseid4]);
+            ['userid' => $studentid, 'enrolid' => $i4, 'courseid' => $course->id, 'completedid' => $courseid4]
+        );
         \core\task\manager::queue_adhoc_task($adhock);
         $this->assertCount(3, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
         \phpunit_util::run_all_adhoc_tasks();

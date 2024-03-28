@@ -32,7 +32,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_coursecompleted_observer {
-
     /**
      * Triggered when user completes a course.
      *
@@ -50,8 +49,13 @@ class enrol_coursecompleted_observer {
                         if ($enrol->enrolperiod > 0) {
                             $enrol->enrolenddate = max(time(), $enrol->enrolstartdate) + $enrol->enrolperiod;
                         }
-                        $plugin->enrol_user($enrol, $event->relateduserid, $enrol->roleid,
-                                        $enrol->enrolstartdate, $enrol->enrolenddate);
+                        $plugin->enrol_user(
+                            $enrol,
+                            $event->relateduserid,
+                            $enrol->roleid,
+                            $enrol->enrolstartdate,
+                            $enrol->enrolenddate
+                        );
                         if ($enrol->customint2 > 0) {
                             $adhock = new \enrol_coursecompleted\task\send_welcome();
                             $adhock->set_custom_data(

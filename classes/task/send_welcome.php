@@ -38,7 +38,6 @@ use core_user;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class send_welcome extends \core\task\adhoc_task {
-
     /**
      * Execute scheduled task
      *
@@ -57,7 +56,7 @@ class send_welcome extends \core\task\adhoc_task {
                     $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$data->courseid";
                     $a->completed = format_string($complcourse, true, ['context' => $context2]);
                     $custom = $DB->get_field('enrol', 'customtext1', ['id' => $data->enrolid]);
-                    $key = ['{$a->coursename}',  '{$a->completed}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
+                    $key = ['{$a->coursename}', '{$a->completed}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
                     $value = [$a->coursename, $a->completed, $a->profileurl, fullname($user), $user->email];
                     if ($custom != '') {
                         $message = str_replace($key, $value, $custom);
@@ -68,8 +67,11 @@ class send_welcome extends \core\task\adhoc_task {
                         $messagehtml = $message;
                     } else {
                         // This is most probably the tag/newline soup known as FORMAT_MOODLE.
-                        $messagehtml = format_text($message, FORMAT_MOODLE,
-                           ['context' => $context, 'para' => false, 'newlines' => true, 'filter' => true]);
+                        $messagehtml = format_text(
+                            $message,
+                            FORMAT_MOODLE,
+                            ['context' => $context, 'para' => false, 'newlines' => true, 'filter' => true]
+                        );
                     }
                     $subject = get_string('welcometocourse', 'moodle', $a->coursename);
                     // Directly emailing welcome message rather than using messaging.

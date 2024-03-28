@@ -35,7 +35,6 @@ namespace enrol_coursecompleted;
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
 final class manager_test extends \advanced_testcase {
-
     /** @var stdClass Instance. */
     private $instance;
 
