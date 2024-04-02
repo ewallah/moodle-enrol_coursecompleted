@@ -515,7 +515,7 @@ final class enrol_test extends \advanced_testcase {
         require_once($CFG->libdir . '/formslib.php');
 
         // Test form.
-        return new class tempform extends \moodleform {
+        return new class extends \moodleform {
             /**
              * Form definition.
              */
