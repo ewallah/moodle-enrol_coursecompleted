@@ -25,15 +25,15 @@
 
 $string['aftercourse'] = 'After completing course: {$a}';
 $string['cachedef_compcourses'] = 'Enrolment on course completion cache';
-$string['coursecompleted:config'] = 'Configure enrol coursecompletion instances';
-$string['coursecompleted:manage'] = 'Manage enrolled users';
-$string['coursecompleted:enrolpast'] = 'Enrol users who completed courses in the past';
-$string['coursecompleted:unenrol'] = 'Unenrol users from course';
-$string['coursecompleted:unenrolself'] = 'Unenrol self from the course';
 $string['compcourse'] = 'Completed course';
 $string['compcourse_help'] = 'Which course have to be completed.';
 $string['confirmbulkdeleteenrolment'] = 'Are you sure you want to delete these user enrolments?';
 $string['confirmbulkediteenrolment'] = 'Are you sure you want to change these user enrolments?';
+$string['coursecompleted:config'] = 'Configure enrol coursecompletion instances';
+$string['coursecompleted:enrolpast'] = 'Enrol users who completed courses in the past';
+$string['coursecompleted:manage'] = 'Manage enrolled users';
+$string['coursecompleted:unenrol'] = 'Unenrol users from course';
+$string['coursecompleted:unenrolself'] = 'Unenrol self from the course';
 $string['customwelcome'] = 'Custom welcome message';
 $string['customwelcome_help'] = 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
 
@@ -63,9 +63,9 @@ $string['status_help'] = 'This setting determines if the course completed enrolm
 $string['status_link'] = 'enrol/coursecompleted';
 $string['svglearnpath'] = 'Display learning path';
 $string['svglearnpath_help'] = 'Display (possible) learning path using svg icons.';
+$string['unenrolusers'] = 'Unenrol users';
 $string['uponcompleting'] = 'Upon completing course {$a}';
 $string['usersenrolled'] = '{$a} Users enrolled';
-$string['unenrolusers'] = 'Unenrol users';
 $string['welcome'] = 'Send course welcome message';
 $string['welcome_help'] = 'When a user is enrolled in a course by completing another course, a welcome message email may be sent.';
 $string['welcometocourse'] = 'Welcome to {$a->coursename}!

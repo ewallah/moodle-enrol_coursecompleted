@@ -28,7 +28,6 @@ namespace enrol_coursecompleted;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot . '/enrol/locallib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
@@ -367,7 +366,7 @@ final class enrol_test extends \advanced_testcase {
         $page->set_pagelayout('standard');
         $page->set_pagetype('course-view');
         $page->set_url('/enrol/coursecompleted/manage.php?enrolid=' . $this->instance->id);
-        $form = new temp_coursecompleted_form();
+        $form = $this->tempform();
         $mform = $form->getform();
         $this->plugin->edit_instance_form($this->instance, $mform, $context);
         $this->assertStringContainsString('Required field', $mform->getReqHTML());
@@ -505,31 +504,34 @@ final class enrol_test extends \advanced_testcase {
         $observer = new \enrol_coursecompleted_observer();
         $observer->coursedeleted($event);
     }
-}
 
-/**
- * Form object to be used in test case.
- *
- * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
- * @author    Renaat Debleu <info@eWallah.net>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class temp_coursecompleted_form extends \moodleform {
     /**
-     * Form definition.
+     * Test form.
+     * @covers \enrol_coursecompleted_plugin
+     * @return \moodleform
      */
-    public function definition() {
-        // No definition required.
-    }
-    /**
-     * Returns form reference
-     * @return MoodleQuickForm
-     */
-    public function getform() {
-        $mform = $this->_form;
-        // Set submitted flag, to simulate submission.
-        $mform->_flagSubmitted = true;
-        return $mform;
+    public function tempform() {
+        global $CFG;
+        require_once($CFG->libdir . '/formslib.php');
+
+        // Test form.
+        return new class tempform extends \moodleform {
+            /**
+             * Form definition.
+             */
+            public function definition() {
+                // No definition required.
+            }
+            /**
+             * Returns form reference
+             * @return MoodleQuickForm
+             */
+            public function getform() {
+                $mform = $this->_form;
+                // Set submitted flag, to simulate submission.
+                $mform->_flagSubmitted = true;
+                return $mform;
+            }
+        };
     }
 }
