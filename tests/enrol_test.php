@@ -514,7 +514,14 @@ final class enrol_test extends \advanced_testcase {
         global $CFG;
         require_once($CFG->libdir . '/formslib.php');
 
-        // Test form.
+        /**
+         * coursecompleted enrolment form tests.
+         *
+         * @package   enrol_coursecompleted
+         * @copyright 2017 eWallah (www.eWallah.net)
+         * @author    Renaat Debleu <info@eWallah.net>
+         * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+         */
         return new class extends \moodleform {
             /**
              * Form definition.
