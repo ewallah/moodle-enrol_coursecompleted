@@ -39,42 +39,54 @@ class enrol_coursecompleted_observer {
      */
     public static function enroluser(\core\event\course_completed $event) {
         global $DB;
-        $params = ['enrol' => 'coursecompleted', 'status' => 0, 'customint1' => $event->courseid];
-        if ($enrols = $DB->get_records('enrol', $params)) {
-            $plugin = \enrol_get_plugin('coursecompleted');
-            foreach ($enrols as $enrol) {
-                if ($DB->record_exists('role', ['id' => $enrol->roleid])) {
-                    // Invalid courses are already detected when context is calculated.
-                    if ($DB->record_exists('course', ['id' => $enrol->courseid])) {
-                        if ($enrol->enrolperiod > 0) {
-                            $enrol->enrolenddate = max(time(), $enrol->enrolstartdate) + $enrol->enrolperiod;
-                        }
-                        $plugin->enrol_user(
-                            $enrol,
-                            $event->relateduserid,
-                            $enrol->roleid,
-                            $enrol->enrolstartdate,
-                            $enrol->enrolenddate
-                        );
-                        if ($enrol->customint2 > 0) {
-                            $adhock = new \enrol_coursecompleted\task\send_welcome();
-                            $adhock->set_custom_data(
-                                [
-                                    'userid' => $event->relateduserid,
-                                    'enrolid' => $enrol->id,
-                                    'courseid' => $enrol->courseid,
-                                    'completedid' => $enrol->customint1,
-                                ]
-                            );
-                            $adhock->set_component('enrol_coursecompleted');
-                            \core\task\manager::queue_adhoc_task($adhock);
-                        }
-                        \enrol_coursecompleted_plugin::keepingroup($enrol, $event->relateduserid);
-                        mark_user_dirty($event->relateduserid);
-                    }
-                } else {
-                    debugging('Role does not exist', DEBUG_DEVELOPER);
+        $params = [
+            'enrol' => 'coursecompleted',
+            'status' => 0,
+            'customint1' => $event->courseid,
+        ];
+        $enrols = $DB->get_records('enrol', $params);
+        foreach ($enrols as $enrol) {
+            // Enrolment ended.
+            if ($enrol->enrolenddate > 0 && $enrol->enrolenddate < time()) {
+                continue;
+            }
+            // Enrolment not yet started.
+            if ($enrol->enrolstartdate > 0 && $enrol->enrolstartdate > time()) {
+                continue;
+            }
+            // Check role and course.
+            if ($DB->record_exists('role', ['id' => $enrol->roleid]) &&
+                $DB->record_exists('course', ['id' => $enrol->courseid])) {
+
+                if ($enrol->enrolperiod > 0) {
+                    $enrol->enrolenddate = max(time(), $enrol->enrolstartdate) + $enrol->enrolperiod;
                 }
+
+                \enrol_get_plugin('coursecompleted')->enrol_user(
+                    $enrol,
+                    $event->relateduserid,
+                    $enrol->roleid,
+                    $enrol->enrolstartdate,
+                    $enrol->enrolenddate
+                );
+                \enrol_coursecompleted_plugin::keepingroup($enrol, $event->relateduserid);
+                mark_user_dirty($event->relateduserid);
+                if ($enrol->customint2 > 0) {
+                    // There is a course welcome message to be sent.
+                    $adhock = new \enrol_coursecompleted\task\send_welcome();
+                    $adhock->set_custom_data(
+                        [
+                            'userid' => $event->relateduserid,
+                            'enrolid' => $enrol->id,
+                            'courseid' => $enrol->courseid,
+                            'completedid' => $enrol->customint1,
+                        ]
+                    );
+                    $adhock->set_component('enrol_coursecompleted');
+                    \core\task\manager::queue_adhoc_task($adhock);
+                }
+            } else {
+                debugging('Role or course does not exist', DEBUG_DEVELOPER);
             }
         }
     }

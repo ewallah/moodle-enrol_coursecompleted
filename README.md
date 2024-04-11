@@ -15,7 +15,7 @@ Course completed enrolment handles the enrolment of users upon completion of a c
 
 ## Course completion
 
-Check the global documentation about course completion: https://docs.moodle.org/402/en/Course_completion
+Check the global documentation about course completion: https://docs.moodle.org/403/en/Course_completion
 
 ## Installation:
 
@@ -24,7 +24,7 @@ Check the global documentation about course completion: https://docs.moodle.org/
 
 ## Requirements
 
-This plugin requires Moodle 4.0+
+This plugin requires Moodle 4.2+
 
 ## Troubleshooting
 
@@ -32,7 +32,8 @@ This plugin requires Moodle 4.0+
  2. Make sure "Enable completion tracking" is set to "yes" in the course settings.
  3. Goto "Administration" > "Course administration" > "Course completion", and configure the the conditions required for course completion. Note: you must set some conditions, you cannot just set the "completion requirements" option at the top. Save.
  4. Goto "Administration" > "Course administration". Make sure you can now "Course completion" listed under "reports". If you cannot see this report then course completion has not been set correctly.
- 5. Start enrolling
+ 5. Make sure the enrolment start date < now AND enrolment end date > now.
+ 6. Start enrolling
 
 ## Theme support
 
@@ -69,7 +70,7 @@ Stable
 
 ## Copyright
 
-2023 eWallah.net
+2024 eWallah.net
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software

@@ -305,23 +305,23 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
 
         $role = ($instance && isset($instance->roleid)) ? $instance->roleid : $this->get_config('roleid');
         $roles = get_default_enrol_roles($context, $role);
-        $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_paypal'), $roles);
+        $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_fee'), $roles);
         $mform->setDefault('roleid', $this->get_config('roleid'));
 
         $arr = ['optional' => true, 'defaultunit' => 86400];
-        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_paypal'), $arr);
+        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_coursecompleted'), $arr);
         $mform->setDefault('enrolperiod', $this->get_config('enrolperiod'));
-        $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_paypal');
+        $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_coursecompleted');
 
         $start = ($instance && isset($instance->customint1)) ? get_course($instance->customint1)->startdate : time();
         $arr = ['optional' => true, 'defaulttime' => $start];
-        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_paypal'), $arr);
-        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_paypal');
+        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_coursecompleted'), $arr);
+        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_coursecompleted');
 
         $duration = intval(get_config('moodlecourse', 'courseduration')) ?? YEARSECS;
         $arr['defaulttime'] = $start + $duration;
-        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_paypal'), $arr);
-        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_paypal');
+        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_coursecompleted'), $arr);
+        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_coursecompleted');
 
         $conditions = ['onlywithcompletion' => true, 'multiple' => false, 'includefrontpage' => false];
         $mform->addElement('course', 'customint1', get_string('course'), $conditions);
@@ -380,7 +380,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $errors = [];
         if ($data['status'] == ENROL_INSTANCE_ENABLED) {
             if (!empty($data['enrolenddate']) && $data['enrolenddate'] < $data['enrolstartdate']) {
-                $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_paypal');
+                $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_fee');
             }
             if (
                 empty($data['customint1']) ||

@@ -53,8 +53,8 @@ if ($ADMIN->fulltree) {
         ];
         $settings->add(new admin_setting_configselect(
             'enrol_coursecompleted/expiredaction',
-            get_string('expiredaction', 'enrol_paypal'),
-            get_string('expiredaction_help', 'enrol_paypal'),
+            get_string('expiredaction', 'enrol_fee'),
+            get_string('expiredaction_help', 'enrol_fee'),
             ENROL_EXT_REMOVED_SUSPENDNOROLES,
             $options
         ));
@@ -72,8 +72,8 @@ if ($ADMIN->fulltree) {
     }
     $settings->add(new admin_setting_configduration(
         'enrol_coursecompleted/enrolperiod',
-        get_string('enrolperiod', 'enrol_paypal'),
-        get_string('enrolperiod_desc', 'enrol_paypal'),
+        get_string('enrolperiod', 'enrol_fee'),
+        get_string('enrolperiod_desc', 'enrol_fee'),
         0
     ));
     $settings->add(new admin_setting_configcheckbox(

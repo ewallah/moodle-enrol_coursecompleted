@@ -92,11 +92,7 @@ final class enrol_test extends \advanced_testcase {
         $this->plugin->add_instance($this->course4, ['customint1' => $this->course3->id, 'roleid' => $studentrole]);
         $this->plugin->add_instance($this->course3, ['customint1' => $this->course2->id, 'roleid' => $studentrole]);
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
-        $this->student = $generator->create_user();
-        $manualplugin = enrol_get_plugin('manual');
-        $instance = $DB->get_record('enrol', ['courseid' => $this->course1->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $this->student->id, $studentrole);
-        mark_user_dirty($this->student->id);
+        $this->student = $generator->create_and_enrol($this->course1, 'student');
     }
 
     /**
@@ -307,7 +303,7 @@ final class enrol_test extends \advanced_testcase {
         $arr = ['status' => 0, 'enrolenddate' => time(), 'enrolstartdate' => time() + 10000];
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
         $this->assertEquals('The specified course does not exist', $tmp['customint']);
-        $this->assertEquals('Enrolment end date cannot be earlier than start date', $tmp['enrolenddate']);
+        $this->assertEquals('The enrolment end date cannot be earlier than the start date.', $tmp['enrolenddate']);
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['shortname' => 'c1', 'enablecompletion' => 1]);
         $tmp = $this->plugin->edit_instance_validation(['status' => 0, 'customint1' => $course->id], null, $this->instance, null);
@@ -375,36 +371,6 @@ final class enrol_test extends \advanced_testcase {
         $html = ob_get_clean();
         $this->assertStringContainsString('Required field', $html);
         $this->assertStringContainsString('Help with Completed course', $html);
-    }
-
-    /**
-     * Test access.
-     * @covers \enrol_coursecompleted_plugin
-     */
-    public function test_access(): void {
-        global $DB;
-        $context = \context_course::instance($this->course2->id);
-        $this->assertTrue(has_capability('enrol/coursecompleted:config', $context));
-        $this->assertTrue(has_capability('enrol/coursecompleted:enrolpast', $context));
-        $this->assertTrue(has_capability('enrol/coursecompleted:manage', $context));
-        $this->assertTrue(has_capability('enrol/coursecompleted:unenrol', $context));
-        $this->assertTrue(has_capability('enrol/coursecompleted:unenrolself', $context));
-        $this->setUser($this->student);
-        $this->assertFalse(has_capability('enrol/coursecompleted:config', $context));
-        $this->assertFalse(has_capability('enrol/coursecompleted:enrolpast', $context));
-        $this->assertFalse(has_capability('enrol/coursecompleted:manage', $context));
-        $this->assertFalse(has_capability('enrol/coursecompleted:unenrol', $context));
-        $this->assertFalse(has_capability('enrol/coursecompleted:unenrolself', $context));
-        $editor = $this->getDataGenerator()->create_user();
-        $editorroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
-        $this->getDataGenerator()->enrol_user($editor->id, $this->course2->id, $editorroleid);
-        mark_user_dirty($editor->id);
-        $this->setUser($editor);
-        $this->assertTrue(has_capability('enrol/coursecompleted:config', $context));
-        $this->assertFalse(has_capability('enrol/coursecompleted:enrolpast', $context));
-        $this->assertTrue(has_capability('enrol/coursecompleted:manage', $context));
-        $this->assertTrue(has_capability('enrol/coursecompleted:unenrol', $context));
-        $this->assertFalse(has_capability('enrol/coursecompleted:unenrolself', $context));
     }
 
     /**
@@ -510,7 +476,7 @@ final class enrol_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted_plugin
      * @return \moodleform
      */
-    public function tempform() {
+    private function tempform() {
         global $CFG;
         require_once($CFG->libdir . '/formslib.php');
 

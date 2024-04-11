@@ -91,20 +91,61 @@ final class other_test extends \advanced_testcase {
     }
 
     /**
+     * Test disabled.
+     * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted_observer
+     */
+    public function test_disabled(): void {
+        global $CFG;
+        require_once($CFG->libdir . '/completionlib.php');
+        $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['enablecompletion' => 1]);
+        $course2 = $generator->create_course(['enablecompletion' => 1]);
+        $plugin = enrol_get_plugin('coursecompleted');
+        $this->setAdminUser();
+
+        $student1 = $generator->create_and_enrol($course1, 'student')->id;
+        $student2 = $generator->create_and_enrol($course1, 'student')->id;
+        $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'enrolstartdate' => time() + 66666666]);
+        $compevent = \core\event\course_completed::create(
+            [
+                'objectid' => $course2->id,
+                'relateduserid' => $student1,
+                'context' => \context_course::instance($course2->id),
+                'courseid' => $course2->id,
+                'other' => ['relateduserid' => $student1],
+            ]
+        );
+        $observer = new \enrol_coursecompleted_observer();
+
+        $observer->enroluser($compevent);
+        $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'enrolenddate' => time() - 66666666]);
+        $compevent = \core\event\course_completed::create(
+            [
+                'objectid' => $course2->id,
+                'relateduserid' => $student2,
+                'context' => \context_course::instance($course2->id),
+                'courseid' => $course2->id,
+                'other' => ['relateduserid' => $student2],
+            ]
+        );
+        $observer = new \enrol_coursecompleted_observer();
+        $observer->enroluser($compevent);
+    }
+
+    /**
      * Test static enrol from past.
      * @covers \enrol_coursecompleted_plugin
      */
     public function test_static_past(): void {
-        global $CFG, $DB;
+        global $CFG;
         require_once($CFG->libdir . '/completionlib.php');
         $generator = $this->getDataGenerator();
+        $course1 = $generator->create_course(['enablecompletion' => 1]);
+        $course2 = $generator->create_course(['enablecompletion' => 1]);
+        $studentid = $generator->create_and_enrol($course1, 'student')->id;
+
         $plugin = enrol_get_plugin('coursecompleted');
-        $manualplugin = enrol_get_plugin('manual');
-        $studentid = $generator->create_user()->id;
-        $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
-        $instance = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $studentid, 5);
-        $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
         $this->setAdminUser();
         $ccompletion = new \completion_completion(['course' => $course1->id, 'userid' => $studentid]);
         $ccompletion->mark_complete(time());
@@ -146,7 +187,7 @@ final class other_test extends \advanced_testcase {
         );
         $observer = new \enrol_coursecompleted_observer();
         $observer->enroluser($compevent);
-        $this->assertDebuggingCalled("Role does not exist");
+        $this->assertDebuggingCalled('Role or course does not exist');
     }
 
     /**
@@ -271,5 +312,41 @@ final class other_test extends \advanced_testcase {
             $this->assertStringNotContainsString('{a->', $message->body);
         }
         $this->assertCount(0, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
+    }
+
+    /**
+     * Test access.
+     * @covers \enrol_coursecompleted_plugin
+     */
+    public function test_access(): void {
+        global $CFG;
+        $CFG->enablecompletion = true;
+        $this->resetAfterTest(true);
+        $enabled = enrol_get_plugins(true);
+        $enabled['coursecompleted'] = true;
+        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['enablecompletion' => 1]);
+        $student = $generator->create_and_enrol($course, 'student');
+        $editor = $generator->create_and_enrol($course, 'editingteacher');
+        $this->setAdminUser();
+        $context = \context_course::instance($course->id);
+        $this->assertTrue(has_capability('enrol/coursecompleted:config', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:enrolpast', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:manage', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:unenrol', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:unenrolself', $context));
+        $this->setUser($student);
+        $this->assertFalse(has_capability('enrol/coursecompleted:config', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:enrolpast', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:manage', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:unenrol', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:unenrolself', $context));
+        $this->setUser($editor);
+        $this->assertTrue(has_capability('enrol/coursecompleted:config', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:enrolpast', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:manage', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:unenrol', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:unenrolself', $context));
     }
 }
