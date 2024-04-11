@@ -59,7 +59,7 @@ Feature: Duration Enrolment on course completion
     And I am on "Course 2" course homepage
     And I navigate to course participants
     Then I should see "2 participants found"
-    And I wait "2" seconds
+    And I wait "4" seconds
     And I run the scheduled task "\enrol_coursecompleted\task\process_expirations"
     And I am on "Course 2" course homepage
     And I navigate to course participants
