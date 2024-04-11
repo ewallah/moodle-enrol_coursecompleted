@@ -12,6 +12,8 @@ Course completed enrolment handles the enrolment of users upon completion of a c
 * Administrators can also enrol users who completed past courses.
 * Administrators can bulk modify and delete users (works only when 1 instance is installed [MDL-66652](https://tracker.moodle.org/browse/MDL-66652)).
 * When a user is part of a group in the first course, the user will also be part of the group with the same name in the second course.
+* When you want to enrol all users only after a particular date, configure this date as part of the course completion.
+* When you want that this plugin only works for a limited period, configure enrolment start and end date. Before and after this date, this plugin will do nothing.
 
 ## Course completion
 
