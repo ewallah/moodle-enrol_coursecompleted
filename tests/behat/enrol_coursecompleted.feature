@@ -194,3 +194,25 @@ Feature: Enrolment on course completion
     And I press "Save changes"
     And I should see "Username 1" in the "participants" "table"
     And I should see "Suspended" in the "participants" "table"
+
+  @javascript
+  Scenario: Admin can backup and restore a course with enrol course completions
+    Given I set the following fields to these values:
+       | Course | Course 1 |
+    And I press "Add method"
+    And I am on "Course 2" course homepage
+    And I log out
+    And I log in as "admin"
+    When I am on "Course 2" course homepage
+    And I backup "Course 2" course using this options:
+      | Confirmation | Filename | test_backup.mbz |
+    And I restore "test_backup.mbz" backup into a new course using this options:
+      | Schema | Course name       | Course 3 |
+      | Schema | Course short name | C3       |
+    And I am on "Course 3" course homepage
+    And I navigate to course participants
+    Then I should see "1 participants found"
+    And I should not see "Username 1" in the "participants" "table"
+    And I should not see "Username 2" in the "participants" "table"
+    And I am on the "Course 3" "enrolment methods" page
+    And I should see "After completing course: C1"
