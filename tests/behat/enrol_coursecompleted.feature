@@ -23,6 +23,8 @@ Feature: Enrolment on course completion
       | teacher1 | C2     | editingteacher |
     And the following config values are set as admin:
       | expiredaction | Unenrol user from course | enrol_coursecompleted |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Disable" "link" in the "Guest access" "table_row"

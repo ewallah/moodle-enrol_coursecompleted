@@ -112,9 +112,19 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: firefox
+        id: behat
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi behat
-      
+
+      - name: faildump
+        if: ${{ failure() && steps.behat.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: firefox faildump (${{ join(matrix.*, ', ') }})
+          path: ${{ github.workspace }}/moodledata/behat_dump
+          retention-days: 7
+          if-no-files-found: ignore
+
       - name: chrome
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi behat --profile chrome
