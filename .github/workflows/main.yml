@@ -129,14 +129,6 @@ jobs:
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi behat --profile chrome
 
-      - name: firefox classic
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi behat --suite="classic"
-      
-      - name: chrome classic
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi behat --suite="classic" --profile chrome
-
       - name: admin bookmarks
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi behat --auto-rerun=0 --profile chrome blocks/admin_bookmarks
