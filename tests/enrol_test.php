@@ -366,8 +366,16 @@ final class enrol_test extends \advanced_testcase {
         ob_start();
         $mform->display();
         $html = ob_get_clean();
-        $this->assertStringContainsString('Required field', $html);
-        $this->assertStringContainsString('Help with Completed course', $html);
+        $strm = get_string_manager();
+        $arr = ['compcourse', 'customwelcome', 'enrolenddate', 'enrolstartdate', 'group'];
+        foreach ($arr as $value) {
+            if ($strm->string_exists($value, 'enrol_coursecompleted')) {
+                $this->assertStringContainsString(get_string($value, 'enrol_coursecompleted'), $html);
+            }
+            if ($strm->string_exists($value . '_desc', 'enrol_coursecompleted')) {
+                $this->assertStringContainsString(get_string($value . '_desc', 'enrol_coursecompleted'), $html);
+            }
+        }
     }
 
     /**
