@@ -58,23 +58,28 @@ echo $OUTPUT->heading(get_string('enrolusers', 'enrol'));
 
 if ($enrolid > 0) {
     $br = '<br>';
+    $current = get_enrolled_users($context, '', 0, 'u.id', 'id', 0, 0, true);
+
     $condition = 'course = ? AND timecompleted > 0';
     if ($action === 'enrol') {
         require_sesskey();
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$instance->customint1])) {
             foreach ($candidates as $candidate) {
-                $user = \core_user::get_user($candidate);
-                if (!empty($user) && !$user->deleted) {
-                    $enrol->enrol_user(
-                        $instance,
-                        $candidate,
-                        $instance->roleid,
-                        $instance->enrolstartdate,
-                        $instance->enrolenddate
-                    );
-                    \enrol_coursecompleted_plugin::keepingroup($instance, $candidate);
-                    mark_user_dirty($candidate);
-                    echo '.';
+                if (!isset($current[$candidate])) {
+                    $user = \core_user::get_user($candidate);
+                    if (!empty($user) && !$user->deleted) {
+                        $enrol->enrol_user(
+                            $instance,
+                            $candidate,
+                            $instance->roleid,
+                            $instance->enrolstartdate,
+                            $instance->enrolenddate,
+                            $instance->enrolperiod
+                        );
+                        \enrol_coursecompleted_plugin::keepingroup($instance, $candidate);
+                        mark_user_dirty($candidate);
+                        echo '.';
+                    }
                 }
             }
             echo $br . $br . get_string('usersenrolled', 'enrol_coursecompleted', count($candidates));
@@ -82,15 +87,19 @@ if ($enrolid > 0) {
             echo $br . $br . $OUTPUT->continue_button($url);
         }
     } else {
+        $allusers = [];
         $cancelurl = new \moodle_url('/enrol/instances.php', ['id' => $instance->courseid]);
         if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$instance->customint1])) {
-            $allusers = [];
             foreach ($candidates as $candidate) {
-                $user = \core_user::get_user($candidate);
-                if (!empty($user) && !$user->deleted) {
-                    $allusers[] = fullname($user);
+                if (!isset($current[$candidate])) {
+                    $user = \core_user::get_user($candidate);
+                    if (!empty($user) && !$user->deleted) {
+                        $allusers[$candidate] = fullname($user);
+                    }
                 }
             }
+        }
+        if (count($allusers) > 0) {
             $link = new \moodle_url($PAGE->url, ['enrolid' => $enrolid, 'action' => 'enrol', 'sesskey' => sesskey()]);
             echo $OUTPUT->confirm(
                 implode(', ', $allusers),
