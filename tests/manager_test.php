@@ -64,10 +64,7 @@ final class manager_test extends \advanced_testcase {
         $plugin = enrol_get_plugin('coursecompleted');
         $id = $plugin->add_instance($course, ['customint1' => $this->course->id, 'roleid' => $studentrole->id]);
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
-        $this->student = $generator->create_user();
-        $manualplugin = enrol_get_plugin('manual');
-        $instance = $DB->get_record('enrol', ['courseid' => $this->course->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $this->student->id, $studentrole->id);
+        $this->student = $generator->create_and_enrol($this->course, 'student');
         mark_user_dirty($this->student->id);
     }
 
@@ -87,7 +84,7 @@ final class manager_test extends \advanced_testcase {
      * Test manager without permission.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_manager_wrong_permission(): void {
+    public function test_manager_without_permission(): void {
         global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $this->setUser($this->student);
@@ -101,7 +98,7 @@ final class manager_test extends \advanced_testcase {
      * Test manager wrong permission.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_manager_wrong_permission2(): void {
+    public function test_manager_wrong_permission(): void {
         global $CFG, $DB;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $generator = $this->getDataGenerator();
@@ -137,25 +134,26 @@ final class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Test manager oldusers.
+     * Test manager old users.
      * @covers \enrol_coursecompleted_plugin
      */
-    public function test_manager_oldusers(): void {
-        global $CFG;
+    public function test_manager_old_users(): void {
+        global $CFG, $DB;
         $this->preventResetByRollback();
         $this->setAdminUser();
-        $sink = $this->redirectEmails();
-        $sank = $this->redirectMessages();
-        $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
-        $ccompletion->mark_complete(time());
+        $cc = new \stdClass();
+        $cc->userid = $this->student->id;
+        $cc->course = $this->course->id;
+        $cc->timestarted = time() - 100;
+        $cc->timeenrolled = 0;
+        $cc->timecompleted = time() - 50;
+        $DB->insert_record('course_completions', $cc);
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $_POST['enrolid'] = $this->instance->id;
         ob_start();
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
         $html = ob_get_clean();
         $this->assertStringNotContainsString('No users found', $html);
-        $sink->close();
-        $sank->close();
     }
 
     /**
@@ -163,14 +161,18 @@ final class manager_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_submit(): void {
-        global $CFG;
+        global $CFG, $DB;
         $this->preventResetByRollback();
         $this->setAdminUser();
         set_config('messaging', false);
-        $sink = $this->redirectEmails();
-        $sank = $this->redirectMessages();
-        $ccompletion = new \completion_completion(['course' => $this->course->id, 'userid' => $this->student->id]);
-        $ccompletion->mark_complete(time());
+        $cc = new \stdClass();
+        $cc->userid = $this->student->id;
+        $cc->course = $this->course->id;
+        $cc->timestarted = time() - 100;
+        $cc->timeenrolled = 0;
+        $cc->timecompleted = time() - 50;
+        $DB->insert_record('course_completions', $cc);
+
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $_POST['enrolid'] = $this->instance->id;
         $_POST['action'] = 'enrol';
@@ -178,9 +180,7 @@ final class manager_test extends \advanced_testcase {
         ob_start();
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
         $html = ob_get_clean();
-        $this->assertStringNotContainsString('No users found', $html);
-        $sink->close();
-        $sank->close();
+        $this->assertStringContainsString('1 Users enrolled', $html);
     }
 
     /**

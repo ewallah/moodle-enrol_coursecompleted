@@ -63,7 +63,7 @@ final class other_test extends \advanced_testcase {
         $this->assertEquals(ENROL_EXT_REMOVED_SUSPENDNOROLES, get_config('enrol_coursecompleted', 'expiredaction'));
         $plugin = enrol_get_plugin('coursecompleted');
         $this->assertNotEmpty($plugin);
-        $this->assertInstanceOf('enrol_coursecompleted_plugin', $plugin);
+        $this->assertInstanceOf('\enrol_coursecompleted_plugin', $plugin);
     }
 
     /**
@@ -93,7 +93,7 @@ final class other_test extends \advanced_testcase {
     /**
      * Test disabled.
      * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted\observer
      */
     public function test_disabled(): void {
         global $CFG;
@@ -116,7 +116,7 @@ final class other_test extends \advanced_testcase {
                 'other' => ['relateduserid' => $student1],
             ]
         );
-        $observer = new \enrol_coursecompleted_observer();
+        $observer = new observer();
 
         $observer->enroluser($compevent);
         $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'enrolenddate' => time() - 66666666]);
@@ -129,7 +129,7 @@ final class other_test extends \advanced_testcase {
                 'other' => ['relateduserid' => $student2],
             ]
         );
-        $observer = new \enrol_coursecompleted_observer();
+        $observer = new observer();
         $observer->enroluser($compevent);
     }
 
@@ -159,23 +159,19 @@ final class other_test extends \advanced_testcase {
 
     /**
      * Test invalid role.
-     * @covers \enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted\observer
      */
     public function test_invalid_role(): void {
         global $DB;
         $generator = $this->getDataGenerator();
         $plugin = enrol_get_plugin('coursecompleted');
-        $studentid = $generator->create_user()->id;
         $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
         $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->setAdminUser();
         $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 9999]);
         $instance = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'coursecompleted'], '*', MUST_EXIST);
         $this->assertCount(2, $plugin->build_course_path($instance));
-        $manualplugin = enrol_get_plugin('manual');
-        $instance = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $studentid, $studentrole->id);
+        $studentid = $generator->create_and_enrol($course2, 'student')->id;
         $compevent = \core\event\course_completed::create(
             [
                 'objectid' => $course2->id,
@@ -185,21 +181,20 @@ final class other_test extends \advanced_testcase {
                 'other' => ['relateduserid' => $studentid],
             ]
         );
-        $observer = new \enrol_coursecompleted_observer();
+        $observer = new observer();
         $observer->enroluser($compevent);
         $this->assertDebuggingCalled('Role or course does not exist');
     }
 
     /**
      * Test group member.
-     * @covers \enrol_coursecompleted_observer
+     * @covers \enrol_coursecompleted\observer
      * @covers \enrol_coursecompleted_plugin
      */
     public function test_groups_child(): void {
         global $DB;
         $generator = $this->getDataGenerator();
         $plugin = enrol_get_plugin('coursecompleted');
-        $studentid = $generator->create_user()->id;
         $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
         $data = new \stdClass();
         $data->courseid = $course1->id;
@@ -218,9 +213,7 @@ final class other_test extends \advanced_testcase {
         $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => $studentrole->id]);
         $instance = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'coursecompleted'], '*', MUST_EXIST);
         $this->assertCount(2, $plugin->build_course_path($instance));
-        $manualplugin = enrol_get_plugin('manual');
-        $instance = $DB->get_record('enrol', ['courseid' => $course2->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $studentid, $studentrole->id);
+        $studentid = $generator->create_and_enrol($course2)->id;
         groups_add_member($groupid2, $studentid);
         rebuild_course_cache($course2->id, true);
         $compevent = \core\event\course_completed::create(
@@ -232,7 +225,7 @@ final class other_test extends \advanced_testcase {
                 'other' => ['relateduserid' => $studentid],
             ]
         );
-        $observer = new \enrol_coursecompleted_observer();
+        $observer = new observer();
         $observer->enroluser($compevent);
         $this->assertTrue(groups_is_member($groupid2, $studentid));
         rebuild_course_cache($course1->id, true);
@@ -274,7 +267,8 @@ final class other_test extends \advanced_testcase {
         $i3 = $plugin->add_instance($course, ['customint1' => $courseid3, 'customtext1' => 'boe', 'customint2' => 1]);
         $i4 = $plugin->add_instance(
             $course,
-            ['customint1' => $courseid4, 'customtext1' => '{$a->fullname} <b>boe</b>', 'customint2' => 1]
+            ['customint1' => $courseid4, 'customtext1' => '{$a->fullname} <b>boe</b>
+<a>another line</a>', 'customint2' => 1]
         );
         $compevent = \core\event\course_completed::create(
             [
@@ -285,7 +279,7 @@ final class other_test extends \advanced_testcase {
                 'other' => ['relateduserid' => $studentid],
             ]
         );
-        $observer = new \enrol_coursecompleted_observer();
+        $observer = new observer();
         $observer->enroluser($compevent);
         $adhock = new \enrol_coursecompleted\task\send_welcome();
         $adhock->set_custom_data(
