@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Payment gateway MTN Africa.
+ * Coursecompleted enrolment empty library.
  *
- * @package    paygw_mtnafrica
- * @copyright  2023 Medical Access Uganda Limited
- * @author     Renaat Debleu <info@eWallah.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   enrol_coursecompleted
+ * @copyright 2024 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

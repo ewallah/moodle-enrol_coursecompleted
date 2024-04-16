@@ -25,9 +25,10 @@
 
 namespace enrol_coursecompleted\task;
 
-use stdClass;
-use moodle_url;
+use context_course;
 use core_user;
+use moodle_url;
+use stdClass;
 
 /**
  * Process expirations task.
@@ -46,24 +47,24 @@ class send_welcome extends \core\task\adhoc_task {
     public function execute() {
         global $CFG, $DB;
         $data = $this->get_custom_data();
-        if ($user = \core_user::get_user($data->userid)) {
+        if ($user = core_user::get_user($data->userid)) {
             if ($course = $DB->get_field('course', 'fullname', ['id' => $data->courseid])) {
                 if ($complcourse = $DB->get_field('course', 'fullname', ['id' => $data->completedid])) {
-                    $context = \context_course::instance($data->courseid);
-                    $context2 = \context_course::instance($data->completedid);
+                    $context = context_course::instance($data->courseid);
+                    $context2 = context_course::instance($data->completedid);
                     $a = new stdClass();
                     $a->coursename = format_string($course, true, ['context' => $context]);
                     $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$data->courseid";
                     $a->completed = format_string($complcourse, true, ['context' => $context2]);
                     $custom = $DB->get_field('enrol', 'customtext1', ['id' => $data->enrolid]);
-                    $key = ['{$a->coursename}', '{$a->completed}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
-                    $value = [$a->coursename, $a->completed, $a->profileurl, fullname($user), $user->email];
                     if ($custom != '') {
+                        $key = ['{$a->coursename}', '{$a->completed}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}'];
+                        $value = [$a->coursename, $a->completed, $a->profileurl, fullname($user), $user->email];
                         $message = str_replace($key, $value, $custom);
                     } else {
                         $message = get_string('welcometocourse', 'enrol_coursecompleted', $a);
                     }
-                    if (strpos($message, '<') == false) {
+                    if (strpos($message, '<') === false) {
                         $messagehtml = $message;
                     } else {
                         // This is most probably the tag/newline soup known as FORMAT_MOODLE.
