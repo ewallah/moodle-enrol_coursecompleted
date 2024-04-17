@@ -159,6 +159,7 @@ final class other_test extends \advanced_testcase {
 
     /**
      * Test invalid role.
+     * @covers \enrol_coursecompleted_plugin
      * @covers \enrol_coursecompleted\observer
      */
     public function test_invalid_role(): void {
@@ -183,7 +184,7 @@ final class other_test extends \advanced_testcase {
         );
         $observer = new observer();
         $observer->enroluser($compevent);
-        $this->assertDebuggingCalled('Role or course does not exist');
+        $this->assertDebuggingCalled('Role does not exist');
     }
 
     /**

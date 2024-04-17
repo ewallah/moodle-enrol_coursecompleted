@@ -44,7 +44,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public function get_instance_name($instance) {
         global $DB;
         if ($short = $DB->get_field('course', 'shortname', ['id' => $instance->customint1])) {
-            $coursename = format_string($short, true, ['context' => context_course::instance($instance->customint1)]);
+            $coursename = format_string($short, true, ['context' => \context_course::instance($instance->customint1)]);
             return get_string('aftercourse', 'enrol_coursecompleted', $coursename);
         }
         return get_string('coursedeleted', '', $instance->customint1);
@@ -61,7 +61,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $arr = [];
         foreach ($instances as $instance) {
             if ($fullname = $DB->get_field('course', 'fullname', ['id' => $instance->customint1])) {
-                $context = context_course::instance($instance->customint1);
+                $context = \context_course::instance($instance->customint1);
                 $name = format_string($fullname, true, ['context' => $context]);
                 $arr[] = new pix_icon('icon', get_string('aftercourse', 'enrol_coursecompleted', $name), 'enrol_coursecompleted');
             }
@@ -93,7 +93,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $i = 1;
             foreach ($items as $item) {
                 $course = get_course($item);
-                $context = context_course::instance($item);
+                $context = \context_course::instance($item);
                 $data[] =
                     [
                         'first' => ($i === 1),
@@ -106,7 +106,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             }
         }
         $course = get_course($instance->customint1);
-        $context = context_course::instance($instance->customint1);
+        $context = \context_course::instance($instance->customint1);
         $rdata =
             [
                 'coursetitle' => format_string($course->fullname, true, ['context' => $context]),
@@ -130,7 +130,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $actions = parent::get_user_enrolment_actions($manager, $ue);
         $id = $ue->enrolmentinstance->customint1;
         if ($DB->record_exists('course', ['id' => $id])) {
-            $context = context_course::instance($id);
+            $context = \context_course::instance($id);
             if (has_capability('report/completion:view', $context)) {
                 $actions[] = new user_enrolment_action(
                     new pix_icon('a/search', ''),
@@ -153,7 +153,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         if ($instance->enrol !== 'coursecompleted') {
             throw new coding_exception('invalid enrol instance!');
         }
-        $context = context_course::instance($instance->courseid);
+        $context = \context_course::instance($instance->courseid);
         $icons = [];
         if (has_capability('enrol/coursecompleted:enrolpast', $context)) {
             $managelink = new moodle_url("/enrol/coursecompleted/manage.php", ['enrolid' => $instance->id]);
@@ -195,6 +195,84 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     }
 
     /**
+     * Enrol user into course via enrol instance.
+     *
+     * @param stdClass $instance
+     * @param int $userid
+     * @param int $roleid optional role id
+     * @param int $timestart 0 means unknown
+     * @param int $timeend 0 means forever
+     * @param int $status default to ENROL_USER_ACTIVE for new enrolments, no change by default in updates
+     * @param bool $recovergrades restore grade history
+     * @return void
+     */
+    public function enrol_user(
+        stdClass $instance,
+        $userid,
+        $roleid = null,
+        $timestart = 0,
+        $timeend = 0,
+        $status = null,
+        $recovergrades = null
+    ) {
+        global $CFG, $DB;
+        // We need to keep the role of the user.
+        if (isset($instance->roleid)) {
+            $roleid = $instance->roleid;
+        }
+        if (isset($instance->enrolstartdate)) {
+            $timestart = $instance->enrolstartdate;
+        }
+        if (isset($instance->enrolenddate)) {
+            $timeend = $instance->enrolenddate;
+        }
+        if (isset($instance->enrolperiod) && $instance->enrolperiod > 0) {
+            $timeend = max(time(), $timestart) + $instance->enrolperiod;
+        }
+
+        if ($DB->record_exists('role', ['id' => $roleid])) {
+            $context = \context_course::instance($instance->courseid, MUST_EXIST);
+            parent::enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status, $recovergrades);
+            role_assign($roleid, $userid, $context->id, 'enrol_coursecompleted', $instance->id);
+
+            // Send welcome message if needed.
+            if ($instance->customint2 > 0) {
+                // There is a course welcome message to be sent.
+                $adhock = new \enrol_coursecompleted\task\send_welcome();
+                $adhock->set_custom_data(
+                    [
+                        'userid' => $userid,
+                        'enrolid' => $instance->id,
+                        'courseid' => $instance->courseid,
+                        'completedid' => $instance->customint1,
+                    ]
+                );
+                $adhock->set_component('enrol_coursecompleted');
+                \core\task\manager::queue_adhoc_task($adhock);
+            }
+
+            // Keep the user in a group when needed.
+            if ($instance->customint3 > 0) {
+                require_once($CFG->dirroot . '/group/lib.php');
+                $groups = array_values(groups_get_user_groups($instance->customint1, $userid));
+                foreach ($groups as $group) {
+                    $subs = array_values($group);
+                    foreach ($subs as $sub) {
+                        $groupnamea = groups_get_group_name($sub);
+                        $groupnameb = groups_get_group_by_name($instance->courseid, $groupnamea);
+                        if ($groupnameb) {
+                            groups_add_member($groupnameb, $userid);
+                        }
+                    }
+                }
+            }
+            mark_user_dirty($userid);
+        } else {
+            debugging('Role does not exist', DEBUG_DEVELOPER);
+        }
+    }
+
+    /**
      * Restore user enrolment.
      *
      * @param \restore_enrolments_structure_step $step
@@ -205,9 +283,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function restore_user_enrolment(\restore_enrolments_structure_step $step, $data, $instance, $userid, $oldstatus) {
         if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
-            $this->enrol_user($instance, $userid, null, $data->timestart, $data->timeend, $data->status);
+            $this->enrol_user($instance, $userid);
         }
-        mark_user_dirty($userid);
     }
 
     /**
@@ -445,30 +522,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     }
 
     /**
-     * Keep user in group
-     *
-     * @param stdClass $enrol Enrolment record
-     * @param int $userid User id
-     */
-    public static function keepingroup($enrol, $userid) {
-        global $CFG;
-        if ($enrol->customint3 > 0) {
-            require_once($CFG->dirroot . '/group/lib.php');
-            $groups = array_values(groups_get_user_groups($enrol->customint1, $userid));
-            foreach ($groups as $group) {
-                $subs = array_values($group);
-                foreach ($subs as $sub) {
-                    $groupnamea = groups_get_group_name($sub);
-                    $groupnameb = groups_get_group_by_name($enrol->courseid, $groupnamea);
-                    if ($groupnameb) {
-                        groups_add_member($groupnameb, $userid);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Returns true if the plugin has one or more bulk operations that can be performed on
      * user enrolments.
      *
@@ -533,12 +586,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                     }
                     if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$enrol->customint1])) {
                         foreach ($candidates as $canid) {
-                            $user = \core_user::get_user($canid);
-                            if (!empty($user) && !$user->deleted) {
-                                $plugin->enrol_user($enrol, $canid, $enrol->roleid, $enrol->enrolstartdate, $enrol->enrolenddate);
-                                self::keepingroup($enrol, $canid);
-                                mark_user_dirty($canid);
-                            }
+                            $plugin->enrol_user($enrol, $canid);
                         }
                     }
                 }

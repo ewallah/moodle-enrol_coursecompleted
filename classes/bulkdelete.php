@@ -90,6 +90,7 @@ class bulkdelete extends \enrol_bulk_enrolment_operation {
         if (!has_capability("enrol/coursecompleted:unenrol", $manager->get_context())) {
             return false;
         }
+
         foreach ($users as $user) {
             foreach ($user->enrolments as $enrolment) {
                 $plugin = $enrolment->enrolmentplugin;

@@ -68,16 +68,7 @@ if ($enrolid > 0) {
                 if (!isset($current[$candidate])) {
                     $user = \core_user::get_user($candidate);
                     if (!empty($user) && !$user->deleted) {
-                        $enrol->enrol_user(
-                            $instance,
-                            $candidate,
-                            $instance->roleid,
-                            $instance->enrolstartdate,
-                            $instance->enrolenddate,
-                            $instance->enrolperiod
-                        );
-                        \enrol_coursecompleted_plugin::keepingroup($instance, $candidate);
-                        mark_user_dirty($candidate);
+                        $enrol->enrol_user($instance, $candidate);
                         echo '.';
                     }
                 }

@@ -104,10 +104,9 @@ final class bulk_test extends \advanced_testcase {
         global $DB;
         $generator = $this->getDataGenerator();
         $plugin = enrol_get_plugin('coursecompleted');
-        $studentid = $generator->create_user()->id;
         $course1 = $generator->create_course(['shortname' => 'c1', 'enablecompletion' => 1]);
         $course2 = $generator->create_course(['shortname' => 'd1', 'enablecompletion' => 1]);
-        $generator->enrol_user($studentid, $course2->id);
+        $studentid = $generator->create_and_enrol($course2, 'student')->id;
         $id = $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5]);
         $instance = $DB->get_record('enrol', ['id' => $id]);
         $plugin->enrol_user($instance, $studentid);

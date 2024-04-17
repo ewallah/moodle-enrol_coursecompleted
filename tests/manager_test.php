@@ -102,9 +102,8 @@ final class manager_test extends \advanced_testcase {
         global $CFG, $DB;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $generator = $this->getDataGenerator();
-        $user = $generator->create_user();
+        $user = $generator->create_and_enrol($this->course, 'editingteacher');
         $role = $DB->get_record('role', ['shortname' => 'editingteacher']);
-        $generator->enrol_user($user->id, $this->course->id, $role->shortname);
         $context = \context_course::instance($this->course->id);
         assign_capability('enrol/coursecompleted:enrolpast', CAP_PROHIBIT, $role->id, $context);
         assign_capability('enrol/coursecompleted:unenrol', CAP_PROHIBIT, $role->id, $context);

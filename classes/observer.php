@@ -58,41 +58,7 @@ class observer {
 
         if ($enrols = $DB->get_records_sql($sql, $params)) {
             foreach ($enrols as $enrol) {
-                // Check role and course.
-                if (
-                    $DB->record_exists('role', ['id' => $enrol->roleid]) &&
-                    $DB->record_exists('course', ['id' => $enrol->courseid])
-                ) {
-                    if ($enrol->enrolperiod > 0) {
-                        $enrol->enrolenddate = max(time(), $enrol->enrolstartdate) + $enrol->enrolperiod;
-                    }
-
-                    \enrol_get_plugin('coursecompleted')->enrol_user(
-                        $enrol,
-                        $event->relateduserid,
-                        $enrol->roleid,
-                        $enrol->enrolstartdate,
-                        $enrol->enrolenddate
-                    );
-                    \enrol_coursecompleted_plugin::keepingroup($enrol, $event->relateduserid);
-                    mark_user_dirty($event->relateduserid);
-                    if ($enrol->customint2 > 0) {
-                        // There is a course welcome message to be sent.
-                        $adhock = new task\send_welcome();
-                        $adhock->set_custom_data(
-                            [
-                                'userid' => $event->relateduserid,
-                                'enrolid' => $enrol->id,
-                                'courseid' => $enrol->courseid,
-                                'completedid' => $enrol->customint1,
-                            ]
-                        );
-                        $adhock->set_component('enrol_coursecompleted');
-                        \core\task\manager::queue_adhoc_task($adhock);
-                    }
-                } else {
-                    debugging('Role or course does not exist', DEBUG_DEVELOPER);
-                }
+                \enrol_get_plugin('coursecompleted')->enrol_user($enrol, $event->relateduserid);
             }
         }
     }

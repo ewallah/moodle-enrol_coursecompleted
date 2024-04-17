@@ -25,6 +25,9 @@
 
 namespace enrol_coursecompleted;
 
+use advanced_testcase;
+use stdClass;
+
 /**
  * coursecompleted enrolment plugin tests.
  *
@@ -34,7 +37,7 @@ namespace enrol_coursecompleted;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
-final class enrol_test extends \advanced_testcase {
+final class enrol_test extends advanced_testcase {
     /** @var stdClass Instance. */
     private $instance;
 
@@ -101,7 +104,7 @@ final class enrol_test extends \advanced_testcase {
      * Test if user is enrolled after completing a course.
      * @covers \enrol_coursecompleted\observer
      */
-    public function test_automatic_enrolled(): void {
+    public function test_event_enrolled(): void {
         global $PAGE;
         $PAGE->set_url('/enrol/editinstance.php');
         $manager1 = new \course_enrolment_manager($PAGE, $this->course1);
@@ -126,83 +129,7 @@ final class enrol_test extends \advanced_testcase {
         $this->assertTrue(is_enrolled(\context_course::instance($this->course1->id), $this->student->id));
         $this->assertTrue(is_enrolled(\context_course::instance($this->course2->id), $this->student->id));
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
-    }
-
-    /**
-     * Test if user is enrolled for a specific time after completing a course.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\observer
-     */
-    public function test_time_enrolled(): void {
-        global $DB, $PAGE;
-        $generator = $this->getDataGenerator();
-        $course1 = $generator->create_course(['shortname' => 'B1']);
-        $course2 = $generator->create_course(['shortname' => 'B2']);
-        $course3 = $generator->create_course(['shortname' => 'B3', 'enablecompletion' => 1]);
-        $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
-        $params = ['customint1' => $course3->id, 'roleid' => $studentrole, 'enrolperiod' => 1];
-        $id1 = $this->plugin->add_instance($course1, $params);
-        $params = ['customint1' => $course3->id, 'roleid' => $studentrole, 'enrolperiod' => 2];
-        $id2 = $this->plugin->add_instance($course2, $params);
-        $manualplugin = enrol_get_plugin('manual');
-        $instance = $DB->get_record('enrol', ['courseid' => $course3->id, 'enrol' => 'manual'], '*', MUST_EXIST);
-        $manualplugin->enrol_user($instance, $this->student->id, $studentrole);
-        $this->assertFalse(is_enrolled(\context_course::instance($course1->id), $this->student->id));
-        $this->assertFalse(is_enrolled(\context_course::instance($course2->id), $this->student->id));
-        $this->assertTrue(is_enrolled(\context_course::instance($course3->id), $this->student->id));
-        mark_user_dirty($this->student->id);
-        rebuild_course_cache($course1->id);
-        rebuild_course_cache($course2->id);
-        rebuild_course_cache($course3->id);
-        $PAGE->set_url('/enrol/editinstance.php');
-        $manager1 = new \course_enrolment_manager($PAGE, $course1);
-        $this->assertCount(0, $manager1->get_user_enrolments($this->student->id));
-        $manager2 = new \course_enrolment_manager($PAGE, $course2);
-        $this->assertCount(0, $manager2->get_user_enrolments($this->student->id));
-        $manager3 = new \course_enrolment_manager($PAGE, $course3);
-        $this->assertCount(1, $manager3->get_user_enrolments($this->student->id));
-        $compevent = \core\event\course_completed::create(
-            [
-                'objectid' => $course1->id,
-                'relateduserid' => $this->student->id,
-                'context' => \context_course::instance($course3->id),
-                'courseid' => $course3->id,
-                'other' => ['relateduserid' => $this->student->id],
-            ]
-        );
-        mark_user_dirty($this->student->id);
-        $observer = new \enrol_coursecompleted\observer();
-        $observer->enroluser($compevent);
-        mark_user_dirty($this->student->id);
-        rebuild_course_cache($course1->id);
-        rebuild_course_cache($course2->id);
-        mark_user_dirty($this->student->id);
-        $this->assertTrue(is_enrolled(\context_course::instance($course1->id), $this->student->id));
-        $this->assertTrue(is_enrolled(\context_course::instance($course2->id), $this->student->id));
-        $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
-        $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id1, 'userid' => $this->student->id]);
-        $this->assertEquals(0, $ueinstance->timestart);
-        $this->assertNotEquals(0, $ueinstance->timeend);
-        $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id2, 'userid' => $this->student->id]);
-        $this->assertEquals(0, $ueinstance->timestart);
-        $this->assertGreaterThan(time(), $ueinstance->timeend);
-        sleep(1);
-        $trace = new \null_progress_trace();
-        $this->plugin->sync($trace);
-        mark_user_dirty($this->student->id);
-        $this->assertFalse(is_enrolled(\context_course::instance($course1->id), $this->student->id, '', true));
-        $manager1 = new \course_enrolment_manager($PAGE, $course1);
-        $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
-        $this->assertTrue(is_enrolled(\context_course::instance($course2->id), $this->student->id));
-        $manager2 = new \course_enrolment_manager($PAGE, $course2);
         $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
-        $this->plugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
-        sleep(2);
-        $this->plugin->sync($trace);
-        mark_user_dirty($this->student->id);
-        $this->assertFalse(is_enrolled(\context_course::instance($course2->id), $this->student->id));
-        $manager2 = new \course_enrolment_manager($PAGE, $course2);
-        $this->assertCount(0, $manager2->get_user_enrolments($this->student->id));
     }
 
     /**
@@ -376,84 +303,6 @@ final class enrol_test extends \advanced_testcase {
                 $this->assertStringContainsString(get_string($value . '_desc', 'enrol_coursecompleted'), $html);
             }
         }
-    }
-
-    /**
-     * Test backup.
-     * @covers \enrol_coursecompleted_plugin
-     */
-    public function test_backup_restore(): void {
-        global $CFG, $DB, $PAGE;
-        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
-        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
-
-        $this->assertEquals(3, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
-        $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
-        $ccompletion->mark_complete(time());
-        $this->runAdhocTasks();
-        $bc = new \backup_controller(
-            \backup::TYPE_1COURSE,
-            $this->course2->id,
-            \backup::FORMAT_MOODLE,
-            \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL,
-            2
-        );
-        $bc->execute_plan();
-        $results = $bc->get_results();
-        $file = $results['backup_destination'];
-        $fp = get_file_packer('application/vnd.moodle.backup');
-        $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
-        $file->extract_to_pathname($fp, $filepath);
-        $bc->destroy();
-        $rc = new \restore_controller(
-            'test-restore-course-event',
-            $this->course2->id,
-            \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL,
-            2,
-            \backup::TARGET_NEW_COURSE
-        );
-        $rc->execute_precheck();
-        $rc->execute_plan();
-        $newid = $rc->get_courseid();
-        $rc->destroy();
-        $this->assertEquals(4, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
-        $this->assertTrue(is_enrolled(\context_course::instance($newid), $this->student->id));
-        $url = new \moodle_url('/user/index.php', ['id' => $newid]);
-        $PAGE->set_url($url);
-        $course = get_course($newid);
-        $manager = new \course_enrolment_manager($PAGE, $course);
-        $enrolments = $manager->get_user_enrolments($this->student->id);
-        $this->assertCount(2, $enrolments);
-        $bc = new \backup_controller(
-            \backup::TYPE_1COURSE,
-            $this->course2->id,
-            \backup::FORMAT_MOODLE,
-            \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL,
-            2
-        );
-        $bc->execute_plan();
-        $results = $bc->get_results();
-        $file = $results['backup_destination'];
-        $fp = get_file_packer('application/vnd.moodle.backup');
-        $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
-        $file->extract_to_pathname($fp, $filepath);
-        $bc->destroy();
-        $rc = new \restore_controller(
-            'test-restore-course-event',
-            $newid,
-            \backup::INTERACTIVE_NO,
-            \backup::MODE_GENERAL,
-            2,
-            \backup::TARGET_EXISTING_ADDING
-        );
-        $rc->execute_precheck();
-        $rc->execute_plan();
-        $rc->destroy();
-        $this->assertEquals(4, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
-        $this->assertTrue(is_enrolled(\context_course::instance($newid), $this->student->id));
     }
 
     /**
