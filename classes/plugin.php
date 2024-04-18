@@ -575,22 +575,27 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
 
         if ($enrols = $DB->get_records('enrol', $params)) {
             $plugin = \enrol_get_plugin('coursecompleted');
-            $condition = 'course = ? AND timecompleted > 0';
             foreach ($enrols as $enrol) {
-                if (
-                    $DB->record_exists('role', ['id' => $enrol->roleid]) &&
-                    $DB->record_exists('course', ['id' => $enrol->courseid])
-                ) {
-                    if ($enrol->enrolperiod > 0) {
-                        $enrol->enrolenddate = max(time(), $enrol->enrolstartdate) + $enrol->enrolperiod;
-                    }
-                    if ($candidates = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$enrol->customint1])) {
-                        foreach ($candidates as $canid) {
-                            $plugin->enrol_user($enrol, $canid);
-                        }
-                    }
+                $candidates = self::get_candidates($enrol->customint1);
+                foreach ($candidates as $canid) {
+                    $plugin->enrol_user($enrol, $canid);
                 }
             }
         }
+    }
+
+    /**
+     * Get all candidates for an enrolment.
+     * @param int $courseid
+     * @return array
+     */
+    public static function get_candidates(int $courseid): array {
+        global $DB;
+        $condition = 'course = ? AND timecompleted > 0';
+        $candidates = [];
+        if ($return = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$courseid])) {
+            $candidates = $return;
+        }
+        return $candidates;
     }
 }

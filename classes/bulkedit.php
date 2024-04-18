@@ -25,10 +25,10 @@
 
 namespace enrol_coursecompleted;
 
+// @codeCoverageIgnoreStart
 defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
 require_once($CFG->dirroot . '/enrol/locallib.php');
+// @codeCoverageIgnoreEnd
 
 /**
  * A bulk operation for the coursecompleted enrolment plugin to edit selected users enrolments.

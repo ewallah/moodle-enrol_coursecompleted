@@ -25,9 +25,10 @@
 
 namespace enrol_coursecompleted\form;
 
+// @codeCoverageIgnoreStart
 defined('MOODLE_INTERNAL') || die();
-
 require_once($CFG->dirroot . '/enrol/bulkchange_forms.php');
+// @codeCoverageIgnoreEnd
 
 /**
  * The form to confirm the intention to bulk edit users enrolments.

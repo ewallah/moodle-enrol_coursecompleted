@@ -28,12 +28,10 @@ namespace enrol_coursecompleted;
 use moodle_url;
 use stdClass;
 
+// @codeCoverageIgnoreStart
 defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
 require_once($CFG->dirroot . '/enrol/locallib.php');
-
-
+// @codeCoverageIgnoreEnd
 /**
  * A bulk operation for the coursecompleted enrolment plugin to delete selected users enrolments.
  *
