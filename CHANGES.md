@@ -1,3 +1,10 @@
+## v4.2.3 (2024-04-11)
+
+*  code review
+*  issue #35
+*  readme issue #35
+*  version update
+
 ## v4.2.2 (2024-03-24)
 
 * code review

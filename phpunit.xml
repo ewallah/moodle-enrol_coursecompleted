@@ -46,9 +46,6 @@
       <file>renderer.php</file>
       <file>rsslib.php</file>
     </include>
-    <exclude>
-      <directory suffix=".php">classes/form</directory>
-    </exclude>
   </coverage>
 
 </phpunit>
