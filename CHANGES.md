@@ -1,9 +1,20 @@
+## v4.2.4 (2024-04-19)
+
+* codecoverage ignore
+* code review
+* namespacing
+* remove classic testing (GitHub actions timeouts)
+* disable async backups (Enabled auto in 404)
+* issue #29
+* version update
+* MOODLE_404_STABLE
+
 ## v4.2.3 (2024-04-11)
 
-*  code review
-*  issue #35
-*  readme issue #35
-*  version update
+* code review
+* issue #35
+* readme issue #35
+* version update
 
 ## v4.2.2 (2024-03-24)
 
@@ -31,6 +42,7 @@
 ## v4.1.0 (2023-10-12)
 
 * Update main.yml
+* MOODLE_403_STABLE
 * Version update
 
 ## v4.0.8 (2023-09-24)
@@ -176,4 +188,3 @@
 
 * phpunit upgrade
 * version update
-
