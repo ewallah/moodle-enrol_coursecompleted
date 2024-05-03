@@ -15,21 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course completed enrol plugin version specification.
+ * * Hook callbacks for enrol_coursecompleted.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'enrol_coursecompleted';
-
-$plugin->requires = 2024041600;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->supported = [404, 404];
-$plugin->release = 'v4.4.1';
-$plugin->version = 2024042900;
-
+$callbacks = [
+    [
+        'hook' => core_enrol\hook\after_user_enrolled::class,
+        'callback' => 'enrol_coursecompleted\user_enrolment_callbacks::send_course_welcome_message',
+    ],
+];

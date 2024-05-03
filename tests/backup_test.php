@@ -83,7 +83,6 @@ final class backup_test extends advanced_testcase {
 
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
-        $this->runAdhocTasks();
         $bc = new \backup_controller(
             \backup::TYPE_1COURSE,
             $this->course2->id,

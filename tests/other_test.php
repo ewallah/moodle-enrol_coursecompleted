@@ -94,6 +94,7 @@ final class other_test extends \advanced_testcase {
      * Test disabled.
      * @covers \enrol_coursecompleted_plugin
      * @covers \enrol_coursecompleted\observer
+     * @covers \enrol_coursecompleted\user_enrolment_callbacks
      */
     public function test_disabled(): void {
         global $CFG;
@@ -161,6 +162,7 @@ final class other_test extends \advanced_testcase {
      * Test invalid role.
      * @covers \enrol_coursecompleted_plugin
      * @covers \enrol_coursecompleted\observer
+     * @covers \enrol_coursecompleted\user_enrolment_callbacks
      */
     public function test_invalid_role(): void {
         global $DB;
@@ -190,6 +192,7 @@ final class other_test extends \advanced_testcase {
     /**
      * Test group member.
      * @covers \enrol_coursecompleted\observer
+     * @covers \enrol_coursecompleted\user_enrolment_callbacks
      * @covers \enrol_coursecompleted_plugin
      */
     public function test_groups_child(): void {
@@ -231,6 +234,7 @@ final class other_test extends \advanced_testcase {
         $this->assertTrue(groups_is_member($groupid2, $studentid));
         rebuild_course_cache($course1->id, true);
         rebuild_course_cache($course2->id, true);
+        // TODO: Why is hook not working?
         $this->assertTrue(groups_is_member($groupid1, $studentid));
     }
 
@@ -249,64 +253,40 @@ final class other_test extends \advanced_testcase {
     }
 
     /**
-     * Test adhoc sending of welcome messages.
-     * @covers \enrol_coursecompleted\task\send_welcome
+     * Test welcome sending of welcome messages.
+     * @covers \enrol_coursecompleted\user_enrolment_callbacks
      */
-    public function test_adhoc_email_welcome_message(): void {
+    public function test_email_welcome_message(): void {
         global $DB;
         $generator = $this->getDataGenerator();
-        $sink = $this->redirectEmails();
+        $messagesink = $this->redirectMessages();
         $plugin = enrol_get_plugin('coursecompleted');
-        $studentid = $generator->create_user()->id;
-        $course = $generator->create_course(['shortname' => 'B0', 'enablecompletion' => 1]);
-        $courseid1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1])->id;
-        $courseid2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1])->id;
-        $courseid3 = $generator->create_course(['shortname' => 'B3', 'enablecompletion' => 1])->id;
-        $courseid4 = $generator->create_course(['shortname' => 'B4', 'enablecompletion' => 1])->id;
-        $plugin->add_instance($course, ['customint1' => $courseid1, 'roleid' => 5, 'customint2' => 0]);
-        $i2 = $plugin->add_instance($course, ['customint1' => $courseid2, 'roleid' => 5, 'customint2' => 1]);
-        $i3 = $plugin->add_instance($course, ['customint1' => $courseid3, 'customtext1' => 'boe', 'customint2' => 1]);
-        $i4 = $plugin->add_instance(
-            $course,
-            ['customint1' => $courseid4, 'customtext1' => '{$a->fullname} <b>boe</b>
-<a>another line</a>', 'customint2' => 1]
+        $student = $generator->create_user();
+        $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
+        $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
+        $course3 = $generator->create_course(['shortname' => 'B3', 'enablecompletion' => 1]);
+        $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'customint2' => 1, 'customtext1' => 'boe']);
+        $plugin->add_instance($course2, ['customint1' => $course3->id, 'roleid' => 5, 'customint2' => 1]);
+        $plugin->add_instance($course3, ['customint1' => $course1->id, 'roleid' => 5, 'customint2' => 1, 'customtext1' => '
+{$a->fullname} <b>boe</b>
+<a>another line</a>']
         );
-        $compevent = \core\event\course_completed::create(
-            [
-                'objectid' => $courseid1,
-                'relateduserid' => $studentid,
-                'context' => \context_course::instance($courseid1),
-                'courseid' => $courseid1,
-                'other' => ['relateduserid' => $studentid],
-            ]
-        );
-        $observer = new observer();
-        $observer->enroluser($compevent);
-        $adhock = new \enrol_coursecompleted\task\send_welcome();
-        $adhock->set_custom_data(
-            ['userid' => $studentid, 'enrolid' => $i2, 'courseid' => $course->id, 'completedid' => $courseid2]
-        );
-        $adhock->set_component('enrol_coursecompleted');
-        $adhock->execute();
-        \core\task\manager::queue_adhoc_task($adhock);
-        $adhock->set_custom_data(
-            ['userid' => $studentid, 'enrolid' => $i3, 'courseid' => $course->id, 'completedid' => $courseid3]
-        );
-        \core\task\manager::queue_adhoc_task($adhock);
-        $adhock->set_custom_data(
-            ['userid' => $studentid, 'enrolid' => $i4, 'courseid' => $course->id, 'completedid' => $courseid4]
-        );
-        \core\task\manager::queue_adhoc_task($adhock);
-        $this->assertCount(3, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
-        \phpunit_util::run_all_adhoc_tasks();
-        $messages = $sink->get_messages();
-        $this->assertCount(4, $messages);
-        $sink->close();
-        foreach ($messages as $message) {
-            $this->assertStringNotContainsString('{a->', $message->header);
-            $this->assertStringNotContainsString('{a->', $message->body);
+        $instances = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
+        foreach ($instances as $instance) {
+            $plugin->enrol_user($instance, $student->id);
         }
-        $this->assertCount(0, $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
+        $messages = $messagesink->get_messages_by_component_and_type(
+            'moodle',
+            'enrolcoursewelcomemessage',
+        );
+        $this->assertNotEmpty($messages);
+        $this->assertStringContainsString($course1->fullname, $messages[0]->subject);
+        $this->assertStringContainsString($course2->fullname, $messages[1]->subject);
+        $this->assertStringContainsString($course3->fullname, $messages[2]->subject);
+        $this->assertEquals('boe', $messages[0]->fullmessagehtml);
+        $this->assertStringContainsString($course3->fullname, $messages[1]->fullmessagehtml);
+        $this->assertStringContainsString(fullname($student), $messages[2]->fullmessagehtml);
+        $messagesink->close();
     }
 
     /**

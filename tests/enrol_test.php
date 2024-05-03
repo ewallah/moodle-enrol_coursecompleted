@@ -103,6 +103,7 @@ final class enrol_test extends advanced_testcase {
     /**
      * Test if user is enrolled after completing a course.
      * @covers \enrol_coursecompleted\observer
+     * @covers \enrol_coursecompleted\user_enrolment_callbacks
      */
     public function test_event_enrolled(): void {
         global $PAGE;
@@ -135,6 +136,7 @@ final class enrol_test extends advanced_testcase {
     /**
      * Test if user is enrolled after completing a course.
      * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted\user_enrolment_callbacks
      */
     public function test_enrolled_after_completion(): void {
         global $PAGE;
@@ -146,7 +148,6 @@ final class enrol_test extends advanced_testcase {
             '100',
             \core_completion\progress::get_course_progress_percentage($this->course1, $this->student->id)
         );
-        $this->runAdhocTasks();
         $manager = new \course_enrolment_manager($PAGE, $this->course2);
         $this->assertCount(1, $manager->get_user_enrolments($this->student->id));
     }
@@ -163,7 +164,6 @@ final class enrol_test extends advanced_testcase {
             '100',
             \core_completion\progress::get_course_progress_percentage($this->course1, $this->student->id)
         );
-        $this->runAdhocTasks();
         $this->setAdminUser();
         $context = \context_course::instance($this->course1->id);
         $this->assertTrue(has_capability('report/completion:view', $context));

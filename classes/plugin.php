@@ -215,7 +215,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $status = null,
         $recovergrades = null
     ) {
-        global $CFG, $DB;
+        global $DB;
         // We need to keep the role of the user.
         if (isset($instance->roleid)) {
             $roleid = $instance->roleid;
@@ -234,39 +234,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $context = \context_course::instance($instance->courseid, MUST_EXIST);
             parent::enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status, $recovergrades);
             role_assign($roleid, $userid, $context->id, 'enrol_coursecompleted', $instance->id);
-
-            // Send welcome message if needed.
-            if ($instance->customint2 > 0) {
-                // There is a course welcome message to be sent.
-                $adhock = new \enrol_coursecompleted\task\send_welcome();
-                $adhock->set_custom_data(
-                    [
-                        'userid' => $userid,
-                        'enrolid' => $instance->id,
-                        'courseid' => $instance->courseid,
-                        'completedid' => $instance->customint1,
-                    ]
-                );
-                $adhock->set_component('enrol_coursecompleted');
-                \core\task\manager::queue_adhoc_task($adhock);
-            }
-
-            // Keep the user in a group when needed.
-            if ($instance->customint3 > 0) {
-                require_once($CFG->dirroot . '/group/lib.php');
-                $groups = array_values(groups_get_user_groups($instance->customint1, $userid));
-                foreach ($groups as $group) {
-                    $subs = array_values($group);
-                    foreach ($subs as $sub) {
-                        $groupnamea = groups_get_group_name($sub);
-                        $groupnameb = groups_get_group_by_name($instance->courseid, $groupnamea);
-                        if ($groupnameb) {
-                            groups_add_member($groupnameb, $userid);
-                        }
-                    }
-                }
-            }
-            mark_user_dirty($userid);
         } else {
             debugging('Role does not exist', DEBUG_DEVELOPER);
         }
