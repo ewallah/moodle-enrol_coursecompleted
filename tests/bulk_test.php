@@ -18,7 +18,7 @@
  * coursecompleted enrolment plugin bulk tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ use stdClass;
  * coursecompleted enrolment plugin bulk tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted
@@ -53,9 +53,6 @@ final class bulk_test extends \advanced_testcase {
         global $CFG;
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
-        $enabled = enrol_get_plugins(true);
-        $enabled['coursecompleted'] = true;
-        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
     }
 
     /**

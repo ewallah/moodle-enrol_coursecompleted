@@ -18,7 +18,7 @@
  * A bulk operation for the coursecompleted enrolment plugin to edit selected users enrolments.
  *
  * @package   enrol_coursecompleted
- * @copyright 2020 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
  * A bulk operation for the coursecompleted enrolment plugin to edit selected users enrolments.
  *
  * @package   enrol_coursecompleted
- * @copyright 2020 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -131,7 +131,6 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
 
         $updatesql = join(', ', $updatesql);
         $sql = "UPDATE {user_enrolments} SET $updatesql WHERE id $ueidsql";
-        \cache::make('core', 'coursecontacts')->delete($context->instanceid);
-        return (bool)$DB->execute($sql, $params);
+        return $DB->execute($sql, $params);
     }
 }

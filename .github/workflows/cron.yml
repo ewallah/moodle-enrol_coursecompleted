@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: this-plugin
+          ref: MOODLE_404_STABLE
 
       - name: setup PHP
         uses: shivammathur/setup-php@v2
@@ -79,17 +80,12 @@ jobs:
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi phpunit --testdox --coverage-text --coverage-clover
 
-      - name: behat
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi behat --profile=chrome
-
-      - name: privacy
-        if: ${{ !cancelled() }}
-        run: vendor/bin/phpunit --colors --no-coverage --testsuite tool_dataprivacy_testsuite,tool_policy_testsuite,core_privacy_testsuite
-        working-directory: moodle
-
       - name: coveralls
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci coveralls-upload || true
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: behat
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci --ansi behat --profile=chrome

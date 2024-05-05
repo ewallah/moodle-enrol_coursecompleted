@@ -18,7 +18,7 @@
  * coursecompleted enrolment manager tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@ namespace enrol_coursecompleted;
  * coursecompleted enrolment manager tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
@@ -51,11 +51,6 @@ final class manager_test extends \advanced_testcase {
         global $CFG, $DB;
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
-        $enabled = enrol_get_plugins(true);
-        unset($enabled['guest']);
-        unset($enabled['self']);
-        $enabled['coursecompleted'] = true;
-        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['shortname' => 'A1', 'enablecompletion' => 1]);
         $this->course = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
@@ -191,5 +186,34 @@ final class manager_test extends \advanced_testcase {
         require_once($CFG->dirroot . '/lib/adminlib.php');
         $ADMIN = admin_get_root(true, true);
         $this->assertTrue($ADMIN->fulltree);
+    }
+    /**
+     * Test access.
+     * @covers \enrol_coursecompleted_plugin
+     */
+    public function test_access(): void {
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['enablecompletion' => 1]);
+        $student = $generator->create_and_enrol($course, 'student');
+        $editor = $generator->create_and_enrol($course, 'editingteacher');
+        $this->setAdminUser();
+        $context = \context_course::instance($course->id);
+        $this->assertTrue(has_capability('enrol/coursecompleted:config', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:enrolpast', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:manage', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:unenrol', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:unenrolself', $context));
+        $this->setUser($student);
+        $this->assertFalse(has_capability('enrol/coursecompleted:config', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:enrolpast', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:manage', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:unenrol', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:unenrolself', $context));
+        $this->setUser($editor);
+        $this->assertTrue(has_capability('enrol/coursecompleted:config', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:enrolpast', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:manage', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:unenrol', $context));
+        $this->assertFalse(has_capability('enrol/coursecompleted:unenrolself', $context));
     }
 }

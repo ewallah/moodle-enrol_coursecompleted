@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capabilities for coursecompleted access plugin.
+ * Coursecompleted enrolment plugin install.
  *
  * @package   enrol_coursecompleted
  * @copyright 2017-2024 eWallah (www.eWallah.net)
@@ -23,28 +23,17 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$caps = [
-    'captype' => 'write',
-    'contextlevel' => CONTEXT_COURSE,
-    'archetypes' => [
-        'manager' => CAP_ALLOW,
-        'editingteacher' => CAP_ALLOW,
-    ],
-];
-$capabilities = [
-    'enrol/coursecompleted:config' => $caps,
-    'enrol/coursecompleted:enrolpast' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => ['manager' => CAP_ALLOW],
-    ],
-    'enrol/coursecompleted:manage' => $caps,
-    'enrol/coursecompleted:unenrol' => $caps,
-    'enrol/coursecompleted:unenrolself' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => [],
-    ],
-];
+/**
+ * Coursecompleted enrolment plugin install.
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+function xmldb_enrol_coursecompleted_install() {
+    $enabled = enrol_get_plugins(true);
+    $enabled['coursecompleted'] = true;
+    set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
+    return true;
+}

@@ -18,7 +18,7 @@
  * Enrol coursecompleted plugin
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
  * Enrol coursecompleted plugin
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,12 +42,15 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string
      */
     public function get_instance_name($instance) {
-        global $DB;
-        if ($short = $DB->get_field('course', 'shortname', ['id' => $instance->customint1])) {
-            $coursename = format_string($short, true, ['context' => \context_course::instance($instance->customint1)]);
-            return get_string('aftercourse', 'enrol_coursecompleted', $coursename);
+        $tmp = is_null($instance) ? 'unknown' : $instance->customint1;
+        if (
+            $tmp !== 'unknown' &&
+            $context = context_course::instance($tmp, IGNORE_MISSING)
+        ) {
+            $name = format_string(get_course($tmp)->shortname, true, ['context' => $context]);
+            return get_string('aftercourse', 'enrol_coursecompleted', $name);
         }
-        return get_string('coursedeleted', '', $instance->customint1);
+        return get_string('coursedeleted', '', $tmp);
     }
 
     /**
@@ -57,12 +60,13 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array of pix_icon
      */
     public function get_info_icons(array $instances) {
-        global $DB;
         $arr = [];
         foreach ($instances as $instance) {
-            if ($fullname = $DB->get_field('course', 'fullname', ['id' => $instance->customint1])) {
-                $context = \context_course::instance($instance->customint1);
-                $name = format_string($fullname, true, ['context' => $context]);
+            if (
+                $this->is_active($instance) &&
+                $context = context_course::instance($instance->customint1, IGNORE_MISSING)
+            ) {
+                $name = format_string(get_course($instance->customint1)->fullname, true, ['context' => $context]);
                 $arr[] = new pix_icon('icon', get_string('aftercourse', 'enrol_coursecompleted', $name), 'enrol_coursecompleted');
             }
         }
@@ -87,13 +91,17 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function enrol_page_hook(stdClass $instance) {
         global $OUTPUT;
+        if (!$this->is_active($instance)) {
+            return '';
+        }
+
         $data = [];
         if ($this->get_config('svglearnpath')) {
             $items = $this->build_course_path($instance);
             $i = 1;
             foreach ($items as $item) {
                 $course = get_course($item);
-                $context = \context_course::instance($item);
+                $context = context_course::instance($item);
                 $data[] =
                     [
                         'first' => ($i === 1),
@@ -106,7 +114,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             }
         }
         $course = get_course($instance->customint1);
-        $context = \context_course::instance($instance->customint1);
+        $context = context_course::instance($instance->customint1);
         $rdata =
             [
                 'coursetitle' => format_string($course->fullname, true, ['context' => $context]),
@@ -126,19 +134,15 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return array An array of user_enrolment_actions
      */
     public function get_user_enrolment_actions(\course_enrolment_manager $manager, $ue) {
-        global $DB;
         $actions = parent::get_user_enrolment_actions($manager, $ue);
         $id = $ue->enrolmentinstance->customint1;
-        if ($DB->record_exists('course', ['id' => $id])) {
-            $context = \context_course::instance($id);
-            if (has_capability('report/completion:view', $context)) {
-                $actions[] = new user_enrolment_action(
-                    new pix_icon('a/search', ''),
-                    get_string('pluginname', 'report_completion'),
-                    new moodle_url('/report/completion/index.php', ['course' => $id]),
-                    ['class' => 'originlink', 'rel' => $ue->id]
-                );
-            }
+        if (context_course::instance($id, IGNORE_MISSING)) {
+            $actions[] = new user_enrolment_action(
+                new pix_icon('a/search', ''),
+                get_string('pluginname', 'report_completion'),
+                new moodle_url('/report/completion/index.php', ['course' => $id]),
+                ['class' => 'originlink', 'rel' => $ue->id]
+            );
         }
         return $actions;
     }
@@ -153,7 +157,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         if ($instance->enrol !== 'coursecompleted') {
             throw new coding_exception('invalid enrol instance!');
         }
-        $context = \context_course::instance($instance->courseid);
+        $context = context_course::instance($instance->courseid);
         $icons = [];
         if (has_capability('enrol/coursecompleted:enrolpast', $context)) {
             $managelink = new moodle_url("/enrol/coursecompleted/manage.php", ['enrolid' => $instance->id]);
@@ -181,8 +185,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 'enrol' => 'coursecompleted',
                 'roleid' => $data->roleid,
                 'customint1' => $data->customint1,
-                'customint2' => $data->customint2,
-                'customint3' => $data->customint3,
             ];
         }
         if ($merge && $instances = $DB->get_records('enrol', $merge, 'id')) {
@@ -216,26 +218,26 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $recovergrades = null
     ) {
         global $DB;
-        // We need to keep the role of the user.
-        if (isset($instance->roleid)) {
-            $roleid = $instance->roleid;
-        }
-        if (isset($instance->enrolstartdate)) {
-            $timestart = $instance->enrolstartdate;
-        }
-        if (isset($instance->enrolenddate)) {
-            $timeend = $instance->enrolenddate;
-        }
-        if (isset($instance->enrolperiod) && $instance->enrolperiod > 0) {
-            $timeend = max(time(), $timestart) + $instance->enrolperiod;
-        }
-
-        if ($DB->record_exists('role', ['id' => $roleid])) {
-            $context = \context_course::instance($instance->courseid, MUST_EXIST);
-            parent::enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status, $recovergrades);
-            role_assign($roleid, $userid, $context->id, 'enrol_coursecompleted', $instance->id);
-        } else {
-            debugging('Role does not exist', DEBUG_DEVELOPER);
+        if ($this->is_active($instance)) {
+            // We ignore the role, timestart, timeend and status parameters and fall back on the instance settings.
+            $roleid = $instance->roleid ?? $this->get_config('roleid');
+            if (
+                $DB->record_exists('role', ['id' => $roleid]) &&
+                context_course::instance($instance->customint1, IGNORE_MISSING) &&
+                context_course::instance($instance->courseid, IGNORE_MISSING)
+            ) {
+                $timestart = 0;
+                $timeend = 0;
+                if (isset($instance->customint4) && $instance->customint4 > 0) {
+                    $timestart = $instance->customint4;
+                }
+                if (isset($instance->enrolperiod) && $instance->enrolperiod > 0) {
+                    $timeend = max(time(), $timestart) + $instance->enrolperiod;
+                }
+                parent::enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status, $recovergrades);
+            } else {
+                debugging('Role does not exist', DEBUG_DEVELOPER);
+            }
         }
     }
 
@@ -351,20 +353,16 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_fee'), $roles);
         $mform->setDefault('roleid', $this->get_config('roleid'));
 
+        $start = ($instance && isset($instance->customint1)) ? get_course($instance->customint1)->startdate : time();
+
+        $arr = ['optional' => true, 'defaulttime' => $start];
+        $mform->addElement('date_time_selector', 'customint4', get_string('enroldate', 'enrol_coursecompleted'), $arr);
+        $mform->addHelpButton('customint4', 'enroldate', 'enrol_coursecompleted');
+
         $arr = ['optional' => true, 'defaultunit' => 86400];
         $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_coursecompleted'), $arr);
         $mform->setDefault('enrolperiod', $this->get_config('enrolperiod'));
         $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_coursecompleted');
-
-        $start = ($instance && isset($instance->customint1)) ? get_course($instance->customint1)->startdate : time();
-        $arr = ['optional' => true, 'defaulttime' => $start];
-        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_coursecompleted'), $arr);
-        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_coursecompleted');
-
-        $duration = intval(get_config('moodlecourse', 'courseduration')) ?? YEARSECS;
-        $arr['defaulttime'] = $start + $duration;
-        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_coursecompleted'), $arr);
-        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_coursecompleted');
 
         $conditions = ['onlywithcompletion' => true, 'multiple' => false, 'includefrontpage' => false];
         $mform->addElement('course', 'customint1', get_string('course'), $conditions);
@@ -388,6 +386,15 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('textarea', 'customtext1', get_string('customwelcome', 'enrol_coursecompleted'), $arr);
         $mform->addHelpButton('customtext1', 'customwelcome', 'enrol_coursecompleted');
         $mform->disabledIf('customtext1', 'customint2', 'notchecked');
+
+        $arr = ['optional' => true, 'defaulttime' => $start];
+        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_coursecompleted'), $arr);
+        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_coursecompleted');
+
+        $duration = intval(get_config('moodlecourse', 'courseduration')) ?? YEARSECS;
+        $arr['defaulttime'] = $start + $duration;
+        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_coursecompleted'), $arr);
+        $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_coursecompleted');
     }
 
     /**
@@ -416,21 +423,20 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param object $instance The instance loaded from the DB
      * @param context $context The context of the instance we are editing
      * @return array of "element_name"=>"error_description" if there are errors,
-     *         or an empty array if everything is OK.
      */
     public function edit_instance_validation($data, $files, $instance, $context): array {
-        global $DB;
         $errors = [];
         if ($data['status'] == ENROL_INSTANCE_ENABLED) {
+            // TODO: check if customint4 has a valid value.
             if (!empty($data['enrolenddate']) && $data['enrolenddate'] < $data['enrolstartdate']) {
                 $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_fee');
             }
             if (
                 empty($data['customint1']) ||
                 $data['customint1'] === 1 ||
-                !$DB->record_exists('course', ['id' => $data['customint1']])
+                !context_course::instance($data['customint1'], IGNORE_MISSING)
             ) {
-                $errors['customint'] = get_string('error_nonexistingcourse', 'tool_generator');
+                $errors['customint1'] = get_string('error_nonexistingcourse', 'tool_generator');
             }
         }
         return $errors;
@@ -486,6 +492,26 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             }
         }
         return $arr;
+    }
+
+    /**
+     * Is this instance active?
+     *
+     * @param stdClass $instance
+     * @return bool
+     */
+    private function is_active($instance): bool {
+        $time = time();
+        $start = is_null($instance->enrolstartdate) ? 0 : $instance->enrolstartdate;
+        if ($start > $time) {
+            return false;
+        }
+        $end = is_null($instance->enrolenddate) ? 0 : $instance->enrolenddate;
+        if ($end != 0 && $end < $time) {
+            // Past enrolment.
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -559,10 +585,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public static function get_candidates(int $courseid): array {
         global $DB;
         $condition = 'course = ? AND timecompleted > 0';
-        $candidates = [];
-        if ($return = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$courseid])) {
-            $candidates = $return;
-        }
-        return $candidates;
+        $return = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$courseid]);
+        return $return ? $return : [];
     }
 }

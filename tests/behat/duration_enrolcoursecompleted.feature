@@ -6,6 +6,7 @@ Feature: Duration Enrolment on course completion
       | fullname | shortname | enablecompletion |
       | Course 1 | C1        | 1                |
       | Course 2 | C2        | 1                |
+      | Course 3 | C3        | 1                |
     And the following "users" exist:
       | username |
       | user1    |
@@ -15,11 +16,10 @@ Feature: Duration Enrolment on course completion
       | user1    | C1     | student        |
       | teacher1 | C1     | editingteacher |
       | teacher1 | C2     | editingteacher |
+      | teacher1 | C3     | editingteacher |
     And the following config values are set as admin:
       | expiredaction | Unenrol user from course | enrol_coursecompleted |
     And I log in as "admin"
-    And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
-    And I click on "Enable" "link" in the "Course completed enrolment" "table_row"
     And I am on "Course 1" course homepage
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
@@ -30,6 +30,13 @@ Feature: Duration Enrolment on course completion
        | id_enrolperiod_enabled  | 1        |
        | id_enrolperiod_number   | 3        |
        | id_enrolperiod_timeunit | seconds  |
+    And I add "Course completed enrolment" enrolment method in "Course 3" with:
+       | Course                  | Course 1 |
+       | id_customint4_enabled   | 1        |
+       | id_customint4_year      | 2030     |
+       | id_enrolperiod_enabled  | 1        |
+       | id_enrolperiod_number   | 3        |
+       | id_enrolperiod_timeunit | days     |
     And I log out
 
   Scenario: Guest users see basic coursecompleted enrolment info.
@@ -64,9 +71,20 @@ Feature: Duration Enrolment on course completion
     And I navigate to course participants
     And I should see "2 participants found"
     But I should see "Not current"
+
+    And I am on "Course 3" course homepage
+    And I navigate to course participants
+    Then I should see "1 participants found"
     And I log out
+
     # When the enrolment is over, students should not have access.
     And I log in as "user1"
     And I am on course index
     And I follow "Course 2"
     And I should see "You will be enrolled in this course when you complete course"
+    And I log out
+
+    And I log in as "admin"
+    And I run all adhoc tasks
+    And I navigate to "Server > Tasks > Ad hoc tasks" in site administration
+    Then I should see "2030" in the "process_future" "table_row"

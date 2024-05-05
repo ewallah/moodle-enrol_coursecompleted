@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capabilities for coursecompleted access plugin.
+ * Coursecompleted enrolment plugin uninstall.
  *
  * @package   enrol_coursecompleted
  * @copyright 2017-2024 eWallah (www.eWallah.net)
@@ -23,28 +23,24 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$caps = [
-    'captype' => 'write',
-    'contextlevel' => CONTEXT_COURSE,
-    'archetypes' => [
-        'manager' => CAP_ALLOW,
-        'editingteacher' => CAP_ALLOW,
-    ],
-];
-$capabilities = [
-    'enrol/coursecompleted:config' => $caps,
-    'enrol/coursecompleted:enrolpast' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => ['manager' => CAP_ALLOW],
-    ],
-    'enrol/coursecompleted:manage' => $caps,
-    'enrol/coursecompleted:unenrol' => $caps,
-    'enrol/coursecompleted:unenrolself' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => [],
-    ],
-];
+/**
+ * Coursecompleted enrolment plugin uninstall.
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017-2024 eWallah
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+function xmldb_enrol_coursecompleted_uninstall() {
+    global $DB;
+    $plugin = enrol_get_plugin('coursecompleted');
+    $rs = $DB->get_recordset('enrol', ['enrol' => 'coursecompleted']);
+    foreach ($rs as $instance) {
+        $plugin->delete_instance($instance);
+    }
+    $rs->close();
+    role_unassign_all(['component' => 'enrol_coursecompleted']);
+    // Delete all planned enrolments.
+    $DB->delete_records('task_adhoc', ['component' => 'enrol_coursecompleted']);
+    return true;
+}

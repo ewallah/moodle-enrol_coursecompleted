@@ -15,11 +15,6 @@ Feature: Learnpaths with course completion enrolment
       | user     | course | role    |
       | user1    | C1     | student |
     And I log in as "admin"
-    And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
-    And I click on "Disable" "link" in the "Guest access" "table_row"
-    And I click on "Disable" "link" in the "Self enrolment" "table_row"
-    And I click on "Disable" "link" in the "Cohort sync" "table_row"
-    And I click on "Enable" "link" in the "Course completed enrolment" "table_row"
 
   @javascript
   Scenario: Learning paths with course completion enrolments

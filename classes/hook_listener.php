@@ -17,43 +17,42 @@
 namespace enrol_coursecompleted;
 
 use context_course;
-use core_user;
-use moodle_url;
+use core_course\hook\before_course_deleted;
+use core_enrol\hook\after_user_enrolled;
 use stdClass;
 
 /**
- * Enrol coursecompleted plugin
+ * Enrol coursecompleted plugin hook listener
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class user_enrolment_callbacks {
+class hook_listener {
 
     /**
      * Callback for the user_enrolment hook.
      *
      * @param \core_enrol\hook\after_user_enrolled $hook
      */
-    public static function send_course_welcome_message(\core_enrol\hook\after_user_enrolled $hook): void {
-        global $CFG, $DB;
+    public static function send_course_welcome_message(after_user_enrolled $hook): void {
+        global $CFG;
         $instance = $hook->get_enrolinstance();
         // Send welcome message.
         if ($instance->enrol == 'coursecompleted') {
             if ($instance->customint2 > 0) {
                 $plugin = enrol_get_plugin($instance->enrol);
-                if ($complcourse = $DB->get_field('course', 'fullname', ['id' => $instance->customint1])) {
-                    $context2 = context_course::instance($instance->customint1);
+                if ($context = context_course::instance($instance->customint1, IGNORE_MISSING)) {
+                    $course = get_course($instance->customint1);
                     $a = new stdClass();
-                    $a->completed = format_string($complcourse, true, ['context' => $context2]);
-                    $custom = $instance->customtext1;
-                    if ($custom == '') {
+                    $a->completed = format_string($course->fullname, true, ['context' => $context]);
+                    if ($instance->customtext1 == '') {
                         $message = get_string('welcometocourse', 'enrol_coursecompleted', $a);
                     } else {
                         $key = ['{$a->completed}'];
                         $value = [$a->completed];
-                        $message = str_replace($key, $value, $custom);
+                        $message = str_replace($key, $value, $instance->customtext1);
                     }
                     $plugin->send_course_welcome_message_to_user(
                         instance: $instance,
@@ -80,5 +79,22 @@ class user_enrolment_callbacks {
                 }
             }
         }
+    }
+
+    /**
+     * Delete course communication data and remove members.
+     * Course can have communication data if it is a group or a course.
+     * This action is important to perform even if the experimental feature is disabled.
+     *
+     * @param before_course_deleted $hook The course deleted hook.
+     */
+    public static function before_course_deleted(
+        before_course_deleted $hook,
+    ): void {
+        global $DB;
+        $DB->delete_records('enrol', ['enrol' => 'coursecompleted', 'customint1' => $hook->course->id]);
+        $sqllike = $DB->sql_like('customdata', ':customdata');
+        $params = ['component' => 'enrol_coursecompleted', 'customdata' => '%"customint1":"' . $hook->course->id . '"%'];
+        $DB->delete_records_select('task_adhoc', "component = :component AND $sqllike", $params);
     }
 }

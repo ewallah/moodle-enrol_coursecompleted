@@ -18,7 +18,7 @@
  * Strings for component 'enrol_coursecompleted', language 'en'.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -49,13 +49,15 @@ $string['defaultrole_desc'] = 'Select the role to assign to users when they are 
 $string['deleteselectedusers'] = 'Delete selected enrolments on course completion';
 $string['editselectedusers'] = 'Edit selected enrolments on course completion';
 $string['editusers'] = 'Change user enrolments';
+$string['enroldate'] = 'Enrolment date';
+$string['enroldate_help'] = 'If enabled, users will be automatically enrolled on a specific moment in the future.';
 $string['enrolenddate'] = 'End date';
-$string['enrolenddate_help'] = 'If enabled, users will be automatically enrolled until this date only.';
+$string['enrolenddate_help'] = 'If enabled, users will be automatically enrolled until this date only. All course completions after this date will be ignored.';
 $string['enrolperiod'] = 'Enrolment duration';
 $string['enrolperiod_desc'] = 'Default length of time that the enrolment is valid. If set to zero, the enrolment duration will be unlimited by default.';
 $string['enrolperiod_help'] = 'Length of time that the enrolment is valid, starting with the moment the user is enrolled. If disabled, the enrolment duration will be unlimited.';
 $string['enrolstartdate'] = 'Start date';
-$string['enrolstartdate_help'] = 'If enabled, users will only be enrolled automatically from this date onwards.';
+$string['enrolstartdate_help'] = 'If enabled, users will only be enrolled automatically from this date onwards. All course completions before this date will be ignored.';
 $string['group'] = 'Keep group';
 $string['group_help'] = 'Try to add users to a group with the same name';
 $string['keepgroup'] = 'Default keep group setting';

@@ -18,7 +18,7 @@
  * coursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +32,7 @@ use stdClass;
  * coursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
@@ -76,11 +76,6 @@ final class enrol_test extends advanced_testcase {
 
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
-        $enabled = enrol_get_plugins(true);
-        unset($enabled['guest']);
-        unset($enabled['self']);
-        $enabled['coursecompleted'] = true;
-        set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
         $generator = $this->getDataGenerator();
         $this->course1 = $generator->create_course(['shortname' => 'A1', 'enablecompletion' => 1]);
         $this->course2 = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
@@ -103,7 +98,7 @@ final class enrol_test extends advanced_testcase {
     /**
      * Test if user is enrolled after completing a course.
      * @covers \enrol_coursecompleted\observer
-     * @covers \enrol_coursecompleted\user_enrolment_callbacks
+     * @covers \enrol_coursecompleted\hook_listener
      */
     public function test_event_enrolled(): void {
         global $PAGE;
@@ -136,7 +131,7 @@ final class enrol_test extends advanced_testcase {
     /**
      * Test if user is enrolled after completing a course.
      * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\user_enrolment_callbacks
+     * @covers \enrol_coursecompleted\hook_listener
      */
     public function test_enrolled_after_completion(): void {
         global $PAGE;
@@ -202,6 +197,7 @@ final class enrol_test extends advanced_testcase {
      * Test library.
      * @covers \enrol_coursecompleted_plugin
      * @covers \enrol_coursecompleted\observer
+     * @covers \enrol_coursecompleted\task\process_future
      */
     public function test_library_functions(): void {
         global $DB;
@@ -219,14 +215,15 @@ final class enrol_test extends advanced_testcase {
         $this->assertCount(1, $this->plugin->get_info_icons([$this->instance]));
         $this->assertCount(2, $this->plugin->get_action_icons($this->instance));
         $this->assertEquals('After completing course: A1', $this->plugin->get_instance_name($this->instance));
+        $this->assertEquals('Deleted course unknown', $this->plugin->get_instance_name(null));
         $this->assertEquals(
             'Enrolment by completion of course with id ' . $this->course1->id,
             $this->plugin->get_description_text($this->instance)
         );
         $this->assertStringContainsString('Test course 1', $this->plugin->enrol_page_hook($this->instance));
-        $arr = ['status' => 0, 'enrolenddate' => time(), 'enrolstartdate' => time() + 10000];
+        $arr = ['status' => 0, 'customint4' => 666, 'enrolenddate' => time(), 'enrolstartdate' => time() + 10000];
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
-        $this->assertEquals('The specified course does not exist', $tmp['customint']);
+        $this->assertEquals('The specified course does not exist', $tmp['customint1']);
         $this->assertEquals('The enrolment end date cannot be earlier than the start date.', $tmp['enrolenddate']);
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['shortname' => 'c1', 'enablecompletion' => 1]);
@@ -269,9 +266,14 @@ final class enrol_test extends advanced_testcase {
         mark_user_dirty($student->id);
         $this->setUser($student);
         $this->assertCount(1, $this->plugin->get_info_icons([$this->instance]));
+        $this->assertCount(0, $this->plugin->get_action_icons($this->instance));
         $tmp = $this->plugin->enrol_page_hook($this->instance);
         $this->assertStringContainsString('Test course 1', $tmp);
         $this->assertStringContainsString('You will be enrolled in this course when you complete course', $tmp);
+        $this->instance->enrolstartdate = time() + 6666;
+        $tmp = $this->plugin->enrol_page_hook($this->instance);
+        $this->assertStringNotContainsString('Test course 1', $tmp);
+        $this->assertStringNotContainsString('You will be enrolled in this course when you complete course', $tmp);
     }
 
     /**
@@ -306,32 +308,6 @@ final class enrol_test extends advanced_testcase {
     }
 
     /**
-     * Test deleted course.
-     * @covers \enrol_coursecompleted\observer
-     * @covers \enrol_coursecompleted_plugin
-     */
-    public function test_deleted_course(): void {
-        global $DB;
-        $start = $DB->count_records('course');
-        $sink = $this->redirectEvents();
-        ob_start();
-        delete_course($this->course1->id, false);
-        ob_end_clean();
-        $events = $sink->get_events();
-        $sink->close();
-        $this->assertEquals('Deleted course ' . $this->course1->id, $this->plugin->get_instance_name($this->instance));
-        $this->assertEquals(
-            'Enrolment by completion of course with id ' . $this->course1->id,
-            $this->plugin->get_description_text($this->instance)
-        );
-        $event = array_pop($events);
-        $this->assertInstanceOf('\core\event\course_deleted', $event);
-        $observer = new \enrol_coursecompleted\observer();
-        $observer->coursedeleted($event);
-        $this->assertEquals($start - 1, $DB->count_records('course'));
-    }
-
-    /**
      * Test form.
      * @covers \enrol_coursecompleted_plugin
      * @return \moodleform
@@ -341,7 +317,7 @@ final class enrol_test extends advanced_testcase {
          * coursecompleted enrolment form tests.
          *
          * @package   enrol_coursecompleted
-         * @copyright 2017 eWallah (www.eWallah.net)
+         * @copyright 2017-2024 eWallah (www.eWallah.net)
          * @author    Renaat Debleu <info@eWallah.net>
          * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
          */

@@ -18,7 +18,7 @@
  * The form to confirm the intention to bulk delete users enrolments.
  *
  * @package   enrol_coursecompleted
- * @copyright 2020 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/enrol/bulkchange_forms.php');
  * The form to confirm the intention to bulk delete users enrolments.
  *
  * @package   enrol_coursecompleted
- * @copyright 2020 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

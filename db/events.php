@@ -18,7 +18,7 @@
  * Coursecompleted enrolment plugin event handler definition.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017 eWallah (www.eWallah.net)
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,10 +31,5 @@ $observers = [
         'callback' => '\enrol_coursecompleted\observer::enroluser',
         'internal' => true,
         'priority' => 9999,
-    ],
-    [
-        'eventname' => '\core\event\course_deleted',
-        'priority' => 1,
-        'callback' => '\enrol_coursecompleted\observer::coursedeleted',
     ],
 ];

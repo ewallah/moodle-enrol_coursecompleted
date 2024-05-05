@@ -28,6 +28,10 @@ defined('MOODLE_INTERNAL') || die();
 $callbacks = [
     [
         'hook' => core_enrol\hook\after_user_enrolled::class,
-        'callback' => 'enrol_coursecompleted\user_enrolment_callbacks::send_course_welcome_message',
+        'callback' => 'enrol_coursecompleted\hook_listener::send_course_welcome_message',
+    ],
+    [
+        'hook' => core_course\hook\before_course_deleted::class,
+        'callback' => 'enrol_coursecompleted\hook_listener::before_course_deleted',
     ],
 ];

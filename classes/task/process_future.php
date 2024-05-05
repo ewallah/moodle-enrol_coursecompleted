@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capabilities for coursecompleted access plugin.
+ * Process future enrolments task.
  *
  * @package   enrol_coursecompleted
  * @copyright 2017-2024 eWallah (www.eWallah.net)
@@ -23,28 +23,26 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace enrol_coursecompleted\task;
 
-$caps = [
-    'captype' => 'write',
-    'contextlevel' => CONTEXT_COURSE,
-    'archetypes' => [
-        'manager' => CAP_ALLOW,
-        'editingteacher' => CAP_ALLOW,
-    ],
-];
-$capabilities = [
-    'enrol/coursecompleted:config' => $caps,
-    'enrol/coursecompleted:enrolpast' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => ['manager' => CAP_ALLOW],
-    ],
-    'enrol/coursecompleted:manage' => $caps,
-    'enrol/coursecompleted:unenrol' => $caps,
-    'enrol/coursecompleted:unenrolself' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => [],
-    ],
-];
+/**
+ * Process future enrolments task.
+ *
+ * @package   enrol_coursecompleted
+ * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @author    Renaat Debleu <info@eWallah.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class process_future extends \core\task\adhoc_task {
+
+    /**
+     * Run task for future enrolments.
+     */
+    public function execute() {
+        $data = $this->get_custom_data();
+        $enrol = enrol_get_plugin('coursecompleted');
+        $userid = $data->userid;
+        unset($data->userid);
+        $enrol->enrol_user($data, $userid);
+    }
+}

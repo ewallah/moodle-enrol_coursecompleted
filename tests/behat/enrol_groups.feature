@@ -26,8 +26,6 @@ Feature: Groups kept during enrolment on course completion
   @javascript
   Scenario: User stays in same group after completing one or several courses
     Given I log in as "admin"
-    And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
-    And I click on "Enable" "link" in the "Course completed enrolment" "table_row"
     And I am on "Course 1" course homepage
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
