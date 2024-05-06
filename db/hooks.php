@@ -34,4 +34,8 @@ $callbacks = [
         'hook' => core_course\hook\before_course_deleted::class,
         'callback' => 'enrol_coursecompleted\hook_listener::before_course_deleted',
     ],
+    [
+        'hook' => core_enrol\hook\after_enrol_instance_status_updated::class,
+        'callback' => 'enrol_coursecompleted\hook_listener::after_enrol_instance_status_updated',
+    ],
 ];

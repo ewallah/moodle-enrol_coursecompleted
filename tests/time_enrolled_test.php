@@ -18,7 +18,7 @@
  * Coursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@ namespace enrol_coursecompleted;
  * oursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
@@ -68,13 +68,15 @@ final class time_enrolled_test extends \advanced_testcase {
             '*',
             MUST_EXIST
         );
-        $instance->userid = $student->id;
         $adhock = new \enrol_coursecompleted\task\process_future();
+        $adhock->set_userid($student->id);
         $adhock->set_custom_data($instance);
         $adhock->set_component('enrol_coursecompleted');
         $adhock->execute();
         \core\task\manager::queue_adhoc_task($adhock);
         \phpunit_util::run_all_adhoc_tasks();
+        delete_course($course1, false);
+        delete_course($course2, false);
     }
 
     /**

@@ -18,6 +18,7 @@ namespace enrol_coursecompleted;
 
 use context_course;
 use core_course\hook\before_course_deleted;
+use core_enrol\hook\after_enrol_instance_status_updated;
 use core_enrol\hook\after_user_enrolled;
 use stdClass;
 
@@ -25,7 +26,7 @@ use stdClass;
  * Enrol coursecompleted plugin hook listener
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -40,40 +41,47 @@ class hook_listener {
         global $CFG;
         $instance = $hook->get_enrolinstance();
         // Send welcome message.
-        if ($instance->enrol == 'coursecompleted') {
-            if ($instance->customint2 > 0) {
-                $plugin = enrol_get_plugin($instance->enrol);
-                if ($context = context_course::instance($instance->customint1, IGNORE_MISSING)) {
-                    $course = get_course($instance->customint1);
-                    $a = new stdClass();
-                    $a->completed = format_string($course->fullname, true, ['context' => $context]);
-                    if ($instance->customtext1 == '') {
-                        $message = get_string('welcometocourse', 'enrol_coursecompleted', $a);
-                    } else {
-                        $key = ['{$a->completed}'];
-                        $value = [$a->completed];
-                        $message = str_replace($key, $value, $instance->customtext1);
+        if (enrol_is_enabled('coursecompleted')) {
+            if ($instance->enrol == 'coursecompleted') {
+                if ($instance->customint2 > 0) {
+                    $plugin = enrol_get_plugin($instance->enrol);
+                    if ($context = context_course::instance($instance->customint1, IGNORE_MISSING)) {
+                        $course = get_course($instance->customint1);
+                        $a = new stdClass();
+                        $formatter = \core\di::get(\core\formatting::class);
+                        $a->completed = $formatter->format_string(
+                            $course->fullname,
+                            context: $context,
+                            filter: false
+                        );
+                        if ($instance->customtext1 == '') {
+                            $message = get_string('welcometocourse', 'enrol_coursecompleted', $a);
+                        } else {
+                            $key = ['{$a->completed}'];
+                            $value = [$a->completed];
+                            $message = str_replace($key, $value, $instance->customtext1);
+                        }
+                        $plugin->send_course_welcome_message_to_user(
+                            instance: $instance,
+                            userid: $hook->get_userid(),
+                            sendoption: ENROL_SEND_EMAIL_FROM_NOREPLY,
+                            message: $message,
+                        );
                     }
-                    $plugin->send_course_welcome_message_to_user(
-                        instance: $instance,
-                        userid: $hook->get_userid(),
-                        sendoption: ENROL_SEND_EMAIL_FROM_NOREPLY,
-                        message: $message,
-                    );
                 }
-            }
 
-            // Keep the user in a group when needed.
-            if ($instance->customint3 > 0) {
-                require_once($CFG->dirroot . '/group/lib.php');
-                $groups = array_values(groups_get_user_groups($instance->customint1, $hook->get_userid()));
-                foreach ($groups as $group) {
-                    $subs = array_values($group);
-                    foreach ($subs as $sub) {
-                        $groupnamea = groups_get_group_name($sub);
-                        $groupnameb = groups_get_group_by_name($instance->courseid, $groupnamea);
-                        if ($groupnameb) {
-                            groups_add_member($groupnameb, $hook->get_userid());
+                // Keep the user in a group when needed.
+                if ($instance->customint3 > 0) {
+                    require_once($CFG->dirroot . '/group/lib.php');
+                    $groups = array_values(groups_get_user_groups($instance->customint1, $hook->get_userid()));
+                    foreach ($groups as $group) {
+                        $subs = array_values($group);
+                        foreach ($subs as $sub) {
+                            $groupnamea = groups_get_group_name($sub);
+                            $groupnameb = groups_get_group_by_name($instance->courseid, $groupnamea);
+                            if ($groupnameb) {
+                                groups_add_member($groupnameb, $hook->get_userid());
+                            }
                         }
                     }
                 }
@@ -82,9 +90,8 @@ class hook_listener {
     }
 
     /**
-     * Delete course communication data and remove members.
-     * Course can have communication data if it is a group or a course.
-     * This action is important to perform even if the experimental feature is disabled.
+     * Delete enrolment methods related to this course.
+     * Delete all adhoc tasks to enrol users in the future.
      *
      * @param before_course_deleted $hook The course deleted hook.
      */
@@ -96,5 +103,25 @@ class hook_listener {
         $sqllike = $DB->sql_like('customdata', ':customdata');
         $params = ['component' => 'enrol_coursecompleted', 'customdata' => '%"customint1":"' . $hook->course->id . '"%'];
         $DB->delete_records_select('task_adhoc', "component = :component AND $sqllike", $params);
+    }
+
+    /**
+     * Cancel all enrolments when enrol disabled.
+     *
+     * @param after_enrol_instance_status_updated $hook The enrol status updated hook.
+     */
+    public static function after_enrol_instance_status_updated(
+        after_enrol_instance_status_updated $hook,
+    ): void {
+        global $DB;
+        $instance = $hook->enrolinstance;
+        if (
+            $instance->enrol == 'coursecompleted' &&
+            $hook->newstatus == ENROL_INSTANCE_DISABLED
+        ) {
+            $sqllike = $DB->sql_like('customdata', ':customdata');
+            $params = ['component' => 'enrol_coursecompleted', 'customdata' => '"customdata":"' . $instance->id . '"%'];
+            $DB->delete_records_select('task_adhoc', "component = :component AND $sqllike", $params);
+        }
     }
 }

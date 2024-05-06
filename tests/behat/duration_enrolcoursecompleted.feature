@@ -34,9 +34,6 @@ Feature: Duration Enrolment on course completion
        | Course                  | Course 1 |
        | id_customint4_enabled   | 1        |
        | id_customint4_year      | 2030     |
-       | id_enrolperiod_enabled  | 1        |
-       | id_enrolperiod_number   | 3        |
-       | id_enrolperiod_timeunit | days     |
     And I log out
 
   Scenario: Guest users see basic coursecompleted enrolment info.
@@ -72,19 +69,30 @@ Feature: Duration Enrolment on course completion
     And I should see "2 participants found"
     But I should see "Not current"
 
-    And I am on "Course 3" course homepage
-    And I navigate to course participants
-    Then I should see "1 participants found"
+  Scenario: Course completion with future date set
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    And I navigate to "Reports" in current page administration
+    And I click on "Course completion" "link" in the "region-main" "region"
+    When I follow "Click to mark user complete"
     And I log out
+    And I wait "1" seconds
+    And I run the scheduled task "core\task\completion_regular_task"
 
-    # When the enrolment is over, students should not have access.
-    And I log in as "user1"
-    And I am on course index
-    And I follow "Course 2"
-    And I should see "You will be enrolled in this course when you complete course"
-    And I log out
-
+    # There should be an adhoc task for future enrolments in course 3.
     And I log in as "admin"
     And I run all adhoc tasks
     And I navigate to "Server > Tasks > Ad hoc tasks" in site administration
     Then I should see "2030" in the "process_future" "table_row"
+    And I am on the "Course 3" "enrolment methods" page
+    And I click on "Edit" "link" in the "After completing course: C1" "table_row"
+    And I set the field "Enabled" to "No"
+    And I click on "Save" "button"
+    And I navigate to "Development > Purge caches" in site administration
+    And I follow "Purge all caches"
+    And I trigger cron
+    And I run all adhoc tasks
+    And I am on course index
+    And I am on the "Course 3" "enrolment methods" page
+    And I navigate to "Server > Tasks > Ad hoc tasks" in site administration
+    ## TODO: not working.
+    But I should not see "2030" in the "process_future" "table_row"

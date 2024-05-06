@@ -18,7 +18,7 @@
  * Enrol coursecompleted plugin
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
  * Enrol coursecompleted plugin
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,7 +47,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             $tmp !== 'unknown' &&
             $context = context_course::instance($tmp, IGNORE_MISSING)
         ) {
-            $name = format_string(get_course($tmp)->shortname, true, ['context' => $context]);
+            $formatter = \core\di::get(\core\formatting::class);
+            $name = $formatter->format_string(
+                get_course($tmp)->shortname,
+                context: $context,
+                filter: false
+            );
             return get_string('aftercourse', 'enrol_coursecompleted', $name);
         }
         return get_string('coursedeleted', '', $tmp);
@@ -66,7 +71,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 $this->is_active($instance) &&
                 $context = context_course::instance($instance->customint1, IGNORE_MISSING)
             ) {
-                $name = format_string(get_course($instance->customint1)->fullname, true, ['context' => $context]);
+                $formatter = \core\di::get(\core\formatting::class);
+                $name = $formatter->format_string(
+                    get_course($instance->customint1)->fullname,
+                    context: $context,
+                    filter: false
+                );
                 $arr[] = new pix_icon('icon', get_string('aftercourse', 'enrol_coursecompleted', $name), 'enrol_coursecompleted');
             }
         }
@@ -96,28 +106,35 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         }
 
         $data = [];
+        $formatter = \core\di::get(\core\formatting::class);
         if ($this->get_config('svglearnpath')) {
             $items = $this->build_course_path($instance);
             $i = 1;
             foreach ($items as $item) {
-                $course = get_course($item);
-                $context = context_course::instance($item);
+                $name = $formatter->format_string(
+                    get_course($item)->fullname,
+                    context: context_course::instance($item),
+                    filter: false
+                );
                 $data[] =
                     [
                         'first' => ($i === 1),
                         'course' => $item == $instance->courseid,
-                        'title' => format_string($course->fullname, true, ['context' => $context]),
+                        'title' => $name,
                         'href' => new moodle_url('/course/view.php', ['id' => $item]),
                         'seqnumber' => $i,
                     ];
                 $i++;
             }
         }
-        $course = get_course($instance->customint1);
-        $context = context_course::instance($instance->customint1);
+        $name = $formatter->format_string(
+            get_course($instance->customint1)->fullname,
+            context: context_course::instance($instance->customint1),
+            filter: false
+        );
         $rdata =
             [
-                'coursetitle' => format_string($course->fullname, true, ['context' => $context]),
+                'coursetitle' => $name,
                 'courseurl' => new moodle_url('/course/view.php', ['id' => $instance->customint1]),
                 'hasdata' => count($data) > 1,
                 'items' => $data,
@@ -416,6 +433,24 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     }
 
     /**
+     * Update instance of enrol plugin.
+     *
+     * @param stdClass $instance
+     * @param stdClass $data modified instance fields
+     * @return boolean
+     */
+    public function update_instance($instance, $data) {
+        $update = parent::update_instance($instance, $data);
+        // Manually dispatch hook.
+        $hook = new \core_enrol\hook\after_enrol_instance_status_updated(
+            enrolinstance: $instance,
+            newstatus: $data->status ?? ENROL_INSTANCE_ENABLED,
+        );
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
+        return $update;
+    }
+
+    /**
      * Perform custom validation of the data used to edit the instance.
      *
      * @param array $data array of ("fieldname"=>value) of submitted data
@@ -448,7 +483,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @return array $items
      */
-    public function build_course_path(stdClass $instance): array {
+    private function build_course_path(stdClass $instance): array {
         $parents = $this->search_parents($instance->customint1);
         $children = $this->search_children($instance->courseid);
         return array_unique(array_merge($parents, $children));
@@ -552,29 +587,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             }
         }
         return $bulkoperations;
-    }
-
-    /**
-     * Enrol all users who completed in the past.
-     * @param int $courseid
-     */
-    public static function enrol_past(int $courseid) {
-        global $DB;
-        $params = [
-            'enrol' => 'coursecompleted',
-            'status' => ENROL_INSTANCE_ENABLED,
-            'customint1' => $courseid,
-        ];
-
-        if ($enrols = $DB->get_records('enrol', $params)) {
-            $plugin = \enrol_get_plugin('coursecompleted');
-            foreach ($enrols as $enrol) {
-                $candidates = self::get_candidates($enrol->customint1);
-                foreach ($candidates as $canid) {
-                    $plugin->enrol_user($enrol, $canid);
-                }
-            }
-        }
     }
 
     /**

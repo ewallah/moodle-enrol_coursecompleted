@@ -18,7 +18,7 @@
  * Process future enrolments task.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@ namespace enrol_coursecompleted\task;
  * Process future enrolments task.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,10 +39,7 @@ class process_future extends \core\task\adhoc_task {
      * Run task for future enrolments.
      */
     public function execute() {
-        $data = $this->get_custom_data();
         $enrol = enrol_get_plugin('coursecompleted');
-        $userid = $data->userid;
-        unset($data->userid);
-        $enrol->enrol_user($data, $userid);
+        $enrol->enrol_user($this->get_custom_data(), $this->get_userid());
     }
 }

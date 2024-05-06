@@ -18,7 +18,7 @@
  * coursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +32,7 @@ use stdClass;
  * coursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
@@ -86,12 +86,28 @@ final class enrol_test extends advanced_testcase {
         $this->plugin = enrol_get_plugin('coursecompleted');
         $id = $this->plugin->add_instance(
             $this->course2,
-            ['customint1' => $this->course1->id, 'customint2' => 1, 'roleid' => $studentrole]
+            [
+                'status' => ENROL_INSTANCE_ENABLED,
+                'customint1' => $this->course1->id,
+                'customint2' => 1,
+                'roleid' => $studentrole,
+            ]
         );
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
-        $this->plugin->add_instance($this->course4, ['customint1' => $this->course3->id, 'roleid' => $studentrole]);
-        $this->plugin->add_instance($this->course3, ['customint1' => $this->course2->id, 'roleid' => $studentrole]);
-        $this->instance = $DB->get_record('enrol', ['id' => $id]);
+        $this->plugin->add_instance(
+            $this->course4,
+            [
+                'customint1' => $this->course3->id,
+                'roleid' => $studentrole,
+            ]
+        );
+        $this->plugin->add_instance(
+            $this->course3,
+            [
+                'customint1' => $this->course2->id,
+                'roleid' => $studentrole,
+            ]
+        );
         $this->student = $generator->create_and_enrol($this->course1, 'student');
     }
 
@@ -187,9 +203,11 @@ final class enrol_test extends advanced_testcase {
      */
     public function test_build_course_path(): void {
         global $DB;
-        $records = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
-        foreach ($records as $record) {
-            $this->assertCount(4, $this->plugin->build_course_path($record));
+        $plug = enrol_get_plugin('coursecompleted');
+        $instances = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
+        foreach ($instances as $instance) {
+            $path = \phpunit_util::call_internal_method($plug, 'build_course_path', [$instance], '\enrol_coursecompleted_plugin');
+            $this->assertCount(4, $path);
         }
     }
 
@@ -211,7 +229,6 @@ final class enrol_test extends advanced_testcase {
         $this->assertTrue($this->plugin->can_hide_show_instance($this->instance));
         $this->assertTrue($this->plugin->can_delete_instance($this->instance));
         $this->assertTrue($this->plugin->show_enrolme_link($this->instance));
-        $this->assertCount(4, $this->plugin->build_course_path($this->instance));
         $this->assertCount(1, $this->plugin->get_info_icons([$this->instance]));
         $this->assertCount(2, $this->plugin->get_action_icons($this->instance));
         $this->assertEquals('After completing course: A1', $this->plugin->get_instance_name($this->instance));
@@ -317,7 +334,7 @@ final class enrol_test extends advanced_testcase {
          * coursecompleted enrolment form tests.
          *
          * @package   enrol_coursecompleted
-         * @copyright 2017-2024 eWallah (www.eWallah.net)
+         * @copyright eWallah (www.eWallah.net)
          * @author    Renaat Debleu <info@eWallah.net>
          * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
          */

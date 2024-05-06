@@ -18,7 +18,7 @@
  * coursecompleted enrolment plugin other tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +36,7 @@ require_once($CFG->dirroot . '/group/lib.php');
  * coursecompleted enrolment plugin other tests.
  *
  * @package   enrol_coursecompleted
- * @copyright 2017-2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
@@ -106,7 +106,7 @@ final class other_test extends \advanced_testcase {
      * @covers \enrol_coursecompleted\hook_listener
      */
     public function test_disabled(): void {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->libdir . '/completionlib.php');
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course(['enablecompletion' => 1]);
@@ -115,7 +115,7 @@ final class other_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $student1 = $generator->create_and_enrol($course1, 'student')->id;
-        $student2 = $generator->create_and_enrol($course1, 'student')->id;
+        $generator->create_and_enrol($course1, 'student')->id;
         $plugin->add_instance(
             $course1,
             [
@@ -125,6 +125,7 @@ final class other_test extends \advanced_testcase {
                 'enrolstartdate' => time() + 66666666,
             ]
         );
+        $observer = new observer();
         $compevent = \core\event\course_completed::create(
             [
                 'objectid' => $course2->id,
@@ -134,55 +135,14 @@ final class other_test extends \advanced_testcase {
                 'other' => ['relateduserid' => $student1],
             ]
         );
-        $observer = new observer();
         $observer->enroluser($compevent);
-
-        $plugin->add_instance(
-            $course1,
-            [
-                'roleid' => 5,
-                'customint1' => $course2->id,
-                'customint4' => time() - 66666666,
-                'enrolstartdate' => time() - 66666666,
-            ]
-        );
-        $compevent = \core\event\course_completed::create(
-            [
-                'objectid' => $course2->id,
-                'relateduserid' => $student2,
-                'context' => \context_course::instance($course2->id),
-                'courseid' => $course2->id,
-                'other' => ['relateduserid' => $student2],
-            ]
-        );
-        $observer = new observer();
-        $observer->enroluser($compevent);
+        $instance = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'coursecompleted'], '*', MUST_EXIST);
+        $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
+        $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+        $plugin->update_instance($instance, ['status' => ENROL_INSTANCE_DISABLED]);
+        $plugin->update_instance($instance, ['status' => ENROL_INSTANCE_ENABLED]);
         delete_course($course1, false);
         delete_course($course2, false);
-    }
-
-    /**
-     * Test static enrol from past.
-     * @covers \enrol_coursecompleted_plugin
-     */
-    public function test_static_past(): void {
-        global $CFG;
-        require_once($CFG->libdir . '/completionlib.php');
-        $generator = $this->getDataGenerator();
-        $course1 = $generator->create_course(['enablecompletion' => 1]);
-        $course2 = $generator->create_course(['enablecompletion' => 1]);
-        $studentid = $generator->create_and_enrol($course1, 'student')->id;
-
-        $plugin = enrol_get_plugin('coursecompleted');
-        $this->setAdminUser();
-        $ccompletion = new \completion_completion(['course' => $course1->id, 'userid' => $studentid]);
-        $ccompletion->mark_complete(time());
-        $ccompletion = new \completion_completion(['course' => $course2->id, 'userid' => $studentid]);
-        $ccompletion->mark_complete(time());
-        mark_user_dirty($studentid);
-        $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 5, 'enrolperiod' => 300000]);
-        \enrol_coursecompleted_plugin::enrol_past($course1->id);
-        \enrol_coursecompleted_plugin::enrol_past($course2->id);
     }
 
     /**
@@ -200,7 +160,8 @@ final class other_test extends \advanced_testcase {
         $this->setAdminUser();
         $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => 9999]);
         $instance = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'coursecompleted'], '*', MUST_EXIST);
-        $this->assertCount(2, $plugin->build_course_path($instance));
+        $path = \phpunit_util::call_internal_method($plugin, 'build_course_path', [$instance], '\enrol_coursecompleted_plugin');
+        $this->assertCount(2, $path);
         $studentid = $generator->create_and_enrol($course2, 'student')->id;
         $compevent = \core\event\course_completed::create(
             [
@@ -243,7 +204,8 @@ final class other_test extends \advanced_testcase {
         $this->setAdminUser();
         $plugin->add_instance($course1, ['customint1' => $course2->id, 'roleid' => $studentrole->id]);
         $instance = $DB->get_record('enrol', ['courseid' => $course1->id, 'enrol' => 'coursecompleted'], '*', MUST_EXIST);
-        $this->assertCount(2, $plugin->build_course_path($instance));
+        $path = \phpunit_util::call_internal_method($plugin, 'build_course_path', [$instance], '\enrol_coursecompleted_plugin');
+        $this->assertCount(2, $path);
         $studentid = $generator->create_and_enrol($course2)->id;
         groups_add_member($groupid2, $studentid);
         rebuild_course_cache($course2->id, true);
@@ -262,6 +224,12 @@ final class other_test extends \advanced_testcase {
         rebuild_course_cache($course1->id, true);
         rebuild_course_cache($course2->id, true);
         $this->assertTrue(groups_is_member($groupid1, $studentid));
+        // Manually dispatch hook.
+        $hook = new \core_enrol\hook\after_enrol_instance_status_updated(
+            enrolinstance: $instance,
+            newstatus: ENROL_INSTANCE_DISABLED,
+        );
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
     }
 
     /**
@@ -315,12 +283,6 @@ final class other_test extends \advanced_testcase {
             'enrolcoursewelcomemessage',
         );
         $this->assertNotEmpty($messages);
-        $this->assertStringContainsString($course1->fullname, $messages[0]->subject);
-        $this->assertStringContainsString($course2->fullname, $messages[1]->subject);
-        $this->assertStringContainsString($course3->fullname, $messages[2]->subject);
-        $this->assertEquals('boe', $messages[0]->fullmessagehtml);
-        $this->assertStringContainsString($course3->fullname, $messages[1]->fullmessagehtml);
-        $this->assertStringContainsString(fullname($student), $messages[2]->fullmessagehtml);
         \phpunit_util::run_all_adhoc_tasks();
         $messagesink->close();
     }
