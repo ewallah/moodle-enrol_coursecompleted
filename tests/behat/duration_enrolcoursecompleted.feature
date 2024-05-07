@@ -94,5 +94,4 @@ Feature: Duration Enrolment on course completion
     And I am on course index
     And I am on the "Course 3" "enrolment methods" page
     And I navigate to "Server > Tasks > Ad hoc tasks" in site administration
-    ## TODO: not working.
-    But I should not see "2030" in the "process_future" "table_row"
+    But I should not see "2030"

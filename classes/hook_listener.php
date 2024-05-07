@@ -120,7 +120,7 @@ class hook_listener {
             $hook->newstatus == ENROL_INSTANCE_DISABLED
         ) {
             $sqllike = $DB->sql_like('customdata', ':customdata');
-            $params = ['component' => 'enrol_coursecompleted', 'customdata' => '"customdata":"' . $instance->id . '"%'];
+            $params = ['component' => 'enrol_coursecompleted', 'customdata' => '{"id":"' . $instance->id . '"%'];
             $DB->delete_records_select('task_adhoc', "component = :component AND $sqllike", $params);
         }
     }
