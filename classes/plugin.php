@@ -558,14 +558,14 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function has_bulk_operations(\course_enrolment_manager $manager): bool {
         if ($this->singleinstance == false) {
-            $instances = array_values($manager->get_enrolment_instances(false));
+            $instances = $manager->get_enrolment_instances();
             $i = 0;
             foreach ($instances as $instance) {
                 if ($instance->enrol == 'coursecompleted') {
                     $i++;
                 }
             }
-            $this->singleinstance = (bool)($i === 1);
+            $this->singleinstance = $i === 1;
         }
         return $this->singleinstance;
     }

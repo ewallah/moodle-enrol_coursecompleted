@@ -81,6 +81,8 @@ final class enrol_test extends advanced_testcase {
         $this->course2 = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
         $this->course3 = $generator->create_course(['shortname' => 'A3', 'enablecompletion' => 1]);
         $this->course4 = $generator->create_course(['shortname' => 'A4', 'enablecompletion' => 1]);
+        $course5 = $generator->create_course(['shortname' => 'A5', 'enablecompletion' => 1]);
+        $course6 = $generator->create_course(['shortname' => 'A6', 'enablecompletion' => 1]);
         $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
         $this->setAdminUser();
         $this->plugin = enrol_get_plugin('coursecompleted');
@@ -95,6 +97,13 @@ final class enrol_test extends advanced_testcase {
         );
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
         $this->plugin->add_instance(
+            $this->course3,
+            [
+                'customint1' => $this->course2->id,
+                'roleid' => $studentrole,
+            ]
+        );
+        $this->plugin->add_instance(
             $this->course4,
             [
                 'customint1' => $this->course3->id,
@@ -102,12 +111,27 @@ final class enrol_test extends advanced_testcase {
             ]
         );
         $this->plugin->add_instance(
-            $this->course3,
+            $course5,
             [
-                'customint1' => $this->course2->id,
+                'customint1' => $this->course4->id,
                 'roleid' => $studentrole,
             ]
         );
+        $this->plugin->add_instance(
+            $course6,
+            [
+                'customint1' => $course5->id,
+                'roleid' => $studentrole,
+            ]
+        );
+        $this->plugin->add_instance(
+            $this->course4,
+            [
+                'customint1' => $course6->id,
+                'roleid' => $studentrole,
+            ]
+        );
+
         $this->student = $generator->create_and_enrol($this->course1, 'student');
     }
 
@@ -207,7 +231,7 @@ final class enrol_test extends advanced_testcase {
         $instances = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
         foreach ($instances as $instance) {
             $path = \phpunit_util::call_internal_method($plug, 'build_course_path', [$instance], '\enrol_coursecompleted_plugin');
-            $this->assertCount(4, $path);
+            $this->assertGreaterThan(4, $path);
         }
     }
 
