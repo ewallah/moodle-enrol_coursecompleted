@@ -49,6 +49,7 @@ final class manager_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $CFG, $DB;
+        parent::setUp();
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();

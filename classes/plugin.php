@@ -417,10 +417,10 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     /**
      * Add new instance of enrol plugin.
      * @param object $course
-     * @param array $fields
+     * @param array|null $fields
      * @return int id of new instance, null if can not be created
      */
-    public function add_instance($course, array $fields = null): int {
+    public function add_instance($course, ?array $fields = null): int {
         if ($fields) {
             if (!isset($fields['customint2'])) {
                 $fields['customint2'] = $this->get_config('welcome', 1);
