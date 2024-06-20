@@ -18,8 +18,8 @@ Course completed enrolment handles the enrolment of users upon completion of a c
 
 ## Warning
 
-This plugin is NOT tested in Moodle Workplace, Totara, or other propriety software. Hence this plugin cannot be used
-in these environments. 
+This plugin is 100% Open Source and NOT tested in Moodle Workplace, Totara, or other propriety software.
+As long as propriety environments do not reward plugin developpers, you can only use this plugin in 100% Open Source environments.
 
 ## Course completion
 

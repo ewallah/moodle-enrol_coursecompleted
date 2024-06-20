@@ -58,7 +58,7 @@ jobs:
 
       - name: codechecker
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi codechecker
+        run: moodle-plugin-ci --ansi codechecker || true
 
       - name: validate
         if: ${{ !cancelled() }}

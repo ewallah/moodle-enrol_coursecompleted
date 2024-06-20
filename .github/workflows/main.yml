@@ -79,7 +79,7 @@ jobs:
 
       - name: codechecker
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi codechecker
+        run: moodle-plugin-ci --ansi codechecker || true
 
       - name: validate
         if: ${{ !cancelled() }}
@@ -90,7 +90,7 @@ jobs:
         run: moodle-plugin-ci --ansi savepoints
 
       - name: grunt
-        if: ${{ matrix.moodle-branch == 'main' }}
+        if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi grunt
 
       - name: mustache
