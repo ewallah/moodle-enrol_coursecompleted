@@ -41,11 +41,13 @@
       <directory suffix=".php">classes</directory>
       <directory suffix=".php">tests/generator</directory>
       <file>externallib.php</file>
-      <file>lib.php</file>
       <file>locallib.php</file>
       <file>renderer.php</file>
       <file>rsslib.php</file>
     </include>
+    <exclude>
+      <file>lib.php</file>
+    </exclude>
   </coverage>
 
 </phpunit>
