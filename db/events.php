@@ -32,8 +32,4 @@ $observers = [
         'internal' => true,
         'priority' => 9999,
     ],
-    [
-        'eventname' => '\core\event\enrol_instance_updated',
-        'callback' => '\enrol_coursecompleted\observer::enrol_instance_updated',
-    ],
 ];

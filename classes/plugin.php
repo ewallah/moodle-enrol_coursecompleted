@@ -32,8 +32,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_coursecompleted_plugin extends enrol_plugin {
-    /** @var bool singleinstance. */
-    private $singleinstance = false;
 
     /**
      * Returns localised name of enrol instance
@@ -66,17 +64,13 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function get_info_icons(array $instances) {
         $arr = [];
+        $formatter = \core\di::get(\core\formatting::class);
         foreach ($instances as $instance) {
             if (
                 $this->is_active($instance) &&
                 $context = context_course::instance($instance->customint1, IGNORE_MISSING)
             ) {
-                $formatter = \core\di::get(\core\formatting::class);
-                $name = $formatter->format_string(
-                    get_course($instance->customint1)->fullname,
-                    context: $context,
-                    filter: false
-                );
+                $name = $formatter->format_string(get_course($instance->customint1)->fullname, context: $context);
                 $arr[] = new pix_icon('icon', get_string('aftercourse', 'enrol_coursecompleted', $name), 'enrol_coursecompleted');
             }
         }
@@ -90,7 +84,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string short html text
      */
     public function get_description_text($instance) {
-        return 'Enrolment by completion of course with id ' . $instance->customint1;
+        $id = $instance->customint1;
+        return "Enrolment by completion of course with id $id";
     }
 
     /**
@@ -107,36 +102,33 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
 
         $data = [];
         $formatter = \core\di::get(\core\formatting::class);
+        $hasdata = false;
         if ($this->get_config('svglearnpath')) {
             $items = $this->build_course_path($instance);
             $i = 1;
             foreach ($items as $item) {
-                $name = $formatter->format_string(
-                    get_course($item)->fullname,
-                    context: context_course::instance($item),
-                    filter: false
-                );
+                $name = $formatter->format_string(get_course($item)->fullname, context: context_course::instance($item));
                 $data[] =
                     [
-                        'first' => ($i === 1),
-                        'course' => $item == $instance->courseid,
+                        'first' => ($i == 1),
+                        'course' => ($item == $instance->courseid),
                         'title' => $name,
                         'href' => new moodle_url('/course/view.php', ['id' => $item]),
                         'seqnumber' => $i,
                     ];
+                $hasdata = true;
                 $i++;
             }
         }
         $name = $formatter->format_string(
             get_course($instance->customint1)->fullname,
-            context: context_course::instance($instance->customint1),
-            filter: false
+            context: context_course::instance($instance->customint1)
         );
         $rdata =
             [
                 'coursetitle' => $name,
                 'courseurl' => new moodle_url('/course/view.php', ['id' => $instance->customint1]),
-                'hasdata' => count($data) > 1,
+                'hasdata' => $hasdata,
                 'items' => $data,
             ];
         $str = $OUTPUT->render_from_template('enrol_coursecompleted/learnpath', $rdata);
@@ -177,7 +169,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $context = context_course::instance($instance->courseid);
         $icons = [];
         if (has_capability('enrol/coursecompleted:enrolpast', $context)) {
-            $managelink = new moodle_url("/enrol/coursecompleted/manage.php", ['enrolid' => $instance->id]);
+            $managelink = new moodle_url('/enrol/coursecompleted/manage.php', ['enrolid' => $instance->id]);
             $icon = new pix_icon('t/enrolusers', get_string('enrolusers', 'enrol_manual'), 'core', ['class' => 'iconsmall']);
             $icons[] = $OUTPUT->action_icon($managelink, $icon);
         }
@@ -359,19 +351,29 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param \MoodleQuickForm $mform
      * @param context $context
      * @return bool
+     * @infection-ignore-all
      */
     public function edit_instance_form($instance, \MoodleQuickForm $mform, $context) {
         $options = [ENROL_INSTANCE_ENABLED => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
         $mform->setDefault('status', $this->get_config('status'));
 
-        $role = ($instance && isset($instance->roleid)) ? $instance->roleid : $this->get_config('roleid');
+        $role = $this->get_config('roleid');
+        if ($instance) {
+            if (isset($instance->roleid)) {
+                $role = $instance->roleid;
+            }
+        }
         $roles = get_default_enrol_roles($context, $role);
         $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_fee'), $roles);
         $mform->setDefault('roleid', $this->get_config('roleid'));
 
-        $start = ($instance && isset($instance->customint1)) ? get_course($instance->customint1)->startdate : time();
-
+        $start = time();
+        if ($instance) {
+            if (isset($instance->customint1)) {
+                $start = get_course($instance->customint1)->startdate;
+            }
+        }
         $arr = ['optional' => true, 'defaulttime' => $start];
         $mform->addElement('date_time_selector', 'customint4', get_string('enroldate', 'enrol_coursecompleted'), $arr);
         $mform->addHelpButton('customint4', 'enroldate', 'enrol_coursecompleted');
@@ -390,12 +392,9 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addHelpButton('customint3', 'group', 'enrol_coursecompleted');
         $mform->setDefault('customint3', $this->get_config('keepgroup'));
 
-        $mform->addElement(
-            'advcheckbox',
-            'customint2',
-            get_string('categoryemail', 'admin'),
-            get_string('welcome', 'enrol_coursecompleted')
-        );
+        $options = self::email_options();
+        $mform->addElement('select', 'customint2', get_string('categoryemail', 'admin'), $options);
+
         $mform->addHelpButton('customint2', 'welcome', 'enrol_coursecompleted');
         $mform->setDefault('customint2', $this->get_config('welcome'));
 
@@ -412,6 +411,16 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $arr['defaulttime'] = $start + $duration;
         $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_coursecompleted'), $arr);
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_coursecompleted');
+    }
+
+    /**
+     * Get email options.
+     * @return array of options
+     */
+    public static function email_options(): array {
+        $options = enrol_send_welcome_email_options();
+        unset($options[ENROL_SEND_EMAIL_FROM_KEY_HOLDER]);
+        return $options;
     }
 
     /**
@@ -441,11 +450,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function update_instance($instance, $data) {
         $update = parent::update_instance($instance, $data);
-        // Manually dispatch hook.
-        $hook = new \core_enrol\hook\after_enrol_instance_status_updated(
-            enrolinstance: $instance,
-            newstatus: $data->status ?? ENROL_INSTANCE_ENABLED,
-        );
+        $hook = new \core_enrol\hook\after_enrol_instance_status_updated(enrolinstance: $instance, newstatus: $data->status);
         \core\di::get(\core\hook\manager::class)->dispatch($hook);
         return $update;
     }
@@ -461,18 +466,17 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function edit_instance_validation($data, $files, $instance, $context): array {
         $errors = [];
-        if ($data['status'] == ENROL_INSTANCE_ENABLED) {
-            // TODO: check if customint4 has a valid value.
-            if (!empty($data['enrolenddate']) && $data['enrolenddate'] < $data['enrolstartdate']) {
+        if (!empty($data['enrolenddate'])) {
+            if ($data['enrolenddate'] <= $data['enrolstartdate']) {
                 $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_fee');
             }
-            if (
-                empty($data['customint1']) ||
-                $data['customint1'] === 1 ||
-                !context_course::instance($data['customint1'], IGNORE_MISSING)
-            ) {
-                $errors['customint1'] = get_string('error_nonexistingcourse', 'tool_generator');
-            }
+        }
+
+        if (
+            empty($data['customint1']) ||
+            !context_course::instance($data['customint1'], IGNORE_MISSING)
+        ) {
+            $errors['customint1'] = get_string('error_nonexistingcourse', 'tool_generator');
         }
         return $errors;
     }
@@ -557,17 +561,14 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool
      */
     public function has_bulk_operations(\course_enrolment_manager $manager): bool {
-        if ($this->singleinstance == false) {
-            $instances = $manager->get_enrolment_instances();
-            $i = 0;
-            foreach ($instances as $instance) {
-                if ($instance->enrol == 'coursecompleted') {
-                    $i++;
-                }
+        $instances = $manager->get_enrolment_instances();
+        $return = false;
+        foreach ($instances as $instance) {
+            if ($instance->enrol === 'coursecompleted') {
+                $return = true;
             }
-            $this->singleinstance = $i === 1;
         }
-        return $this->singleinstance;
+        return $return;
     }
 
     /**
@@ -598,6 +599,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         global $DB;
         $condition = 'course = ? AND timecompleted > 0';
         $return = $DB->get_fieldset_select('course_completions', 'userid', $condition, [$courseid]);
-        return $return ? $return : [];
+        return $return ?? [];
     }
 }

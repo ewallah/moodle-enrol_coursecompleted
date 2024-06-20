@@ -42,6 +42,7 @@ class observer {
     public static function enroluser(\core\event\course_completed $event) {
         global $DB;
         if (enrol_is_enabled('coursecompleted')) {
+            // TODO: What if there are 2 roles?
             $sql = "SELECT *
                       FROM {enrol}
                       WHERE enrol = :enrol
@@ -56,7 +57,7 @@ class observer {
             if ($enrols = $DB->get_records_sql($sql, $params)) {
                 $userid = $event->relateduserid;
                 foreach ($enrols as $enrol) {
-                    if ($enrol->customint4 > time() + 100) {
+                    if ($enrol->customint4 > time() + 10) {
                         $adhock = new \enrol_coursecompleted\task\process_future();
                         $adhock->set_userid($userid);
                         $adhock->set_custom_data($enrol);
@@ -70,23 +71,4 @@ class observer {
             }
         }
     }
-
-    /**
-     * Triggered when an enrolment method changed.
-     *
-     * @param \core\event\enrol_instance_updated $event
-     */
-    public static function enrol_instance_updated(\core\event\enrol_instance_updated $event) {
-        // TODO: move to hook.
-        global $DB;
-        if (
-            enrol_is_enabled('coursecompleted') &&
-            $instance = $DB->get_record('enrol', ['id' => $event->objectid, 'status' => ENROL_INSTANCE_DISABLED])
-        ) {
-            $sqllike = $DB->sql_like('customdata', ':customdata');
-            $params = ['component' => 'enrol_coursecompleted', 'customdata' => '"customdata":"' . $instance->id . '"%'];
-            $DB->delete_records_select('task_adhoc', "component = :component AND $sqllike", $params);
-        }
-    }
-
 }

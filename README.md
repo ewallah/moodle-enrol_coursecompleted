@@ -6,9 +6,9 @@ Course completed enrolment handles the enrolment of users upon completion of a c
 
 ## Enrolment on course completed
 
-* With this plugin it is possible to create a chain of courses.  The moment a student completes a course, he/she
-  is automatically enrolled in one or more courses. But it can also be used to give a user another role when he/she
-  completes the course.
+* With this plugin it is possible to create a chain of courses.  The moment a student completes a course, the person
+  is automatically enrolled in one or more courses. But it can also be used to give a user another role after completing
+  the course.
 * Administrators can also enrol users who completed past courses.
 * Administrators can bulk modify and delete users (works only when 1 instance is installed [MDL-66652](https://tracker.moodle.org/browse/MDL-66652)).
 * When a user is part of a group in the first course, the user will also be part of the group with the same name in the second course.
@@ -16,9 +16,14 @@ Course completed enrolment handles the enrolment of users upon completion of a c
 * When you want that this plugin only works for a limited period, configure enrolment start and end date. Before and after this date, this plugin will do nothing.
 * Now you can also enrol a user in the future (the welcome message will also be sent only the moment the user is enrolled).
 
+## Warning
+
+This plugin is NOT tested in Moodle Workplace, Totara, or other propriety software. Hence this plugin cannot be used
+in these environments. 
+
 ## Course completion
 
-Check the global documentation about course completion: https://docs.moodle.org/403/en/Course_completion
+Check the global documentation about course completion: https://docs.moodle.org/404/en/Course_completion
 
 ## Installation:
 
@@ -70,6 +75,7 @@ Stable
 
 [![Build Status](https://github.com/ewallah/moodle-enrol_coursecompleted/workflows/Tests/badge.svg)](https://github.com/ewallah/moodle-enrol_coursecompleted/actions)
 [![Coverage Status](https://coveralls.io/repos/github/ewallah/moodle-enrol_coursecompleted/badge.svg?branch=main)](https://coveralls.io/github/ewallah/moodle-enrol_coursecompleted?branch=main)
+![Mutation score](https://badgen.net/badge/Mutation%20Score%20Indicator/93)
 
 ## Copyright
 

@@ -28,10 +28,10 @@ namespace enrol_coursecompleted;
 use moodle_url;
 use stdClass;
 
-// @codeCoverageIgnoreStart
+
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/enrol/locallib.php');
-// @codeCoverageIgnoreEnd
+
 /**
  * A bulk operation for the coursecompleted enrolment plugin to delete selected users enrolments.
  *
@@ -88,14 +88,10 @@ class bulkdelete extends \enrol_bulk_enrolment_operation {
         if (!has_capability("enrol/coursecompleted:unenrol", $manager->get_context())) {
             return false;
         }
-
         foreach ($users as $user) {
             foreach ($user->enrolments as $enrolment) {
                 $plugin = $enrolment->enrolmentplugin;
-                $instance = $enrolment->enrolmentinstance;
-                if ($plugin->allow_unenrol_user($instance, $enrolment)) {
-                    $plugin->unenrol_user($instance, $user->id);
-                }
+                $plugin->unenrol_user($enrolment->enrolmentinstance, $user->id);
             }
         }
         return true;

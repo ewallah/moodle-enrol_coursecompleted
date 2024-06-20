@@ -25,10 +25,8 @@
 
 namespace enrol_coursecompleted;
 
-// @codeCoverageIgnoreStart
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/enrol/locallib.php');
-// @codeCoverageIgnoreEnd
 
 /**
  * A bulk operation for the coursecompleted enrolment plugin to edit selected users enrolments.
@@ -93,21 +91,18 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
             foreach ($user->enrolments as $enrolment) {
                 $ueids[] = $enrolment->id;
                 $courseid = $enrolment->enrolmentinstance->courseid;
-                // Trigger event.
-                $event = \core\event\user_enrolment_updated::create(
-                    [
-                        'objectid' => $enrolment->id,
-                        'courseid' => $courseid,
-                        'context' => \context_course::instance($courseid),
-                        'relateduserid' => $user->id,
-                        'other' => ['enrol' => 'coursecompleted'],
-                    ]
-                );
-                $event->trigger();
+                $data = [
+                    'objectid' => $enrolment->id,
+                    'courseid' => $courseid,
+                    'context' => \context_course::instance($courseid),
+                    'relateduserid' => $user->id,
+                    'other' => ['enrol' => 'coursecompleted'],
+                ];
+                \core\event\user_enrolment_updated::create($data)->trigger();
             }
         }
         [$ueidsql, $params] = $DB->get_in_or_equal($ueids, SQL_PARAMS_NAMED);
-        if ($properties->status == ENROL_USER_ACTIVE || $properties->status == ENROL_USER_SUSPENDED) {
+        if (!empty($properties->status)) {
             $updatesql[] = 'status = :status';
             $params['status'] = $properties->status;
         }
@@ -119,10 +114,6 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
             $updatesql[] = 'timeend = :timeend';
             $params['timeend'] = $properties->timeend;
         }
-        if (empty($updatesql)) {
-            return true;
-        }
-
         $updatesql[] = 'modifierid = :modifierid';
         $params['modifierid'] = $USER->id;
 
