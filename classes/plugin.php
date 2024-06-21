@@ -102,7 +102,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
 
         $data = [];
         $formatter = \core\di::get(\core\formatting::class);
-        $hasdata = false;
         if ($this->get_config('svglearnpath')) {
             $items = $this->build_course_path($instance);
             $i = 1;
@@ -116,10 +115,10 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                         'href' => new moodle_url('/course/view.php', ['id' => $item]),
                         'seqnumber' => $i,
                     ];
-                $hasdata = true;
                 $i++;
             }
         }
+        $hasdata = count($data) >= 2;
         $name = $formatter->format_string(
             get_course($instance->customint1)->fullname,
             context: context_course::instance($instance->customint1)
@@ -351,7 +350,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param \MoodleQuickForm $mform
      * @param context $context
      * @return bool
-     * @infection-ignore-all
      */
     public function edit_instance_form($instance, \MoodleQuickForm $mform, $context) {
         $options = [ENROL_INSTANCE_ENABLED => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
@@ -359,21 +357,19 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->setDefault('status', $this->get_config('status'));
 
         $role = $this->get_config('roleid');
+        $start = time();
         if ($instance) {
             if (isset($instance->roleid)) {
                 $role = $instance->roleid;
+            }
+            if (isset($instance->customint1)) {
+                $start = get_course($instance->customint1)->startdate;
             }
         }
         $roles = get_default_enrol_roles($context, $role);
         $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_fee'), $roles);
         $mform->setDefault('roleid', $this->get_config('roleid'));
 
-        $start = time();
-        if ($instance) {
-            if (isset($instance->customint1)) {
-                $start = get_course($instance->customint1)->startdate;
-            }
-        }
         $arr = ['optional' => true, 'defaulttime' => $start];
         $mform->addElement('date_time_selector', 'customint4', get_string('enroldate', 'enrol_coursecompleted'), $arr);
         $mform->addHelpButton('customint4', 'enroldate', 'enrol_coursecompleted');
@@ -467,7 +463,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public function edit_instance_validation($data, $files, $instance, $context): array {
         $errors = [];
         if (!empty($data['enrolenddate'])) {
-            if ($data['enrolenddate'] <= $data['enrolstartdate']) {
+            // Minimum duration of a course is one hour.
+            if ($data['enrolenddate'] < $data['enrolstartdate'] + 3600) {
                 $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_fee');
             }
         }

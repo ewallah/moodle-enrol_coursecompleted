@@ -25,6 +25,11 @@
 
 namespace enrol_coursecompleted;
 
+use advanced_testcase;
+use context_course;
+use moodle_exception;
+use stdClass;
+
 /**
  * coursecompleted enrolment manager tests.
  *
@@ -34,7 +39,7 @@ namespace enrol_coursecompleted;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \enrol_coursecompleted_plugin
  */
-final class manager_test extends \advanced_testcase {
+final class manager_test extends advanced_testcase {
     /** @var stdClass Instance. */
     private $instance;
 
@@ -71,7 +76,7 @@ final class manager_test extends \advanced_testcase {
     public function test_manager_empty_param(): void {
         global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
-        $this->expectException(\moodle_exception::class);
+        $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage('A required parameter (enrolid) was missing');
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
@@ -85,7 +90,7 @@ final class manager_test extends \advanced_testcase {
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $this->setUser($this->student);
         $_POST['enrolid'] = $this->instance->id;
-        $this->expectException(\moodle_exception::class);
+        $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage('Sorry, but you do not currently have permissions to do that (Enrol users).');
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
@@ -100,14 +105,14 @@ final class manager_test extends \advanced_testcase {
         $generator = $this->getDataGenerator();
         $user = $generator->create_and_enrol($this->course, 'editingteacher');
         $role = $DB->get_record('role', ['shortname' => 'editingteacher']);
-        $context = \context_course::instance($this->course->id);
+        $context = context_course::instance($this->course->id);
         assign_capability('enrol/coursecompleted:enrolpast', CAP_PROHIBIT, $role->id, $context);
         assign_capability('enrol/coursecompleted:unenrol', CAP_PROHIBIT, $role->id, $context);
         assign_capability('enrol/manual:enrol', CAP_ALLOW, $role->id, $context);
         \core\session\manager::init_empty_session();
         $this->setUser($user);
         $_POST['enrolid'] = $this->instance->id;
-        $this->expectException(\moodle_exception::class);
+        $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage('Sorry, but you do not currently have permissions to do that (Enrol users).');
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
@@ -136,7 +141,7 @@ final class manager_test extends \advanced_testcase {
         global $CFG, $DB;
         $this->preventResetByRollback();
         $this->setAdminUser();
-        $cc = new \stdClass();
+        $cc = new stdClass();
         $cc->userid = $this->student->id;
         $cc->course = $this->course->id;
         $cc->timestarted = time() - 100;
@@ -148,6 +153,7 @@ final class manager_test extends \advanced_testcase {
         ob_start();
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
         $html = ob_get_clean();
+        $this->assertStringContainsString(fullname($this->student), $html);
         $this->assertStringNotContainsString('No users found', $html);
     }
 
@@ -160,7 +166,7 @@ final class manager_test extends \advanced_testcase {
         $this->preventResetByRollback();
         $this->setAdminUser();
         set_config('messaging', false);
-        $cc = new \stdClass();
+        $cc = new stdClass();
         $cc->userid = $this->student->id;
         $cc->course = $this->course->id;
         $cc->timestarted = time() - 100;
@@ -188,6 +194,34 @@ final class manager_test extends \advanced_testcase {
         $ADMIN = admin_get_root(true, true);
         $this->assertTrue($ADMIN->fulltree);
     }
+
+    /**
+     * Test settings page.
+     * @covers \enrol_coursecompleted_plugin
+     */
+    public function test_settings_page(): void {
+        global $CFG, $OUTPUT, $PAGE;
+        $this->preventResetByRollback();
+        $this->setAdminUser();
+        ob_start();
+        chdir($CFG->dirroot . '/admin');
+        $_POST['section'] = 'enrolsettingscoursecompleted';
+        $_POST['sesskey'] = sesskey();
+        include($CFG->dirroot . '/admin/settings.php');
+        $html = ob_get_clean();
+        $this->assertStringContainsString('Default: No', $html);
+        $this->assertStringContainsString('value="3" selected>Disable course enrolment and remove role', $html);
+        $this->assertStringContainsString('<option value="5" selected>Student</option>', $html);
+        $this->assertStringContainsString('value="604800" selected>weeks', $html);
+        $this->assertStringContainsString('value="86400" selected>days', $html);
+        $this->assertStringContainsString('value="1" selected>From the course contact', $html);
+        $this->assertStringContainsString('id_s_enrol_coursecompleted_svglearnpath" checked', $html);
+        $this->assertStringContainsString('id_s_enrol_coursecompleted_keepgroup" checked', $html);
+        // Small hack to avoid warnings.
+        $this->assertNotEmpty($PAGE);
+        $this->assertNotEmpty($OUTPUT);
+    }
+
     /**
      * Test access.
      * @covers \enrol_coursecompleted_plugin
@@ -198,7 +232,7 @@ final class manager_test extends \advanced_testcase {
         $student = $generator->create_and_enrol($course, 'student');
         $editor = $generator->create_and_enrol($course, 'editingteacher');
         $this->setAdminUser();
-        $context = \context_course::instance($course->id);
+        $context = context_course::instance($course->id);
         $this->assertTrue(has_capability('enrol/coursecompleted:config', $context));
         $this->assertTrue(has_capability('enrol/coursecompleted:enrolpast', $context));
         $this->assertTrue(has_capability('enrol/coursecompleted:manage', $context));
@@ -216,5 +250,9 @@ final class manager_test extends \advanced_testcase {
         $this->assertTrue(has_capability('enrol/coursecompleted:manage', $context));
         $this->assertTrue(has_capability('enrol/coursecompleted:unenrol', $context));
         $this->assertFalse(has_capability('enrol/coursecompleted:unenrolself', $context));
+        assign_capability('enrol/coursecompleted:enrolpast', CAP_ALLOW, 3, $context);
+        assign_capability('enrol/coursecompleted:unenrolself', CAP_ALLOW, 3, $context);
+        $this->assertTrue(has_capability('enrol/coursecompleted:enrolpast', $context));
+        $this->assertTrue(has_capability('enrol/coursecompleted:unenrolself', $context));
     }
 }

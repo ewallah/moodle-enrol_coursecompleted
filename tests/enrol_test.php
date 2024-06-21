@@ -483,13 +483,16 @@ final class enrol_test extends advanced_testcase {
      */
     public function test_other_config(): void {
         global $DB;
-        $this->plugin->set_config('defaultenrol', true);
+        $this->plugin->set_config('status', 1);
+        $this->plugin->set_config('roleid', 3);
         $this->plugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
-        $this->plugin->set_config('defaultrole', 3);
-        $this->plugin->set_config('svglearnpath', 0);
+        $this->plugin->set_config('welcome', ENROL_SEND_EMAIL_FROM_NOREPLY);
         $this->plugin->set_config('keepgroup', 0);
         $this->plugin->set_config('enrolperiod', 3000);
-        $this->assertEquals($this->plugin->get_config('enrolperiod'), 3000);
+        $this->plugin->set_config('svglearnpath', 0);
+        $this->assertEquals(get_config('enrol_coursecompleted', 'enrolperiod'), 3000);
+        $this->assertEquals(get_config('enrol_coursecompleted', 'roleid'), 3);
+        $this->assertEquals(get_config('enrol_coursecompleted', 'keepgroup'), 0);
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);
         // Add teacher.
@@ -525,18 +528,18 @@ final class enrol_test extends advanced_testcase {
             '<selectclass="custom-select"name="status"id="id_status"><optionvalue="0">Yes</option>',
             $cleaned
         );
-        $this->assertStringContainsString('<optionvalue="1">No</option></select>', $cleaned);
+        $this->assertStringContainsString('<optionvalue="1"selected>No</option>', $cleaned);
         $this->assertStringContainsString('cols="60"rows="8"', $cleaned);
-        $this->assertStringContainsString('name="customint3"class="form-check-input"value="1"id="id_customint3"', $cleaned);
         $this->assertStringContainsString('<selectclass="custom-select"name="customint2"id="id_customint2">', $cleaned);
-        $this->assertStringContainsString('<optionvalue="0">No</option>', $cleaned);
-        $this->assertStringContainsString('<optionvalue="1"selected>Fromthecoursecontact</option>', $cleaned);
-        $this->assertStringNotContainsString('<optionvalue="2">Fromthekeyholder</option>', $cleaned);
-        $this->assertStringContainsString('<optionvalue="3">Fromtheno-replyaddress</option>', $cleaned);
+        $this->assertStringContainsString('name="customint3"class="form-check-input"value="1"id="id_customint3"', $cleaned);
         $this->assertStringContainsString(
-            '<selectclass="custom-select"name="roleid"id="id_roleid"><optionvalue="5"selected>Student</option>',
+            '<inputtype="checkbox"name="customint4[enabled]"class="form-check-input"id="id_customint4_enabled"value="1">',
             $cleaned
         );
+        $this->assertStringContainsString('<optionvalue="0">No</option>', $cleaned);
+        $this->assertStringContainsString('<optionvalue="1">Fromthecoursecontact</option>', $cleaned);
+        $this->assertStringContainsString('<optionvalue="3"selected>Fromtheno-replyaddress</option>', $cleaned);
+        $this->assertStringContainsString('<optionvalue="3"selected>Teacher</option>', $cleaned);
     }
 
     /**
