@@ -128,7 +128,7 @@ Feature: Enrolment on course completion
     And I click on "//a[@data-action='unenrol']" "xpath_element" in the "teacher1" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
     And I am on the "Course 2" "enrolment methods" page
-    And I wait until the page is ready
+    # And I wait until the page is ready
     When I click on "[aria-label='Enrol users']" "css_element" in the "tr.lastrow" "css_element"
     Then I should see "Username 1"
     And I press "Enrol users"
