@@ -18,8 +18,8 @@ Course completed enrolment handles the enrolment of users upon completion of a c
 
 ## Warning
 
-This plugin is 100% Open Source and NOT tested in Moodle Workplace, Totara, or other proprietary software.
-As long as proprietary environments do not reward plugin developers, you can use this plugin only in 100% Open Source environments.
+This plugin is 100% open source and has NOT been tested in Moodle Workplace, Totara, or any other proprietary software system.
+As long as the latter do not reward plugin developers, you can use this plugin only in 100% open source environments.
 
 ## Course completion
 
@@ -46,6 +46,14 @@ This plugin requires Moodle 4.4+
 ## Theme support
 
 This plugin is developed and tested on Moodle Core's Boost theme and Boost child themes, including Moodle Core's Classic theme.
+
+## Database support
+
+This plugin is developed and tested using
+
+* MYSQL
+* MariaDB
+* PostgreSQL
 
 ## Plugin repositories
 
