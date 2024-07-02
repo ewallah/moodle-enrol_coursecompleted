@@ -1,3 +1,9 @@
+## v4.4.3 (2024-07-02)
+
+* version update
+* MOODLE_404_STABLE only
+* readme
+
 ## v4.2.4 (2024-04-19)
 
 * codecoverage ignore
