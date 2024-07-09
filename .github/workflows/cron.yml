@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         moodle-branch: ['main']
-        php: ['8.1']
+        php: ['8.3']
         database: ['mysqli']
 
     steps:
@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: this-plugin
+          ref: MOODLE_404_STABLE
 
       - name: setup PHP
         uses: shivammathur/setup-php@v2
