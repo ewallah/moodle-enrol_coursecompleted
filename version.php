@@ -29,6 +29,6 @@ $plugin->component = 'enrol_coursecompleted';
 
 $plugin->requires = 2023042400;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->supported = [402, 404];
+$plugin->supported = [402, 403];
 $plugin->release = 'v4.2.4';
-$plugin->version = 2024041900;
+$plugin->version = 2024070900;
