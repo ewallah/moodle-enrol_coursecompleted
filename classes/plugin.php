@@ -426,7 +426,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     /**
      * Add new instance of enrol plugin.
      * @param object $course
-     * @param array $fields
+     * @param array|null $fields
      * @return int id of new instance, null if can not be created
      */
     public function add_instance($course, ?array $fields = null): int {
