@@ -45,6 +45,12 @@ jobs:
           path: this-plugin
           ref: MOODLE_404_STABLE
 
+      - name: add plugin
+        uses: actions/checkout@v4
+        with:
+          repository: ndunand/moodle-enrol_attributes
+          path: extras/enrol_attributes
+
       - name: setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -60,7 +66,7 @@ jobs:
            sudo locale-gen en_AU.UTF-8
 
       - name: install Moodle
-        run: moodle-plugin-ci --ansi install --db-host=127.0.0.1 --plugin this-plugin
+        run: moodle-plugin-ci install --db-host=127.0.0.1 --plugin this-plugin --extra-plugins=extras
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
