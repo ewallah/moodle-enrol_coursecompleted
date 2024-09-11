@@ -66,6 +66,7 @@ final class enrol_test extends advanced_testcase {
         global $CFG;
         require_once($CFG->libdir . '/formslib.php');
         require_once($CFG->dirroot . '/enrol/locallib.php');
+        parent::setUpBeforeClass();
     }
 
     /**
@@ -73,6 +74,7 @@ final class enrol_test extends advanced_testcase {
      */
     protected function setUp(): void {
         global $CFG, $DB;
+        parent::setUp();
 
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);

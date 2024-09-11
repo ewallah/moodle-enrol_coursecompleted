@@ -44,6 +44,7 @@ final class bulk_test extends \advanced_testcase {
         global $CFG;
         require_once($CFG->libdir . '/formslib.php');
         require_once($CFG->dirroot . '/enrol/locallib.php');
+        parent::setUpBeforeClass();
     }
 
     /**
@@ -51,6 +52,7 @@ final class bulk_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $CFG;
+        parent::setUp();
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
         $enabled = enrol_get_plugins(true);
