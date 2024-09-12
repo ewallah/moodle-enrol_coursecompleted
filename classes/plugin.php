@@ -234,13 +234,13 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 context_course::instance($instance->customint1, IGNORE_MISSING) &&
                 context_course::instance($instance->courseid, IGNORE_MISSING)
             ) {
-                $timestart = 0;
+                $timestart = time();
                 $timeend = 0;
                 if (isset($instance->customint4) && $instance->customint4 > 0) {
                     $timestart = $instance->customint4;
                 }
                 if (isset($instance->enrolperiod) && $instance->enrolperiod > 0) {
-                    $timeend = max(time(), $timestart) + $instance->enrolperiod;
+                    $timeend = $timestart + $instance->enrolperiod;
                 }
                 parent::enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status, $recovergrades);
             } else {

@@ -138,10 +138,10 @@ final class time_enrolled_test extends advanced_testcase {
         $this->assertTrue(is_enrolled(context_course::instance($course2->id), $student->id));
         $this->assertCount(1, $manager1->get_user_enrolments($student->id));
         $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id1, 'userid' => $student->id]);
-        $this->assertEquals(0, $ueinstance->timestart);
+        $this->assertNotEquals(0, $ueinstance->timestart);
         $this->assertEquals(0, $ueinstance->timeend);
         $ueinstance = $DB->get_record('user_enrolments', ['enrolid' => $id2, 'userid' => $student->id]);
-        $this->assertEquals(0, $ueinstance->timestart);
+        $this->assertNotEquals(0, $ueinstance->timestart);
         $this->assertGreaterThan(time(), $ueinstance->timeend);
         sleep(1);
         $trace = new \null_progress_trace();
