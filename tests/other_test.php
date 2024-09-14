@@ -47,6 +47,7 @@ final class other_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         global $CFG;
+        parent::setUp();
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
         $enabled = enrol_get_plugins(true);

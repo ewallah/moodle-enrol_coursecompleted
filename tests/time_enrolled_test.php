@@ -41,6 +41,7 @@ final class time_enrolled_test extends \advanced_testcase {
     protected function setUp(): void {
         global $CFG;
         require_once($CFG->dirroot . '/enrol/locallib.php');
+        parent::setUp();
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
         $enabled = enrol_get_plugins(true);

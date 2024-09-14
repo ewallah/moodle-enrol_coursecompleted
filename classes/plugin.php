@@ -220,9 +220,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         if (isset($instance->roleid)) {
             $roleid = $instance->roleid;
         }
-        if (isset($instance->enrolstartdate)) {
-            $timestart = $instance->enrolstartdate;
-        }
+        $timestart = isset($instance->enrolstartdate) ? $instance->enrolstartdate : time();
         if (isset($instance->enrolenddate)) {
             $timeend = $instance->enrolenddate;
         }
