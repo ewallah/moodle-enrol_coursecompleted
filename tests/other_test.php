@@ -158,6 +158,12 @@ final class other_test extends advanced_testcase {
         $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
         $observer->enroluser($compevent);
         $this->assertEquals(5, $DB->count_records('user_enrolments', []));
+        $recs = $DB->get_records_select('task_adhoc', "component = :component AND $sqllike", $params);
+        foreach ($recs as $rec) {
+            $this->assertEquals($rec->component, 'enrol_coursecompleted');
+            $this->assertEquals($rec->userid, $student1);
+            $this->assertEquals($rec->faildelay, 0);
+        }
         $this->assertEquals(1, $DB->count_records_select('task_adhoc', "component = :component AND $sqllike", $params));
         $data = new stdClass();
         $data->status = ENROL_INSTANCE_DISABLED;

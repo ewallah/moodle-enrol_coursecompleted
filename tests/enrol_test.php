@@ -432,7 +432,9 @@ final class enrol_test extends advanced_testcase {
         $html = ob_get_clean();
         $cleaned = preg_replace('/\s+/', '', $html);
         $this->assertStringContainsString('<optionvalue="1">No</option></select>', $cleaned);
+        $this->assertStringContainsString('optionvalue="86400"selected', $cleaned);
         $this->assertStringContainsString('<optionvalue="0">No</option>', $cleaned);
+        $this->assertStringContainsString('d="id_enrolstartdate_enabled"value="1">Enable</label>', $cleaned);
         $this->assertStringContainsString('cols="60"rows="8"', $cleaned);
         $this->assertStringContainsString('name="customint3"class="form-check-input"value="1"id="id_customint3"', $cleaned);
         $this->assertStringContainsString(

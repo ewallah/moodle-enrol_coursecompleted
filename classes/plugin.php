@@ -403,8 +403,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_coursecompleted'), $arr);
         $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_coursecompleted');
 
-        $duration = intval(get_config('moodlecourse', 'courseduration')) ?? YEARSECS;
-        $arr['defaulttime'] = $start + $duration;
+        $arr['defaulttime'] = $start + get_config('moodlecourse', 'courseduration');
         $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_coursecompleted'), $arr);
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_coursecompleted');
     }
@@ -464,7 +463,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $errors = [];
         if (!empty($data['enrolenddate'])) {
             // Minimum duration of a course is one hour.
-            if ($data['enrolenddate'] < $data['enrolstartdate'] + 3600) {
+            if ($data['enrolenddate'] <= $data['enrolstartdate'] + HOURSECS) {
                 $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_fee');
             }
         }

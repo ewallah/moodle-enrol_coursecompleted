@@ -317,8 +317,16 @@ final class hook_test extends \advanced_testcase {
                 'customint1' => $this->course2->id,
             ]
         );
+        $this->plugin->add_instance(
+            $this->course1,
+            [
+                'status' => ENROL_INSTANCE_ENABLED,
+                'roleid' => 5,
+                'customint1' => $this->course1->id,
+            ]
+        );
         $this->event->trigger();
-        $this->assertEquals(1, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
+        $this->assertEquals(2, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
         $this->assertEquals(4, $DB->count_records('course', []));
         delete_course($this->course1, false);
         $this->assertEquals(3, $DB->count_records('course', []));
