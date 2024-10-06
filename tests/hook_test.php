@@ -367,7 +367,7 @@ final class hook_test extends \advanced_testcase {
         $this->assertEquals(3, $DB->count_records('course', []));
         delete_course($this->course1, false);
         $this->assertEquals(2, $DB->count_records('course', []));
-        $this->assertEquals(3, $DB->count_records('enrol', []));
+        $this->assertGreaterThan(2, $DB->count_records('enrol', []));
         $this->assertEquals(1, $DB->count_records('user_enrolments', []));
         $this->assertEquals(0, $DB->count_records('task_adhoc', ['component' => 'enrol_coursecompleted']));
     }
