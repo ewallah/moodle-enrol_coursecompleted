@@ -82,7 +82,7 @@ Stable
 ## Status
 
 [![Build Status](https://github.com/ewallah/moodle-enrol_coursecompleted/workflows/Tests/badge.svg)](https://github.com/ewallah/moodle-enrol_coursecompleted/actions)
-[![Coverage Status](https://coveralls.io/repos/github/ewallah/moodle-enrol_coursecompleted/badge.svg?branch=main)](https://coveralls.io/github/ewallah/moodle-enrol_coursecompleted?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/ewallah/moodle-enrol_coursecompleted/badge.svg?branch=MOODLE_404_STABLE)](https://coveralls.io/github/ewallah/moodle-enrol_coursecompleted?branch=MOODLE_404_STABLE)
 ![Mutation score](https://badgen.net/badge/Mutation%20Score%20Indicator/87)
 
 ## Copyright
