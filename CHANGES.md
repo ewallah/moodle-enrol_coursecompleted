@@ -1,3 +1,9 @@
+## v4.4.4 (2024-10-07)
+
+* version update
+* unenrol when plugin is suppporting self unenrolment
+* readme
+
 ## v4.4.4 (2024-10-06)
 
 * version update

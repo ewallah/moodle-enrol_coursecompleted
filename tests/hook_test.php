@@ -109,6 +109,7 @@ final class hook_test extends \advanced_testcase {
                 'customint1' => $this->course2->id,
                 'customint2' => ENROL_DO_NOT_SEND_EMAIL,
                 'customint4' => time() + 20,
+                'customint5' => 1,
             ]
         );
         $this->event->trigger();
@@ -204,7 +205,7 @@ final class hook_test extends \advanced_testcase {
                 'roleid' => 5,
                 'customint1' => $this->course2->id,
                 'customint2' => ENROL_SEND_EMAIL_FROM_COURSE_CONTACT,
-                'customint4' => time() + 66666666,
+                'customint4' => time() + 666666,
             ]
         );
         $this->event->trigger();
@@ -234,6 +235,55 @@ final class hook_test extends \advanced_testcase {
         $this->assertTrue(user_has_role_assignment($this->student->id, 6, $context->id));
     }
 
+
+    /**
+     * Test unenrol.
+     * @covers \enrol_coursecompleted\hook_listener
+     */
+    public function test_unenrol(): void {
+        $context = \context_course::instance($this->course2->id);
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+
+        $this->plugin->add_instance(
+            $this->course1,
+            [
+                'status' => ENROL_INSTANCE_ENABLED,
+                'roleid' => 5,
+                'customint1' => $this->course2->id,
+                'customint5' => 1,
+            ]
+        );
+        $this->event->trigger();
+        $context = \context_course::instance($this->course1->id);
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+        $context = \context_course::instance($this->course2->id);
+        $this->assertFalse(user_has_role_assignment($this->student->id, 5, $context->id));
+    }
+
+    /**
+     * Test not unenrol.
+     * @covers \enrol_coursecompleted\hook_listener
+     */
+    public function test_not_unenrol(): void {
+        $context = \context_course::instance($this->course2->id);
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+
+        $this->plugin->add_instance(
+            $this->course1,
+            [
+                'status' => ENROL_INSTANCE_ENABLED,
+                'roleid' => 5,
+                'customint1' => $this->course2->id,
+                'customint5' => 0,
+            ]
+        );
+        $this->event->trigger();
+        $context = \context_course::instance($this->course1->id);
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+        $context = \context_course::instance($this->course2->id);
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+    }
+
     /**
      * Test group.
      * @covers \enrol_coursecompleted\hook_listener
@@ -251,6 +301,26 @@ final class hook_test extends \advanced_testcase {
         );
         $this->event->trigger();
         $this->assertTrue(groups_is_member($groupid1, $this->student->id));
+        $this->assertTrue(groups_is_member($groupid2, $this->student->id));
+    }
+
+    /**
+     * Test not group.
+     * @covers \enrol_coursecompleted\hook_listener
+     */
+    public function test_not_group(): void {
+        [$groupid1, $groupid2] = $this->create_groups();
+        $this->plugin->add_instance(
+            $this->course1,
+            [
+                'status' => ENROL_INSTANCE_ENABLED,
+                'roleid' => 5,
+                'customint1' => $this->course2->id,
+                'customint3' => false,
+            ]
+        );
+        $this->event->trigger();
+        $this->assertFalse(groups_is_member($groupid1, $this->student->id));
         $this->assertTrue(groups_is_member($groupid2, $this->student->id));
     }
 

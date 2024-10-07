@@ -352,6 +352,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool
      */
     public function edit_instance_form($instance, \MoodleQuickForm $mform, $context) {
+        $plugin = 'enrol_coursecompleted';
         $options = [ENROL_INSTANCE_ENABLED => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
         $mform->setDefault('status', $this->get_config('status'));
@@ -371,40 +372,44 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->setDefault('roleid', $this->get_config('roleid'));
 
         $arr = ['optional' => true, 'defaulttime' => $start];
-        $mform->addElement('date_time_selector', 'customint4', get_string('enroldate', 'enrol_coursecompleted'), $arr);
-        $mform->addHelpButton('customint4', 'enroldate', 'enrol_coursecompleted');
+        $mform->addElement('date_time_selector', 'customint4', get_string('enroldate', $plugin), $arr);
+        $mform->addHelpButton('customint4', 'enroldate', $plugin);
 
         $arr = ['optional' => true, 'defaultunit' => 86400];
-        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_coursecompleted'), $arr);
+        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', $plugin), $arr);
         $mform->setDefault('enrolperiod', $this->get_config('enrolperiod'));
-        $mform->addHelpButton('enrolperiod', 'enrolperiod', 'enrol_coursecompleted');
+        $mform->addHelpButton('enrolperiod', 'enrolperiod', $plugin);
 
         $conditions = ['onlywithcompletion' => true, 'multiple' => false, 'includefrontpage' => false];
         $mform->addElement('course', 'customint1', get_string('course'), $conditions);
         $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
-        $mform->addHelpButton('customint1', 'compcourse', 'enrol_coursecompleted');
+        $mform->addHelpButton('customint1', 'compcourse', $plugin);
 
-        $mform->addElement('advcheckbox', 'customint3', get_string('groups'), get_string('group', 'enrol_coursecompleted'));
-        $mform->addHelpButton('customint3', 'group', 'enrol_coursecompleted');
+        $mform->addElement('advcheckbox', 'customint5', get_string('unenrol', 'enrol'), get_string('tryunenrol', $plugin));
+        $mform->addHelpButton('customint5', 'tryunenrol', $plugin);
+        $mform->setDefault('customint5', $this->get_config('tryunenrol'));
+
+        $mform->addElement('advcheckbox', 'customint3', get_string('groups'), get_string('group', $plugin));
+        $mform->addHelpButton('customint3', 'group', $plugin);
         $mform->setDefault('customint3', $this->get_config('keepgroup'));
 
         $options = self::email_options();
         $mform->addElement('select', 'customint2', get_string('categoryemail', 'admin'), $options);
 
-        $mform->addHelpButton('customint2', 'welcome', 'enrol_coursecompleted');
+        $mform->addHelpButton('customint2', 'welcome', $plugin);
         $mform->setDefault('customint2', $this->get_config('welcome'));
 
         $arr = ['cols' => '60', 'rows' => '8'];
-        $mform->addElement('textarea', 'customtext1', get_string('customwelcome', 'enrol_coursecompleted'), $arr);
-        $mform->addHelpButton('customtext1', 'customwelcome', 'enrol_coursecompleted');
+        $mform->addElement('textarea', 'customtext1', get_string('customwelcome', $plugin), $arr);
+        $mform->addHelpButton('customtext1', 'customwelcome', $plugin);
         $mform->disabledIf('customtext1', 'customint2', 'notchecked');
 
         $arr = ['optional' => true, 'defaulttime' => $start];
-        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_coursecompleted'), $arr);
-        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', 'enrol_coursecompleted');
+        $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', $plugin), $arr);
+        $mform->addHelpButton('enrolstartdate', 'enrolstartdate', $plugin);
 
         $arr['defaulttime'] = $start + get_config('moodlecourse', 'courseduration');
-        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_coursecompleted'), $arr);
+        $mform->addElement('date_time_selector', 'enrolenddate', get_string('enrolenddate', $plugin), $arr);
         $mform->addHelpButton('enrolenddate', 'enrolenddate', 'enrol_coursecompleted');
     }
 

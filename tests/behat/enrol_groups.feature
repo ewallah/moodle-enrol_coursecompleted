@@ -27,6 +27,9 @@ Feature: Groups kept during enrolment on course completion
   Scenario: User stays in same group after completing one or several courses
     Given I log in as "admin"
     And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I should see "2 participants found"
+
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the field "Teacher" to "1"
@@ -35,7 +38,8 @@ Feature: Groups kept during enrolment on course completion
 
     When I am on the "C2" "Course" page logged in as "teacher1"
     And I add "Course completed enrolment" enrolment method in "Course 2" with:
-       | Course | Course 1 |
+       | Course  | Course 1 |
+       | Unenrol | 1        |
     And I am on "Course 1" course homepage
     And I navigate to "Reports" in current page administration
     And I click on "Course completion" "link" in the "region-main" "region"
@@ -50,4 +54,9 @@ Feature: Groups kept during enrolment on course completion
     And I set the field "type" in the "Filter 1" "fieldset" to "Groups"
     And I set the field "Type or select..." in the "Filter 1" "fieldset" to "Group 1"
     And I click on "Apply filters" "button"
+    And I should see "1 participants found"
+
+    # Student user should be unenrolled.
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
     And I should see "1 participants found"

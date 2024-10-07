@@ -72,6 +72,9 @@ $string['status_help'] = 'This setting determines if the course completed enrolm
 $string['status_link'] = 'enrol/coursecompleted';
 $string['svglearnpath'] = 'Display learning path';
 $string['svglearnpath_help'] = 'Display (possible) learning path using svg icons.';
+$string['tryunenrol'] = 'Unenrol user from completed course.';
+$string['tryunenrol_help'] = 'Try to self unenrol user from completed course.
+If the user was enrolled with a method that allows self unenrolment, then this plugin will try to self unenrol the user.';
 $string['unenrolusers'] = 'Unenrol users';
 $string['uponcompleting'] = 'Upon completing course {$a}';
 $string['usersenrolled'] = '{$a} Users enrolled';

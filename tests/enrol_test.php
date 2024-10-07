@@ -100,6 +100,7 @@ final class enrol_test extends advanced_testcase {
                 'status' => ENROL_INSTANCE_ENABLED,
                 'customint1' => $this->course1->id,
                 'customint2' => ENROL_SEND_EMAIL_FROM_NOREPLY,
+                'customint4' => 100,
                 'roleid' => $studentrole,
             ]
         );
@@ -361,7 +362,7 @@ final class enrol_test extends advanced_testcase {
     public function test_library_other_functionality(): void {
         global $DB;
         $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
-        $arr = ['status' => 0, 'customint4' => 666, 'enrolenddate' => time(), 'enrolstartdate' => time() + 10000];
+        $arr = ['status' => 0, 'customint1' => 666, 'enrolenddate' => time(), 'enrolstartdate' => time() + 10000];
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
         $this->assertEquals('The specified course does not exist', $tmp['customint1']);
         $this->assertEquals('The enrolment end date cannot be earlier than the start date.', $tmp['enrolenddate']);
@@ -437,6 +438,8 @@ final class enrol_test extends advanced_testcase {
         $this->assertStringContainsString('d="id_enrolstartdate_enabled"value="1">Enable</label>', $cleaned);
         $this->assertStringContainsString('cols="60"rows="8"', $cleaned);
         $this->assertStringContainsString('name="customint3"class="form-check-input"value="1"id="id_customint3"', $cleaned);
+        $this->assertStringContainsString('fieldsetdata-fieldtype="date_time"class="m-0p-0border-0"id="id_customint4"', $cleaned);
+        $this->assertStringContainsString('name="customint5"class="form-check-input"value="1"id="id_customint5"', $cleaned);
         $this->assertStringContainsString(
             '<selectclass="custom-select"name="status"id="id_status"><optionvalue="0">Yes</option>',
             $cleaned

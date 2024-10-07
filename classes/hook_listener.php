@@ -21,6 +21,7 @@ use core_course\hook\before_course_deleted;
 use core_enrol\hook\after_enrol_instance_status_updated;
 use core_enrol\hook\after_user_enrolled;
 use core_user;
+use moodle_page;
 use stdClass;
 
 /**
@@ -39,7 +40,7 @@ class hook_listener {
      * @param \core_enrol\hook\after_user_enrolled $hook
      */
     public static function send_course_welcome_message(after_user_enrolled $hook): void {
-        global $CFG;
+        global $CFG, $DB;
         $instance = $hook->get_enrolinstance();
         if ($instance->enrol == 'coursecompleted') {
             if (enrol_is_enabled('coursecompleted')) {
@@ -77,6 +78,24 @@ class hook_listener {
                             $groupnameb = groups_get_group_by_name($instance->courseid, $groupnamea);
                             if ($groupnameb) {
                                 groups_add_member($groupnameb, $hook->get_userid());
+                            }
+                        }
+                    }
+                }
+                // Try unenrol the user from the completed course.
+                if ($instance->customint5 > 0) {
+                    if ($context = context_course::instance($instance->customint1, IGNORE_MISSING)) {
+                        $page = new moodle_page();
+                        require_once($CFG->dirroot . '/enrol/locallib.php');
+                        $course = get_course($instance->customint1);
+                        $cem = new \course_enrolment_manager($page, $course);
+                        $enrols = $cem->get_user_enrolments($hook->get_userid());
+                        foreach ($enrols as $enrol) {
+                            $plugin = enrol_get_plugin($enrol->enrolmentinstance->enrol);
+                            if ($instance = $DB->get_record('enrol', ['id' => $enrol->enrolid], '*', MUST_EXIST)) {
+                                if ($plugin->allow_unenrol_user($instance, $enrol)) {
+                                    $plugin->unenrol_user($instance, $hook->get_userid());
+                                }
                             }
                         }
                     }
