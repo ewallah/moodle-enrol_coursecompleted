@@ -109,7 +109,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 $name = $formatter->format_string(get_course($item)->fullname, context: context_course::instance($item));
                 $data[] =
                     [
-                        'first' => ($i == 1),
+                        'first' => ($i === 1),
                         'course' => ($item == $instance->courseid),
                         'title' => $name,
                         'href' => new moodle_url('/course/view.php', ['id' => $item]),
@@ -118,7 +118,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 $i++;
             }
         }
-        $hasdata = count($data) >= 2;
         $name = $formatter->format_string(
             get_course($instance->customint1)->fullname,
             context: context_course::instance($instance->customint1)
@@ -127,7 +126,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             [
                 'coursetitle' => $name,
                 'courseurl' => new moodle_url('/course/view.php', ['id' => $instance->customint1]),
-                'hasdata' => $hasdata,
+                'hasdata' => count($data) >= 2,
                 'items' => $data,
             ];
         $str = $OUTPUT->render_from_template('enrol_coursecompleted/learnpath', $rdata);

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * coursecompleted enrolment plugin bulk tests.
+ * Coursecompleted enrolment plugin bulk tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)
@@ -31,7 +31,7 @@ use moodle_url;
 use stdClass;
 
 /**
- * coursecompleted enrolment plugin bulk tests.
+ * Coursecompleted enrolment plugin bulk tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)

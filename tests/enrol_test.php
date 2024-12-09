@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * coursecompleted enrolment plugin tests.
+ * Coursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)
@@ -32,7 +32,7 @@ use moodle_url;
 use stdClass;
 
 /**
- * coursecompleted enrolment plugin tests.
+ * Coursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)
@@ -307,6 +307,7 @@ final class enrol_test extends advanced_testcase {
         $this->assertEquals($icons[0]->attributes['title'], 'After completing course: Test course 1');
         $icons = $this->plugin->get_action_icons($this->instance);
         $this->assertCount(2, $icons);
+        $this->assertStringContainsString('iconsmall', $icons[0]);
         $this->assertStringContainsString('icon fa fa-', $icons[0]);
         $this->assertStringContainsString('icon fa fa-', $icons[1]);
         $this->assertStringContainsString(
@@ -327,7 +328,8 @@ final class enrol_test extends advanced_testcase {
         );
         $this->plugin->set_config('svglearnpath', 0);
         $out = $this->plugin->enrol_page_hook($this->instance);
-        $cleaned0 = preg_replace('/\s+/', '', $out);
+        $this->assertStringNotContainsString('<strong class="fa-stack-1x text-light">', $out);
+
         $this->plugin->set_config('svglearnpath', 1);
         $out = $this->plugin->enrol_page_hook($this->instance);
         $cleaned = preg_replace('/\s+/', '', $out);
@@ -343,14 +345,19 @@ final class enrol_test extends advanced_testcase {
                 $cleaned
             );
         }
-        $this->assertStringContainsString('Test course 1</a>', $out);
-        $this->assertStringContainsString('<strong class="fa-stack-1x">1</strong>', $out);
-        $this->assertStringNotContainsString('class="fa-stack-1x">1</strong>', $cleaned0);
-        $this->assertStringContainsString('<strong class="fa-stack-1x text-light">2</strong>', $out);
-        $this->assertStringContainsString('<strong class="fa-stack-1x">3</strong>', $out);
-        $this->assertStringContainsString('<strong class="fa-stack-1x">4</strong>', $out);
-        $this->assertStringContainsString('<strong class="fa-stack-1x">5</strong>', $out);
-        $this->assertStringContainsString('<strong class="fa-stack-1x">6</strong>', $out);
+        $arr = [
+            'Test course 1</a>',
+            '<strong class="fa-stack-1x">1</strong>',
+            '<strong class="fa-stack-1x text-light">2</strong>',
+            '<strong class="fa-stack-1x">3</strong>',
+            '<strong class="fa-stack-1x">4</strong>',
+            '<strong class="fa-stack-1x">5</strong>',
+            '<strong class="fa-stack-1x">6</strong>',
+        ];
+        foreach ($arr as $value) {
+            $this->assertStringContainsString($value, $out);
+        }
+        
     }
 
     /**
@@ -439,6 +446,7 @@ final class enrol_test extends advanced_testcase {
         $this->assertStringContainsString('cols="60"rows="8"', $cleaned);
         $this->assertStringContainsString('name="customint3"class="form-check-input"value="1"id="id_customint3"', $cleaned);
         $this->assertStringContainsString('fieldsetdata-fieldtype="date_time"class="m-0p-0border-0"id="id_customint4"', $cleaned);
+        $this->assertStringContainsString('name="customint4[enabled]"', $cleaned);
         $this->assertStringContainsString('name="customint5"class="form-check-input"value="1"id="id_customint5"', $cleaned);
         $this->assertStringContainsString(
             '<selectclass="custom-select"name="status"id="id_status"><optionvalue="0">Yes</option>',
@@ -542,6 +550,15 @@ final class enrol_test extends advanced_testcase {
         $this->assertStringContainsString('<optionvalue="1">Fromthecoursecontact</option>', $cleaned);
         $this->assertStringContainsString('<optionvalue="3"selected>Fromtheno-replyaddress</option>', $cleaned);
         $this->assertStringContainsString('<optionvalue="3"selected>Teacher</option>', $cleaned);
+        $strs = [
+            'HelpwithCompletedcourse',
+            'HelpwithEnrolmentdate',
+            'HelpwithEnrolmentduration',
+            'HelpwithUnenroluserfromcompletedcourse',
+        ];
+        foreach ($strs as $str) {
+            $this->assertStringContainsString($str, $cleaned);
+        }
     }
 
     /**
@@ -551,7 +568,7 @@ final class enrol_test extends advanced_testcase {
      */
     private function tempform() {
         /**
-         * coursecompleted enrolment form tests.
+         * Coursecompleted enrolment form tests.
          *
          * @package   enrol_coursecompleted
          * @copyright eWallah (www.eWallah.net)

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * coursecompleted enrolment manager tests.
+ * Coursecompleted enrolment manager tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)
@@ -31,7 +31,7 @@ use moodle_exception;
 use stdClass;
 
 /**
- * coursecompleted enrolment manager tests.
+ * Coursecompleted enrolment manager tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)

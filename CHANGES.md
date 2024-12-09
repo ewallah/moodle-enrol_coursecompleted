@@ -122,7 +122,7 @@
 
 * Moodle 4
 * fix behat
-* course index
+* Course index
 * fix boost issue
 * utf8mb4
 * Moodle 4
@@ -143,7 +143,7 @@
 
 * Moodle 4
 * fix behat
-* course index
+* Course index
 * fix boost issue
 * utf8mb4
 * workflow
@@ -163,7 +163,7 @@
 
 ## v3.9.2 (2022-01-11)
 
-* course start date
+* Course start date
 * cache
 * Create auto_assign.yml
 * code review

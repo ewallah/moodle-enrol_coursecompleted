@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * coursecompleted enrolment plugin tests.
+ * Coursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)
@@ -29,7 +29,7 @@ use advanced_testcase;
 use stdClass;
 
 /**
- * coursecompleted enrolment plugin tests.
+ * Coursecompleted enrolment plugin tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * coursecompleted enrolment plugin hook tests.
+ * Coursecompleted enrolment plugin hook tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)
@@ -28,7 +28,7 @@ namespace enrol_coursecompleted;
 use stdClass;
 
 /**
- * coursecompleted enrolment plugin hook tests.
+ * Coursecompleted enrolment plugin hook tests.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)
@@ -396,10 +396,12 @@ final class hook_test extends \advanced_testcase {
             ]
         );
         $this->event->trigger();
+        $DB->set_field('enrol', 'customint1', $this->course1->id, ['enrol' => 'guest']);
         $this->assertEquals(2, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
         $this->assertEquals(4, $DB->count_records('course', []));
         delete_course($this->course1, false);
         $this->assertEquals(3, $DB->count_records('course', []));
+        $this->assertEquals(0, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
         delete_course($this->course2, false);
         $this->assertEquals(2, $DB->count_records('course', []));
         $this->assertEquals(0, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
@@ -422,6 +424,7 @@ final class hook_test extends \advanced_testcase {
             ]
         );
         $this->event->trigger();
+        $DB->set_field('enrol', 'customint1', $this->course2->id, ['enrol' => 'guest']);
         $this->assertEquals(1, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
         $recs = $DB->get_records('task_adhoc', ['component' => 'enrol_coursecompleted']);
         $this->assertEquals(1, count($recs));

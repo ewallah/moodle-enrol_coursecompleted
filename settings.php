@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * coursecompleted access plugin settings and presets.
+ * Coursecompleted access plugin settings and presets.
  *
  * @package   enrol_coursecompleted
  * @copyright eWallah (www.eWallah.net)
