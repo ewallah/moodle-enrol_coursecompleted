@@ -47,7 +47,7 @@ jobs:
            sudo locale-gen en_AU.UTF-8
 
       - name: install Moodle
-        run: moodle-plugin-ci install -db-host=127.0.0.1 --plugin this-plugin
+        run: moodle-plugin-ci install --db-host=127.0.0.1 --plugin this-plugin
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
