@@ -35,7 +35,7 @@ use context_course;
  * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_coursecompleted_plugin)]
+ * #[CoversClass(enrol_coursecompleted_plugin)]
  */
 final class time_enrolled_test extends advanced_testcase {
     /**

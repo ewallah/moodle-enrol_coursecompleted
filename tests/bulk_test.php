@@ -37,7 +37,7 @@ use stdClass;
  * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_coursecompleted)]
+ * #[CoversClass(enrol_coursecompleted)]
  */
 final class bulk_test extends \advanced_testcase {
 
