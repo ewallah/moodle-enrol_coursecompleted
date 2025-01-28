@@ -35,7 +35,7 @@ use context_course;
  * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_coursecompleted_plugin
+ * @coversDefaultClass \enrol_coursecompleted_plugin)]
  */
 final class time_enrolled_test extends advanced_testcase {
     /**
@@ -51,7 +51,7 @@ final class time_enrolled_test extends advanced_testcase {
 
     /**
      * Test if adhoc.
-     * @covers \enrol_coursecompleted\task\process_future
+     * #[CoversClass(enrol_coursecompleted\task\process_future)]
      */
     public function test_adhoc_task(): void {
         global $DB;
@@ -85,9 +85,9 @@ final class time_enrolled_test extends advanced_testcase {
 
     /**
      * Test if user is enrolled for a specific time after completing a course.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\observer
-     * @covers \enrol_coursecompleted\task\process_future
+     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * #[CoversClass(enrol_coursecompleted\observer)]
+     * #[CoversClass(enrol_coursecompleted\task\process_future)]
      */
     public function test_time_enrolled(): void {
         global $DB, $PAGE;
@@ -192,7 +192,7 @@ final class time_enrolled_test extends advanced_testcase {
     /**
      * Test enrol time variation.
      *
-     * @covers \enrol_coursecompleted_plugin
+     * #[CoversClass(enrol_coursecompleted_plugin)]
      * @dataProvider enroltime_provider
      * @param array $input
      * @param bool $isenrolled

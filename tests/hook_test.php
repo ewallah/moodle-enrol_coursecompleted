@@ -97,7 +97,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test disabled.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_disabled(): void {
         $sink = $this->redirectMessages();
@@ -120,7 +120,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test enabled.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_enabled(): void {
         $sink = $this->redirectMessages();
@@ -145,7 +145,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test custommessage.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_custommessage(): void {
         $sink = $this->redirectMessages();
@@ -171,7 +171,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test enabled no messages.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_enabled_nomessages(): void {
         $sink = $this->redirectMessages();
@@ -194,7 +194,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test enabled later messages.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_later_messages(): void {
         global $DB;
@@ -219,7 +219,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test role.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_role(): void {
         $this->plugin->add_instance(
@@ -238,7 +238,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test unenrol.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_unenrol(): void {
         $context = \context_course::instance($this->course2->id);
@@ -262,7 +262,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test not unenrol.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_not_unenrol(): void {
         $context = \context_course::instance($this->course2->id);
@@ -286,7 +286,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test group.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_group(): void {
         [$groupid1, $groupid2] = $this->create_groups();
@@ -306,7 +306,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test not group.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_not_group(): void {
         [$groupid1, $groupid2] = $this->create_groups();
@@ -355,7 +355,7 @@ final class hook_test extends \advanced_testcase {
     }
     /**
      * Test non group.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_non_group(): void {
         [$groupid1, $groupid2] = $this->create_groups();
@@ -375,7 +375,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test delete.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_delete(): void {
         global $DB;
@@ -409,7 +409,7 @@ final class hook_test extends \advanced_testcase {
 
     /**
      * Test future delete.
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_future_delete(): void {
         global $DB;

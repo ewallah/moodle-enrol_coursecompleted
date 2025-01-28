@@ -38,7 +38,7 @@ use stdClass;
  * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \enrol_coursecompleted_plugin
+ * @coversDefaultClass \enrol_coursecompleted_plugin)]
  */
 final class enrol_test extends advanced_testcase {
     /** @var stdClass Instance. */
@@ -159,8 +159,8 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test if user is enrolled after completing a course.
-     * @covers \enrol_coursecompleted\observer
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted\observer)]
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_event_enrolled(): void {
         $manager1 = new \course_enrolment_manager($this->page, $this->course1);
@@ -190,8 +190,8 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test if user is enrolled after completing a course.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\hook_listener
+     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * #[CoversClass(enrol_coursecompleted\hook_listener)]
      */
     public function test_enrolled_after_completion(): void {
         global $PAGE;
@@ -209,7 +209,7 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test ue.
-     * @covers \enrol_coursecompleted_plugin
+     * #[CoversClass(enrol_coursecompleted_plugin)]
      */
     public function test_user_edit(): void {
         global $PAGE;
@@ -271,7 +271,7 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test builld course path.
-     * @covers \enrol_coursecompleted_plugin
+     * #[CoversClass(enrol_coursecompleted_plugin)]
      */
     public function test_build_course_path(): void {
         global $DB;
@@ -285,9 +285,9 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test library.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\observer
-     * @covers \enrol_coursecompleted\task\process_future
+     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * #[CoversClass(enrol_coursecompleted\observer)]
+     * #[CoversClass(enrol_coursecompleted\task\process_future)]
      */
     public function test_library_functions(): void {
         $this->assertEquals($this->plugin->get_name(), 'coursecompleted');
@@ -362,9 +362,9 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test library 2.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\observer
-     * @covers \enrol_coursecompleted\task\process_future
+     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * #[CoversClass(enrol_coursecompleted\observer)]
+     * #[CoversClass(enrol_coursecompleted\task\process_future)]
      */
     public function test_library_other_functionality(): void {
         global $DB;
@@ -421,7 +421,7 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test form.
-     * @covers \enrol_coursecompleted_plugin
+     * #[CoversClass(enrol_coursecompleted_plugin)]
      */
     public function test_form(): void {
         $page = new moodle_page();
@@ -489,7 +489,7 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test other config.
-     * @covers \enrol_coursecompleted_plugin
+     * #[CoversClass(enrol_coursecompleted_plugin)]
      */
     public function test_other_config(): void {
         global $DB;
@@ -563,7 +563,7 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test form.
-     * @covers \enrol_coursecompleted_plugin
+     * #[CoversClass(enrol_coursecompleted_plugin)]
      * @return \moodleform
      */
     private function tempform() {
