@@ -357,7 +357,6 @@ final class enrol_test extends advanced_testcase {
         foreach ($arr as $value) {
             $this->assertStringContainsString($value, $out);
         }
-        
     }
 
     /**

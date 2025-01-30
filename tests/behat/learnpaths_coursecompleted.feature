@@ -8,6 +8,9 @@ Feature: Learnpaths with course completion enrolment
       | Course 2 | C2        | ##tomorrow##  | ##last day of next month## | 1                |
       | Course 3 | C3        | ##tomorrow##  | ##last day of next month## | 1                |
       | Course 4 | C4        | ##tomorrow##  | ##last day of next month## | 1                |
+    And the following "activities" exist:
+      | activity   | name   | intro            | course | idnumber |
+      | page       | Page A | page description | C1     | page1    |
     And the following "users" exist:
       | username |
       | user1    |
@@ -35,9 +38,11 @@ Feature: Learnpaths with course completion enrolment
     And I press "Add method"
     And I am on "Course 4" course homepage
     And I log out
-    When I am on the "C2" "Course" page logged in as "user1"
+    When I am on the "C4" "Course" page logged in as "user1"
     Then I should see "You will be enrolled in this course when"
-    And I am on the "C3" "Course" page
-    Then I should see "You will be enrolled in this course when"
-    And I am on the "C3" "Course" page
-    Then I should see "You will be enrolled in this course when"
+    And I follow "Course 3"
+    And I should see "You will be enrolled in this course when"
+    And I follow "Course 2"
+    And I should see "You will be enrolled in this course when"
+    And I follow "Course 1"
+    And I should see "Page A"
