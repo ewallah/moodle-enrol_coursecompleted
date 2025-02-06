@@ -187,6 +187,18 @@ Feature: Enrolment on course completion
     And I should see "Suspended" in the "participants" "table"
 
   @javascript
+  Scenario: Admin can adda enrol course completion welcome message
+    Given the following config values are set as admin:
+       | config  | value | plugin                |
+       | welcome | 1     | enrol_coursecompleted |
+    And I set the following fields to these values:
+       | Course                 | Course 1 |
+       | Custom welcome message | Welcome  |
+    And I press "Add method"
+    And I am on "Course 2" course homepage
+    And I log out
+
+  @javascript
   Scenario: Admin can backup and restore a course with enrol course completions
     Given I set the following fields to these values:
        | Course | Course 1 |

@@ -401,7 +401,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $arr = ['cols' => '60', 'rows' => '8'];
         $mform->addElement('textarea', 'customtext1', get_string('customwelcome', $plugin), $arr);
         $mform->addHelpButton('customtext1', 'customwelcome', $plugin);
-        $mform->disabledIf('customtext1', 'customint2', 'notchecked');
+        $mform->disabledIf('customtext1', 'customint2', 'eq', 0);
 
         $arr = ['optional' => true, 'defaulttime' => $start];
         $mform->addElement('date_time_selector', 'enrolstartdate', get_string('enrolstartdate', $plugin), $arr);
