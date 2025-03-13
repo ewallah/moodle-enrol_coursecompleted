@@ -40,9 +40,9 @@ Feature: Learnpaths with course completion enrolment
     And I log out
     When I am on the "C4" "Course" page logged in as "user1"
     Then I should see "You will be enrolled in this course when"
-    And I follow "Course 3"
+    And I follow "3"
     And I should see "You will be enrolled in this course when"
-    And I follow "Course 2"
+    And I follow "2"
     And I should see "You will be enrolled in this course when"
-    And I follow "Course 1"
+    And I follow "1"
     And I should see "Page A"
