@@ -447,10 +447,7 @@ final class enrol_test extends advanced_testcase {
         $this->assertStringContainsString('fieldsetdata-fieldtype="date_time"class="m-0p-0border-0"id="id_customint4"', $cleaned);
         $this->assertStringContainsString('name="customint4[enabled]"', $cleaned);
         $this->assertStringContainsString('name="customint5"class="form-check-input"value="1"id="id_customint5"', $cleaned);
-        $this->assertStringContainsString(
-            '<selectclass="custom-select"name="status"id="id_status"><optionvalue="0">Yes</option>',
-            $cleaned
-        );
+        $this->assertStringContainsString('-select"name="status"id="id_status"><optionvalue="0">Yes</option>', $cleaned);
         $this->assertStringContainsString('-select"name="customint2"id="id_customint2">', $cleaned);
         $this->assertStringContainsString('<optionvalue="1"selected>Fromthecoursecontact</option>', $cleaned);
         $this->assertStringNotContainsString('<optionvalue="2">Fromthekeyholder</option>', $cleaned);
