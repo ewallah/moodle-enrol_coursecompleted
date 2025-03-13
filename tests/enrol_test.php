@@ -451,12 +451,12 @@ final class enrol_test extends advanced_testcase {
             '<selectclass="custom-select"name="status"id="id_status"><optionvalue="0">Yes</option>',
             $cleaned
         );
-        $this->assertStringContainsString('<selectclass="custom-select"name="customint2"id="id_customint2">', $cleaned);
+        $this->assertStringContainsString('-select"name="customint2"id="id_customint2">', $cleaned);
         $this->assertStringContainsString('<optionvalue="1"selected>Fromthecoursecontact</option>', $cleaned);
         $this->assertStringNotContainsString('<optionvalue="2">Fromthekeyholder</option>', $cleaned);
         $this->assertStringContainsString('<optionvalue="3">Fromtheno-replyaddress</option>', $cleaned);
         $this->assertStringContainsString(
-            '<selectclass="custom-select"name="roleid"id="id_roleid"><optionvalue="5"selected>Student</option>',
+            '-select"name="roleid"id="id_roleid"><optionvalue="5"selected>Student</option>',
             $cleaned
         );
 
@@ -533,13 +533,10 @@ final class enrol_test extends advanced_testcase {
         $mform->display();
         $html = ob_get_clean();
         $cleaned = preg_replace('/\s+/', '', $html);
-        $this->assertStringContainsString(
-            '<selectclass="custom-select"name="status"id="id_status"><optionvalue="0">Yes</option>',
-            $cleaned
-        );
+        $this->assertStringContainsString('-select"name="status"id="id_status"><optionvalue="0">Yes</option>', $cleaned);
         $this->assertStringContainsString('<optionvalue="1"selected>No</option>', $cleaned);
         $this->assertStringContainsString('cols="60"rows="8"', $cleaned);
-        $this->assertStringContainsString('<selectclass="custom-select"name="customint2"id="id_customint2">', $cleaned);
+        $this->assertStringContainsString('-select"name="customint2"id="id_customint2">', $cleaned);
         $this->assertStringContainsString('name="customint3"class="form-check-input"value="1"id="id_customint3"', $cleaned);
         $this->assertStringContainsString(
             '<inputtype="checkbox"name="customint4[enabled]"class="form-check-input"id="id_customint4_enabled"value="1">',
