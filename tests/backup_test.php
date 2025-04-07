@@ -35,7 +35,6 @@ use stdClass;
  * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * #[CoversClass(enrol_coursecompleted_plugin)]
  */
 final class backup_test extends advanced_testcase {
     /** @var stdClass Student. */
@@ -71,7 +70,7 @@ final class backup_test extends advanced_testcase {
 
     /**
      * Test backup.
-     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_backup_restore(): void {
         global $CFG, $DB, $PAGE;

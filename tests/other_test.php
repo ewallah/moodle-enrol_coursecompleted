@@ -37,7 +37,6 @@ use stdClass;
  * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * #[CoversClass(enrol_coursecompleted_plugin)]
  */
 final class other_test extends advanced_testcase {
 
@@ -64,7 +63,7 @@ final class other_test extends advanced_testcase {
 
     /**
      * Basic test.
-     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_basics(): void {
         $this->assertTrue(enrol_is_enabled('coursecompleted'));
@@ -76,7 +75,7 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test other files.
-     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_files(): void {
         global $CFG;
@@ -87,7 +86,7 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test install and uninstall.
-     * #[CoversNothing]
+     * @coversNothing
      */
     public function test_install_uninstall(): void {
         global $CFG;
@@ -99,7 +98,7 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test invalid instance.
-     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_invalid_instance(): void {
         $plugin = enrol_get_plugin('coursecompleted');
@@ -112,9 +111,9 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test disabled.
-     * #[CoversClass(enrol_coursecompleted_plugin)]
-     * #[CoversClass(enrol_coursecompleted\observer)]
-     * #[CoversClass(enrol_coursecompleted\hook_listener)]
+     * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted\observer
+     * @covers \enrol_coursecompleted\hook_listener
      */
     public function test_disabled(): void {
         global $CFG, $DB;
@@ -196,7 +195,7 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test complex path.
-     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * @covers \enrol_coursecompleted_plugin
      */
     public function test_complex_path(): void {
         global $DB;
@@ -258,9 +257,9 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test invalid role.
-     * #[CoversClass(enrol_coursecompleted_plugin)]
-     * #[CoversClass(enrol_coursecompleted\observer)]
-     * #[CoversClass(enrol_coursecompleted\hook_listener)]
+     * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted\hook_listener
+     * @covers \enrol_coursecompleted\observer
      */
     public function test_invalid_role(): void {
         global $DB;
@@ -290,9 +289,9 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test group member.
-     * #[CoversClass(enrol_coursecompleted\observer)]
-     * #[CoversClass(enrol_coursecompleted\hook_listener)]
-     * #[CoversClass(enrol_coursecompleted_plugin)]
+     * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted\hook_listener
+     * @covers \enrol_coursecompleted\observer
      */
     public function test_groups_child(): void {
         global $DB;
@@ -345,7 +344,7 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test expiration task.
-     * #[CoversClass(enrol_coursecompleted\task\process_expirations)]
+     * @covers \enrol_coursecompleted\task\process_expirations
      */
     public function test_task(): void {
         $task = new task\process_expirations();
@@ -359,8 +358,9 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test welcome sending of welcome messages.
-     * #[CoversClass(enrol_coursecompleted\hook_listener)]
-     * #[CoversClass(enrol_coursecompleted\task\process_future)]
+     * @covers \enrol_coursecompleted_plugin
+     * @covers \enrol_coursecompleted\hook_listener
+     * @covers \enrol_coursecompleted\task\process_future
      */
     public function test_email_welcome_message(): void {
         global $DB;
