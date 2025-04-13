@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+declare(strict_types=1);
+
 namespace enrol_coursecompleted;
 
 use context_course;
@@ -61,8 +63,8 @@ class hook_listener {
                         $plugin = enrol_get_plugin('coursecompleted');
                         $plugin->send_course_welcome_message_to_user(
                             instance: $instance,
-                            userid: $hook->get_userid(),
-                            sendoption: $instance->customint2,
+                            userid: (int)$hook->get_userid(),
+                            sendoption: (int)$instance->customint2,
                             message: $message,
                         );
                     }
@@ -71,13 +73,13 @@ class hook_listener {
                 // Keep the user in a group when needed.
                 if ($instance->customint3 > 0) {
                     require_once($CFG->dirroot . '/group/lib.php');
-                    $groups = groups_get_user_groups($instance->customint1, $hook->get_userid());
+                    $groups = groups_get_user_groups((int)$instance->customint1, (int)$hook->get_userid());
                     foreach ($groups as $group) {
                         foreach ($group as $sub) {
                             $groupnamea = groups_get_group_name($sub);
-                            $groupnameb = groups_get_group_by_name($instance->courseid, $groupnamea);
+                            $groupnameb = groups_get_group_by_name((int)$instance->courseid, $groupnamea);
                             if ($groupnameb) {
-                                groups_add_member($groupnameb, $hook->get_userid());
+                                groups_add_member($groupnameb, (int)$hook->get_userid());
                             }
                         }
                     }

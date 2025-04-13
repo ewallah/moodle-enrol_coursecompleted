@@ -23,12 +23,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+declare(strict_types=1);
+
 namespace enrol_coursecompleted;
 
 use advanced_testcase;
 use context_course;
 use moodle_exception;
 use stdClass;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Coursecompleted enrolment manager tests.
@@ -38,6 +41,10 @@ use stdClass;
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversClass(\enrol_coursecompleted_plugin::class)]
+#[CoversClass(hook_listener::class)]
+#[CoversClass(observer::class)]
+#[CoversClass(task\process_expirations::class)]
 final class manager_test extends advanced_testcase {
     /** @var stdClass Instance. */
     private $instance;
@@ -70,7 +77,6 @@ final class manager_test extends advanced_testcase {
 
     /**
      * Test missing enrolid param.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_empty_param(): void {
         global $CFG;
@@ -82,7 +88,6 @@ final class manager_test extends advanced_testcase {
 
     /**
      * Test manager without permission.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_without_permission(): void {
         global $CFG;
@@ -96,7 +101,6 @@ final class manager_test extends advanced_testcase {
 
     /**
      * Test manager wrong permission.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_wrong_permission(): void {
         global $CFG, $DB;
@@ -118,9 +122,6 @@ final class manager_test extends advanced_testcase {
 
     /**
      * Test manager bare.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\form\bulkdelete
-     * @covers \enrol_coursecompleted\form\bulkedit
      */
     public function test_manager_bare(): void {
         global $CFG;
@@ -134,7 +135,6 @@ final class manager_test extends advanced_testcase {
 
     /**
      * Test manager old users.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_old_users(): void {
         global $CFG, $DB;
@@ -158,7 +158,6 @@ final class manager_test extends advanced_testcase {
 
     /**
      * Test submit manager oldusers.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_manager_submit(): void {
         global $CFG, $DB;
@@ -185,7 +184,6 @@ final class manager_test extends advanced_testcase {
 
     /**
      * Tests settings.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_enrol_courescompleted_settings(): void {
         global $ADMIN, $CFG;
@@ -196,7 +194,6 @@ final class manager_test extends advanced_testcase {
 
     /**
      * Test settings page.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_settings_page(): void {
         global $CFG, $OUTPUT, $PAGE;
@@ -223,7 +220,6 @@ final class manager_test extends advanced_testcase {
 
     /**
      * Test access.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_access(): void {
         $generator = $this->getDataGenerator();

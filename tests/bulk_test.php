@@ -23,12 +23,15 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+declare(strict_types=1);
+
 namespace enrol_coursecompleted;
 
 use context_course;
 use moodle_page;
 use moodle_url;
 use stdClass;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Coursecompleted enrolment plugin bulk tests.
@@ -38,6 +41,10 @@ use stdClass;
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversClass(bulkdelete::class)]
+#[CoversClass(form\bulkdelete::class)]
+#[CoversClass(bulkedit::class)]
+#[CoversClass(form\bulkedit::class)]
 final class bulk_test extends \advanced_testcase {
 
     /** @var stdClass First course. */
@@ -88,8 +95,6 @@ final class bulk_test extends \advanced_testcase {
 
     /**
      * Test bulk delete.
-     * @covers \enrol_coursecompleted\bulkdelete
-     * @covers \enrol_coursecompleted\form\bulkdelete
      */
     public function test_bulk_delete(): void {
         $plugin = enrol_get_plugin('coursecompleted');
@@ -129,8 +134,6 @@ final class bulk_test extends \advanced_testcase {
 
     /**
      * Test bulk delete.
-     * @covers \enrol_coursecompleted\bulkdelete
-     * @covers \enrol_coursecompleted\form\bulkdelete
      */
     public function test_bulk_delete2(): void {
         $this->setAdminUser();
@@ -157,8 +160,6 @@ final class bulk_test extends \advanced_testcase {
 
     /**
      * Test bulk edit.
-     * @covers \enrol_coursecompleted\bulkedit
-     * @covers \enrol_coursecompleted\form\bulkedit
      */
     public function test_bulk_edit(): void {
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, context_course::instance($this->course2->id)->id));

@@ -23,10 +23,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+declare(strict_types=1);
+
 namespace enrol_coursecompleted;
 
 use advanced_testcase;
 use stdClass;
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Coursecompleted enrolment plugin tests.
@@ -36,6 +39,8 @@ use stdClass;
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversClass(\enrol_coursecompleted_plugin::class)]
+#[CoversClass(hook_listener::class)]
 final class backup_test extends advanced_testcase {
     /** @var stdClass Student. */
     private $student;
@@ -70,7 +75,6 @@ final class backup_test extends advanced_testcase {
 
     /**
      * Test backup.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_backup_restore(): void {
         global $CFG, $DB, $PAGE;

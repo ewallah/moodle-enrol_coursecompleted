@@ -23,12 +23,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+declare(strict_types=1);
+
 namespace enrol_coursecompleted;
 
 use advanced_testcase;
 use context_course;
 use stdClass;
-
+use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
  * Coursecompleted enrolment plugin other tests.
@@ -38,6 +40,10 @@ use stdClass;
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[CoversClass(\enrol_coursecompleted_plugin::class)]
+#[CoversClass(hook_listener::class)]
+#[CoversClass(observer::class)]
+#[CoversClass(task\process_expirations::class)]
 final class other_test extends advanced_testcase {
 
     /**
@@ -63,7 +69,6 @@ final class other_test extends advanced_testcase {
 
     /**
      * Basic test.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_basics(): void {
         $this->assertTrue(enrol_is_enabled('coursecompleted'));
@@ -75,7 +80,6 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test other files.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_files(): void {
         global $CFG;
@@ -86,8 +90,8 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test install and uninstall.
-     * @coversNothing
      */
+    #[CoversNothing()]
     public function test_install_uninstall(): void {
         global $CFG;
         include($CFG->dirroot . '/enrol/coursecompleted/db/install.php');
@@ -98,7 +102,6 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test invalid instance.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_invalid_instance(): void {
         $plugin = enrol_get_plugin('coursecompleted');
@@ -111,9 +114,6 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test disabled.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\observer
-     * @covers \enrol_coursecompleted\hook_listener
      */
     public function test_disabled(): void {
         global $CFG, $DB;
@@ -195,7 +195,6 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test complex path.
-     * @covers \enrol_coursecompleted_plugin
      */
     public function test_complex_path(): void {
         global $DB;
@@ -257,9 +256,6 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test invalid role.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\hook_listener
-     * @covers \enrol_coursecompleted\observer
      */
     public function test_invalid_role(): void {
         global $DB;
@@ -289,9 +285,6 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test group member.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\hook_listener
-     * @covers \enrol_coursecompleted\observer
      */
     public function test_groups_child(): void {
         global $DB;
@@ -305,7 +298,7 @@ final class other_test extends advanced_testcase {
         $data->description = '';
         $data->descriptionformat = FORMAT_HTML;
         $groupid1 = groups_create_group($data);
-        rebuild_course_cache($course1->id, true);
+        rebuild_course_cache((int)$course1->id, true);
         $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
         $data->courseid = $course2->id;
         $data->idnumber = $course2->id . 'A';
@@ -318,7 +311,7 @@ final class other_test extends advanced_testcase {
         $this->assertCount(2, $path);
         $studentid = $generator->create_and_enrol($course2)->id;
         groups_add_member($groupid2, $studentid);
-        rebuild_course_cache($course2->id, true);
+        rebuild_course_cache((int)$course2->id, true);
         $compevent = \core\event\course_completed::create(
             [
                 'objectid' => $course2->id,
@@ -331,8 +324,8 @@ final class other_test extends advanced_testcase {
         $observer = new observer();
         $observer->enroluser($compevent);
         $this->assertTrue(groups_is_member($groupid2, $studentid));
-        rebuild_course_cache($course1->id, true);
-        rebuild_course_cache($course2->id, true);
+        rebuild_course_cache((int)$course1->id, true);
+        rebuild_course_cache((int)$course2->id, true);
         $this->assertTrue(groups_is_member($groupid1, $studentid));
         // Manually dispatch hook.
         $hook = new \core_enrol\hook\after_enrol_instance_status_updated(
@@ -344,7 +337,6 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test expiration task.
-     * @covers \enrol_coursecompleted\task\process_expirations
      */
     public function test_task(): void {
         $task = new task\process_expirations();
@@ -358,9 +350,6 @@ final class other_test extends advanced_testcase {
 
     /**
      * Test welcome sending of welcome messages.
-     * @covers \enrol_coursecompleted_plugin
-     * @covers \enrol_coursecompleted\hook_listener
-     * @covers \enrol_coursecompleted\task\process_future
      */
     public function test_email_welcome_message(): void {
         global $DB;

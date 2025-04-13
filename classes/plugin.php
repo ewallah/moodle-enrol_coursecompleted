@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+declare(strict_types=1);
+
 /**
  * Enrol coursecompleted plugin
  *
@@ -449,7 +451,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function update_instance($instance, $data) {
         $update = parent::update_instance($instance, $data);
-        $hook = new \core_enrol\hook\after_enrol_instance_status_updated(enrolinstance: $instance, newstatus: $data->status);
+        $hook = new \core_enrol\hook\after_enrol_instance_status_updated(enrolinstance: $instance, newstatus: (int)$data->status);
         \core\di::get(\core\hook\manager::class)->dispatch($hook);
         return $update;
     }
