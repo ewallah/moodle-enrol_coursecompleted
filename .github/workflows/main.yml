@@ -30,12 +30,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        moodle-branch: ['MOODLE_404_STABLE', 'MOODLE_405_STABLE', 'main']
-        php: ['8.2']
+        moodle-branch: ['MOODLE_405_STABLE', 'MOODLE_500_STABLE', 'main']
+        php: ['8.3']
         database: ['mariadb', 'pgsql']
         include:
-          - php: '8.3'
-            moodle-branch: 'main'
+          - php: '8.2'
+            moodle-branch: 'MOODLE_405_STABLE'
             database: 'pgsql'
           - php: '8.4'
             moodle-branch: 'main'

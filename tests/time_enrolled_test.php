@@ -28,6 +28,7 @@ namespace enrol_coursecompleted;
 
 use advanced_testcase;
 use context_course;
+use Generator;
 use PHPUnit\Framework\Attributes\{DataProvider, CoversClass};
 
 /**
@@ -166,9 +167,9 @@ final class time_enrolled_test extends advanced_testcase {
 
     /**
      * Time provider.
-     * return \Generator
+     * return Generator
      */
-    public static function enroltime_provider(): \Generator {
+    public static function enroltime_provider(): Generator {
         $plus = time() + 100000;
         $minus = time() - 100000;
         yield 'Not set' => [[], true];
@@ -193,6 +194,7 @@ final class time_enrolled_test extends advanced_testcase {
      *
      * @param array $input
      * @param bool $isenrolled
+     * @dataProvider enroltime_provider
      */
     #[DataProvider('enroltime_provider')]
     public function test_enroltime_with_provider(array $input, bool $isenrolled): void {
