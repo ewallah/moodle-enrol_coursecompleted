@@ -27,6 +27,9 @@ declare(strict_types=1);
 
 namespace enrol_coursecompleted;
 
+use advanced_testcase;
+use context_course;
+use core\event\course_completed;
 use stdClass;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -41,7 +44,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(\enrol_coursecompleted_plugin::class)]
 #[CoversClass(hook_listener::class)]
 #[CoversClass(observer::class)]
-final class hook_test extends \advanced_testcase {
+final class hook_test extends advanced_testcase {
 
     /** @var stdClass First course. */
     private $course1;
@@ -52,7 +55,7 @@ final class hook_test extends \advanced_testcase {
     /** @var stdClass Student. */
     private $student;
 
-    /** @var \core\event\course_completed Event. */
+    /** @var course_completed Event. */
     private $event;
 
     /** @var stdClass plugin. */
@@ -90,11 +93,11 @@ final class hook_test extends \advanced_testcase {
         $generator->create_and_enrol($this->course2, 'teacher');
         $this->student = $generator->create_and_enrol($this->course2, 'student');
         $this->plugin = enrol_get_plugin('coursecompleted');
-        $this->event = \core\event\course_completed::create(
+        $this->event = course_completed::create(
             [
                 'objectid' => $this->course2->id,
                 'relateduserid' => $this->student->id,
-                'context' => \context_course::instance($this->course2->id),
+                'context' => context_course::instance($this->course2->id),
                 'courseid' => $this->course2->id,
                 'other' => ['relateduserid' => $this->student->id],
             ]
@@ -138,7 +141,7 @@ final class hook_test extends \advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = \context_course::instance($this->course1->id);
+        $context = context_course::instance($this->course1->id);
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
         $messages = $sink->get_messages_by_component_and_type('moodle', 'enrolcoursewelcomemessage');
         $this->assertCount(1, $messages);
@@ -163,7 +166,7 @@ final class hook_test extends \advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = \context_course::instance($this->course1->id);
+        $context = context_course::instance($this->course1->id);
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
         $messages = $sink->get_messages_by_component_and_type('moodle', 'enrolcoursewelcomemessage');
         $this->assertCount(1, $messages);
@@ -187,7 +190,7 @@ final class hook_test extends \advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = \context_course::instance($this->course1->id);
+        $context = context_course::instance($this->course1->id);
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
         $messages = $sink->get_messages_by_component_and_type('moodle', 'enrolcoursewelcomemessage');
         $this->assertCount(0, $messages);
@@ -210,7 +213,7 @@ final class hook_test extends \advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = \context_course::instance($this->course1->id);
+        $context = context_course::instance($this->course1->id);
         $this->assertFalse(user_has_role_assignment($this->student->id, 5, $context->id));
         $this->assertEquals(4, $DB->count_records('course', []));
         delete_course($this->course2, false);
@@ -231,7 +234,7 @@ final class hook_test extends \advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = \context_course::instance($this->course1->id);
+        $context = context_course::instance($this->course1->id);
         $this->assertTrue(user_has_role_assignment($this->student->id, 6, $context->id));
     }
 
@@ -240,7 +243,7 @@ final class hook_test extends \advanced_testcase {
      * Test unenrol.
      */
     public function test_unenrol(): void {
-        $context = \context_course::instance($this->course2->id);
+        $context = context_course::instance($this->course2->id);
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
 
         $this->plugin->add_instance(
@@ -253,9 +256,9 @@ final class hook_test extends \advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = \context_course::instance($this->course1->id);
+        $context = context_course::instance($this->course1->id);
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
-        $context = \context_course::instance($this->course2->id);
+        $context = context_course::instance($this->course2->id);
         $this->assertFalse(user_has_role_assignment($this->student->id, 5, $context->id));
     }
 
@@ -263,7 +266,7 @@ final class hook_test extends \advanced_testcase {
      * Test not unenrol.
      */
     public function test_not_unenrol(): void {
-        $context = \context_course::instance($this->course2->id);
+        $context = context_course::instance($this->course2->id);
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
 
         $this->plugin->add_instance(
@@ -276,9 +279,9 @@ final class hook_test extends \advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = \context_course::instance($this->course1->id);
+        $context = context_course::instance($this->course1->id);
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
-        $context = \context_course::instance($this->course2->id);
+        $context = context_course::instance($this->course2->id);
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
     }
 
@@ -325,21 +328,21 @@ final class hook_test extends \advanced_testcase {
      * @return array
      */
     private function create_groups(): array {
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->courseid = $this->course1->id;
         $data->idnumber = $this->course1->id . 'A';
         $data->name = 'A group';
         $data->description = '';
         $data->descriptionformat = FORMAT_HTML;
         $groupid1 = groups_create_group($data);
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->courseid = $this->course1->id;
         $data->idnumber = $this->course1->id . 'b';
         $data->name = 'B group';
         $data->description = '';
         $data->descriptionformat = FORMAT_HTML;
         groups_create_group($data);
-        $data = new \stdClass();
+        $data = new stdClass();
         $data->courseid = $this->course2->id;
         $data->idnumber = $this->course2->id . 'A';
         $data->name = 'A group';

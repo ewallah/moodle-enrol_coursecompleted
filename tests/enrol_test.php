@@ -337,11 +337,9 @@ final class enrol_test extends advanced_testcase {
             $this->course4->id,
         ];
         foreach ($arr as $value) {
-            $this->assertStringContainsString(
-                "https://www.example.com/moodle/course/view.php?id=$value",
-                $cleaned
-            );
+            $this->assertStringContainsString("https://www.example.com/moodle/course/view.php?id=$value", $cleaned);
         }
+        $this->assertStringNotContainsString('https://www.example.com/moodle/course/view.php?id='. $this->course2->id, $cleaned);
         $arr = [
             'Test course 1</a>',
             '<strong class="fa-stack-1x">1</strong>',

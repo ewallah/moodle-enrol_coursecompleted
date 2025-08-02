@@ -108,6 +108,11 @@ jobs:
         run: vendor/bin/phpunit --colors --no-coverage --testsuite tool_dataprivacy_testsuite,tool_policy_testsuite,core_privacy_testsuite
         working-directory: moodle
 
+      - name: other
+        if: ${{ matrix.moodle-branch == 'main'}}
+        run: vendor/bin/phpunit --colors --no-coverage --testsuite core_enrol_testsuite
+        working-directory: moodle
+
       - name: coveralls
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci coveralls-upload || true

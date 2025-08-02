@@ -401,6 +401,9 @@ final class other_test extends advanced_testcase {
             $this->assertCount(3, $path);
         }
         \phpunit_util::run_all_adhoc_tasks();
+        $context = \context_course::instance($course3->id);
+        $this->assertTrue(user_has_role_assignment($student->id, 5, $context->id));
+
         $this->assertEquals(3, $DB->count_records('user_enrolments', []));
         $messages = $messagesink->get_messages_by_component_and_type(
             'moodle',

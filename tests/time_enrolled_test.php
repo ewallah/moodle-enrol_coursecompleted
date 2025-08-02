@@ -91,7 +91,11 @@ final class time_enrolled_test extends advanced_testcase {
     /**
      * Test if user is enrolled for a specific time after completing a course.
      */
+    #[Large]
     public function test_time_enrolled(): void {
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
         global $DB, $PAGE;
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course();
