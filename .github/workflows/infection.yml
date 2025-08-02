@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   ci:
-    name: infection
+    name: ci
     runs-on: ubuntu-latest
 
     services:
@@ -20,9 +20,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        moodle-branch: [main]
-        php: [8.3]
-        database: [pgsql]
+        moodle-branch: ['main']
+        php: ['8.3']
+        database: ['pgsql']
 
     steps:
       - name: checkout plugin
@@ -60,6 +60,5 @@ jobs:
            echo 'require("autoload.php");' >> vendor/autoloadmoodle.php
 
       - name: infection
-        if: ${{ !cancelled() }}
-        run: infection -s --only-covered --no-progress --configuration=public/enrol/coursecompleted/.infection.json5
+        run: infection -s --configuration=public/enrol/coursecompleted/.infection.json5
         working-directory: moodle
