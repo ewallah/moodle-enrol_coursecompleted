@@ -26,7 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-
     $plugin = 'enrol_coursecompleted';
 
     $settings->add(

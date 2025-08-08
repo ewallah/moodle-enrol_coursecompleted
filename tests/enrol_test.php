@@ -153,7 +153,8 @@ final class enrol_test extends advanced_testcase {
         $this->page->set_context(context_course::instance($this->course1->id));
         $this->page->set_course($this->course1);
         $this->page->set_pagelayout('admin');
-        $url = new moodle_url('/enrol/editinstance.php',
+        $url = new moodle_url(
+            '/enrol/editinstance.php',
             [
                 'courseid' => $this->course1->id,
                 'type' => 'coursecompleted',
@@ -339,7 +340,7 @@ final class enrol_test extends advanced_testcase {
         foreach ($arr as $value) {
             $this->assertStringContainsString("https://www.example.com/moodle/course/view.php?id=$value", $cleaned);
         }
-        $this->assertStringNotContainsString('https://www.example.com/moodle/course/view.php?id='. $this->course2->id, $cleaned);
+        $this->assertStringNotContainsString('https://www.example.com/moodle/course/view.php?id=' . $this->course2->id, $cleaned);
         $arr = [
             'Test course 1</a>',
             '<strong class="fa-stack-1x">1</strong>',
@@ -471,7 +472,6 @@ final class enrol_test extends advanced_testcase {
                 $this->assertStringContainsString(get_string($value . '_desc', 'enrol_coursecompleted'), $html);
             }
         }
-
     }
 
     /**

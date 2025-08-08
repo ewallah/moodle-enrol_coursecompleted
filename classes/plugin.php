@@ -34,7 +34,6 @@ declare(strict_types=1);
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_coursecompleted_plugin extends enrol_plugin {
-
     /**
      * Returns localised name of enrol instance
      *

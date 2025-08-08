@@ -69,7 +69,7 @@ final class time_enrolled_test extends advanced_testcase {
         $plugin->add_instance($course2, $input);
         $instance = $DB->get_record(
             'enrol',
-                [
+            [
                     'courseid' => $course2->id,
                     'customint1' => $course1->id,
                     'enrol' => 'coursecompleted',

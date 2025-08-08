@@ -45,7 +45,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(observer::class)]
 #[CoversClass(task\process_expirations::class)]
 final class other_test extends advanced_testcase {
-
     /**
      * Setup to ensure that forms and locallib are loaded.
      */

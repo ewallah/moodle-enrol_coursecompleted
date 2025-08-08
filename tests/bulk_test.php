@@ -46,7 +46,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(bulkedit::class)]
 #[CoversClass(form\bulkedit::class)]
 final class bulk_test extends \advanced_testcase {
-
     /** @var stdClass First course. */
     private $course1;
 

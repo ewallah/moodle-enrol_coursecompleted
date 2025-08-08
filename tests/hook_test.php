@@ -45,7 +45,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(hook_listener::class)]
 #[CoversClass(observer::class)]
 final class hook_test extends advanced_testcase {
-
     /** @var stdClass First course. */
     private $course1;
 
