@@ -46,17 +46,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(task\process_expirations::class)]
 final class other_test extends advanced_testcase {
     /**
-     * Setup to ensure that forms and locallib are loaded.
-     */
-    public static function setUpBeforeClass(): void {
-        global $CFG;
-        require_once($CFG->libdir . '/formslib.php');
-        require_once($CFG->libdir . '/grouplib.php');
-        require_once($CFG->dirroot . '/group/lib.php');
-        parent::setUpBeforeClass();
-    }
-
-    /**
      * Tests initial setup.
      */
     protected function setUp(): void {
@@ -286,7 +275,10 @@ final class other_test extends advanced_testcase {
      * Test group member.
      */
     public function test_groups_child(): void {
-        global $DB;
+        global $CFG, $DB;
+        require_once($CFG->libdir . '/grouplib.php');
+        require_once($CFG->dirroot . '/group/lib.php');
+
         $generator = $this->getDataGenerator();
         $plugin = enrol_get_plugin('coursecompleted');
         $course1 = $generator->create_course(['shortname' => 'B1', 'enablecompletion' => 1]);
