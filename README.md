@@ -81,7 +81,7 @@ Stable
 [![Build Status](https://github.com/ewallah/moodle-enrol_coursecompleted/workflows/Tests/badge.svg)](https://github.com/ewallah/moodle-enrol_coursecompleted/actions)
 [![Coverage Status](https://coveralls.io/repos/github/ewallah/moodle-enrol_coursecompleted/badge.svg?branch=main)](https://coveralls.io/github/ewallah/moodle-enrol_coursecompleted?branch=main)
 ![Mutation score](https://badgen.net/badge/Mutation%20Score%20Indicator/88)
-![:heart: Sponsor](https://wise.com/pay/r/qF5gfXj8Si7pYcg)
+[:heart: Sponsor](https://wise.com/pay/r/qF5gfXj8Si7pYcg)
 
 ## Copyright
 
