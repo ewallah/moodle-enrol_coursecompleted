@@ -24,16 +24,12 @@ As long as the latter do not reward plugin developers, you can use this plugin o
 
 ## Course completion
 
-Check the global documentation about course completion: https://docs.moodle.org/404/en/Course_completion
+Check the global documentation about course completion: https://docs.moodle.org/en/Course_completion
 
 ## Installation:
 
  1. Unpack the zip file into the enrol/ directory. A new directory will be created called coursecompleted.
  2. Go to Site administration > Notifications to complete the plugin installation.
-
-## Requirements
-
-This plugin requires Moodle 4.4+
 
 ## Troubleshooting
 
@@ -83,12 +79,13 @@ Stable
 ## Status
 
 [![Build Status](https://github.com/ewallah/moodle-enrol_coursecompleted/workflows/Tests/badge.svg)](https://github.com/ewallah/moodle-enrol_coursecompleted/actions)
-[![Coverage Status](https://coveralls.io/repos/github/ewallah/moodle-enrol_coursecompleted/badge.svg?branch=MOODLE_404_STABLE)](https://coveralls.io/github/ewallah/moodle-enrol_coursecompleted?branch=MOODLE_404_STABLE)
-![Mutation score](https://badgen.net/badge/Mutation%20Score%20Indicator/88)
+[![Coverage Status](https://coveralls.io/repos/github/ewallah/moodle-enrol_coursecompleted/badge.svg?branch=main)](https://coveralls.io/github/ewallah/moodle-enrol_coursecompleted?branch=main)
+[![Mutation score](https://badgen.net/badge/Mutation%20Score%20Indicator/88)
+[![:heart: Sponsor](https://wise.com/pay/r/qF5gfXj8Si7pYcg)
 
 ## Copyright
 
-eWallah.net
+[eWallah.net](https://www.eWallah.net)
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software

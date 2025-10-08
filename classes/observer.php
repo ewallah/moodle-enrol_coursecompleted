@@ -44,7 +44,6 @@ class observer {
     public static function enroluser(\core\event\course_completed $event) {
         global $DB;
         if (enrol_is_enabled('coursecompleted')) {
-            // TODO: What if there are 2 roles?
             $sql = "SELECT *
                       FROM {enrol}
                       WHERE enrol = :enrol

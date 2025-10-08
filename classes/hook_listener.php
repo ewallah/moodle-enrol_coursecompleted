@@ -133,7 +133,6 @@ class hook_listener {
     ): void {
         global $DB;
         $instance = $hook->enrolinstance;
-        // TODO: if enabled then recreate adhoc_tasks.
         if ($instance->enrol === 'coursecompleted') {
             if ($hook->newstatus === ENROL_INSTANCE_DISABLED) {
                 // Remove adhoc tasks that enrol students in the future.
@@ -142,6 +141,7 @@ class hook_listener {
                 // Only tested by behat.
                 $DB->delete_records_select('task_adhoc', "component = :component AND $sqllike", $params);
             }
+            // TODO: if enabled then recreate adhoc_tasks.
         }
     }
 }

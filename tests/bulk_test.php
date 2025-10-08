@@ -192,6 +192,9 @@ final class bulk_test extends \advanced_testcase {
         $sink->close();
         $this->assertCount(1, $events);
         foreach ($events as $eventinfo) {
+            $this->assertEquals($eventinfo->get_data()['contextid'], context_course::instance($this->course1->id)->id);
+            $this->assertEquals($eventinfo->get_data()['relateduserid'], $user->id);
+            $this->assertEquals($eventinfo->get_data()['objectid'], $this->instance->id);
             $this->assertTrue($eventinfo instanceof \core\event\user_enrolment_updated);
         }
         $properties = new stdClass();
@@ -201,6 +204,7 @@ final class bulk_test extends \advanced_testcase {
         $form->display();
         $html = ob_get_clean();
         // TODO: suspended user shown but student not listed.
+        print_object($html);
         $this->assertStringContainsString('<th class="header c0" style="" scope="col">Name</th>', $html);
         $this->assertStringContainsString('<th class="header c1" style="" scope="col">Status</th>', $html);
         $this->assertStringContainsString('<th class="header c2" style="" scope="col">Enrolment starts</th>', $html);

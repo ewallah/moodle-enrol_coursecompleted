@@ -332,6 +332,13 @@ final class enrol_test extends advanced_testcase {
         $out = $this->plugin->enrol_page_hook($this->instance);
         $cleaned = preg_replace('/\s+/', '', $out);
         $this->assertStringContainsString('title="Testcourse1"', $cleaned);
+        $this->assertStringContainsString('"Testcourse1"><spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
+        $this->assertStringContainsString('<spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
+        $this->assertStringContainsString('<strongclass="fa-stack-1x">1</strong></a></span>', $cleaned);
+        $this->assertStringContainsString('<spanclass="fa-stackfa-2x"><spanclass="fafa-arrow-rightfa-stack-1xtext-dark"></span>', $cleaned);
+        $this->assertStringContainsString('<spanclass="fa-stackfa-2x"><spanclass="fafa-circlefa-stack-2xtext-dark"></span>', $cleaned);
+        $this->assertStringContainsString('<strongclass="fa-stack-1xtext-light">2</strong></span><spanclass="fa-stackfa-2x">', $cleaned);
+        $this->assertStringContainsString('<spanclass="fafa-arrow-rightfa-stack-1xtext-dark"></span></span>', $cleaned);
         $arr = [
             $this->course1->id,
             $this->course3->id,
@@ -430,7 +437,7 @@ final class enrol_test extends advanced_testcase {
         $mform->display();
         $html = ob_get_clean();
         $cleaned = preg_replace('/\s+/', '', $html);
-        $this->assertStringContainsString('<optionvalue="1">No</option></select>', $cleaned);
+        $this->assertStringContainsString('-select"name="status"id="id_status"><optionvalue="0">Yes</option>', $cleaned);
         $this->assertStringContainsString('optionvalue="86400"selected', $cleaned);
         $this->assertStringContainsString('<optionvalue="0">No</option>', $cleaned);
         $this->assertStringContainsString('d="id_enrolstartdate_enabled"value="1">Enable</label>', $cleaned);
@@ -441,13 +448,10 @@ final class enrol_test extends advanced_testcase {
         $this->assertStringContainsString('name="customint5"class="form-check-input"value="1"id="id_customint5"', $cleaned);
         $this->assertStringContainsString('-select"name="status"id="id_status"><optionvalue="0">Yes</option>', $cleaned);
         $this->assertStringContainsString('-select"name="customint2"id="id_customint2">', $cleaned);
-        $this->assertStringContainsString('<optionvalue="1"selected>Fromthecoursecontact</option>', $cleaned);
-        $this->assertStringNotContainsString('<optionvalue="2">Fromthekeyholder</option>', $cleaned);
-        $this->assertStringContainsString('<optionvalue="3">Fromtheno-replyaddress</option>', $cleaned);
-        $this->assertStringContainsString(
-            '-select"name="roleid"id="id_roleid"><optionvalue="5"selected>Student</option>',
-            $cleaned
-        );
+        $this->assertStringContainsString('<optionvalue="1"selected>Fromthecoursecontact', $cleaned);
+        $this->assertStringNotContainsString('<optionvalue="2">Fromthekeyholder', $cleaned);
+        $this->assertStringContainsString('<optionvalue="3">Fromtheno-replyaddress', $cleaned);
+        $this->assertStringContainsString('-select"name="roleid"id="id_roleid"><optionvalue="5"selected>Student', $cleaned);
 
         $arr = [
             'Enrolmentdate',
