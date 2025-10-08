@@ -204,7 +204,6 @@ final class bulk_test extends \advanced_testcase {
         $form->display();
         $html = ob_get_clean();
         // TODO: suspended user shown but student not listed.
-        print_object($html);
         $this->assertStringContainsString('<th class="header c0" style="" scope="col">Name</th>', $html);
         $this->assertStringContainsString('<th class="header c1" style="" scope="col">Status</th>', $html);
         $this->assertStringContainsString('<th class="header c2" style="" scope="col">Enrolment starts</th>', $html);
