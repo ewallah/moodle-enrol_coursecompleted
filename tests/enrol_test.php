@@ -335,9 +335,9 @@ final class enrol_test extends advanced_testcase {
         $this->assertStringContainsString('"Testcourse1"><spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
         $this->assertStringContainsString('<spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
         $this->assertStringContainsString('<strongclass="fa-stack-1x">1</strong></a></span>', $cleaned);
-        $this->assertStringContainsString('<spanclass="fa-stackfa-2x"><spanclass="fafa-arrow-rightfa-stack-1xtext-dark"></span>', $cleaned);
-        $this->assertStringContainsString('<spanclass="fa-stackfa-2x"><spanclass="fafa-circlefa-stack-2xtext-dark"></span>', $cleaned);
-        $this->assertStringContainsString('<strongclass="fa-stack-1xtext-light">2</strong></span><spanclass="fa-stackfa-2x">', $cleaned);
+        $this->assertStringContainsString('spanclass="fa-stackfa-2x"><spanclass="fafa-arrow-rightfa-stack-1xtext-dark"', $cleaned);
+        $this->assertStringContainsString('<spanclass="fa-stackfa-2x"><spanclass="fafa-circlefa-stack-2xtext-dark">', $cleaned);
+        $this->assertStringContainsString('<strongclass="fa-stack-1xtext-light">2</strong></span>', $cleaned);
         $this->assertStringContainsString('<spanclass="fafa-arrow-rightfa-stack-1xtext-dark"></span></span>', $cleaned);
         $arr = [
             $this->course1->id,
