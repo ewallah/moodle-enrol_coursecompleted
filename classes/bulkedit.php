@@ -124,7 +124,7 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
         $updatesql[] = 'timemodified = :timemodified';
         $params['timemodified'] = time();
 
-        $updatesql = join(', ', $updatesql);
+        $updatesql = implode(', ', $updatesql);
         $sql = "UPDATE {user_enrolments} SET $updatesql WHERE id $ueidsql";
         return $DB->execute($sql, $params);
     }
