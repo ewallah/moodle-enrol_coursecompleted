@@ -38,6 +38,7 @@ namespace enrol_coursecompleted;
 class observer {
     /**
      * Triggered when user completes a course.
+     * @param \core\event\course_completed $event Event
      */
     public static function enroluser(\core\event\course_completed $event): void {
         global $DB;

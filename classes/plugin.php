@@ -187,7 +187,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param \restore_enrolments_structure_step $step Restore step
      * @param stdClass $data Data to restore
      * @param stdClass $course Course
-     * @param int $oldid Old id 
+     * @param int $oldid Old id
      */
     public function restore_instance(\restore_enrolments_structure_step $step, stdClass $data, $course, $oldid): void {
         global $DB;
@@ -288,7 +288,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * Is it possible to delete enrol instance via standard UI?
      *
      * @param object $instance Instance
-     * @return bool if user can delete instance 
+     * @return bool if user can delete instance
      */
     public function can_delete_instance($instance) {
         return has_capability('enrol/coursecompleted:manage', context_course::instance($instance->courseid));
@@ -574,7 +574,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * Has bulk operations.
      *
      * @param \course_enrolment_manager $manager Manager
-     * @return bool True if bulk operations 
+     * @return bool True if bulk operations
      */
     public function has_bulk_operations(\course_enrolment_manager $manager): bool {
         $instances = $manager->get_enrolment_instances();
