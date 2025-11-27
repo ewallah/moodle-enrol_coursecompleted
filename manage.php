@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once("../../config.php");
+require_once(__DIR__ . "/../../config.php");
 require_once($CFG->dirroot . '/enrol/coursecompleted/classes/plugin.php');
 global $DB, $OUTPUT, $PAGE;
 
@@ -34,6 +34,7 @@ if ($instance = $DB->get_record('enrol', ['id' => $enrolid, 'enrol' => 'courseco
     $course = get_course($instance->courseid);
     $context = \context_course::instance($course->id, MUST_EXIST);
 }
+
 $canenrol = has_capability('enrol/coursecompleted:enrolpast', $context);
 $canunenrol = has_capability('enrol/coursecompleted:unenrol', $context);
 
@@ -41,6 +42,7 @@ if (!$canenrol && !$canunenrol) {
     // No need to invent new error strings here...
     require_capability('enrol/manual:enrol', $context);
 }
+
 require_login($course);
 
 $enrol = enrol_get_plugin('coursecompleted');
@@ -71,6 +73,7 @@ if ($enrolid > 0) {
                 }
             }
         }
+
         echo $br . $br . get_string('usersenrolled', 'enrol_coursecompleted', count($candidates));
         $url = new \moodle_url('/enrol/instances.php', ['id' => $course->id]);
         echo $br . $br . $OUTPUT->continue_button($url);
@@ -85,7 +88,8 @@ if ($enrolid > 0) {
                 }
             }
         }
-        if (count($allusers) > 0) {
+
+        if ($allusers !== []) {
             $link = new \moodle_url($PAGE->url, ['enrolid' => $enrolid, 'action' => 'enrol', 'sesskey' => sesskey()]);
             echo $OUTPUT->confirm(
                 implode(', ', $allusers),
@@ -97,4 +101,5 @@ if ($enrolid > 0) {
         }
     }
 }
+
 echo $OUTPUT->footer();

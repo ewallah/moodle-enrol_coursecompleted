@@ -66,9 +66,9 @@ class bulkdelete extends \enrol_bulk_enrolment_operation {
      * Returns a enrol_bulk_enrolment_operation extension form to be used
      * in collecting required information for this operation to be processed.
      *
-     * @param string|moodle_url|null $defaultaction
-     * @param mixed $defaultcustomdata
-     * @return enrol_coursecompleted\form\bulkdelete
+     * @param string|moodle_url|null $defaultaction Default action
+     * @param mixed $defaultcustomdata Default customdata
+     * @return enrol_coursecompleted\form\bulkdelete Bulk delete
      */
     public function get_form($defaultaction = null, $defaultcustomdata = null) {
         $data = is_array($defaultcustomdata) ? $defaultcustomdata : [];
@@ -81,21 +81,23 @@ class bulkdelete extends \enrol_bulk_enrolment_operation {
     /**
      * Processes the bulk operation request for the given userids with the provided properties.
      *
-     * @param course_enrolment_manager $manager
-     * @param array $users
+     * @param course_enrolment_manager $manager Manager
+     * @param array $users Users
      * @param stdClass $properties The data returned by the form.
-     * @return bool
+     * @return bool True or false
      */
     public function process(\course_enrolment_manager $manager, array $users, stdClass $properties) {
         if (!has_capability("enrol/coursecompleted:unenrol", $manager->get_context())) {
             return false;
         }
+
         foreach ($users as $user) {
             foreach ($user->enrolments as $enrolment) {
                 $plugin = $enrolment->enrolmentplugin;
                 $plugin->unenrol_user($enrolment->enrolmentinstance, $user->id);
             }
         }
+
         return true;
     }
 }

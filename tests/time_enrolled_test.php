@@ -192,8 +192,6 @@ final class time_enrolled_test extends advanced_testcase {
     /**
      * Test enrol time variation.
      *
-     * @param array $input
-     * @param bool $isenrolled
      * @dataProvider enroltime_provider
      */
     #[DataProvider('enroltime_provider')]

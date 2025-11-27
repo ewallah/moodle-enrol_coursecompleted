@@ -90,6 +90,7 @@ final class hook_test extends advanced_testcase {
         $generator->create_and_enrol($course3, 'student');
         $generator->create_and_enrol($this->course1, 'teacher');
         $generator->create_and_enrol($this->course2, 'teacher');
+
         $this->student = $generator->create_and_enrol($this->course2, 'student');
         $this->plugin = enrol_get_plugin('coursecompleted');
         $this->event = course_completed::create(
@@ -324,7 +325,6 @@ final class hook_test extends advanced_testcase {
 
     /**
      * Create groups.
-     * @return array
      */
     private function create_groups(): array {
         $data = new stdClass();
@@ -333,6 +333,7 @@ final class hook_test extends advanced_testcase {
         $data->name = 'A group';
         $data->description = '';
         $data->descriptionformat = FORMAT_HTML;
+
         $groupid1 = groups_create_group($data);
         $data = new stdClass();
         $data->courseid = $this->course1->id;
@@ -347,6 +348,7 @@ final class hook_test extends advanced_testcase {
         $data->name = 'A group';
         $data->description = '';
         $data->descriptionformat = FORMAT_HTML;
+
         $groupid2 = groups_create_group($data);
         $this->getDataGenerator()->create_group_member(['groupid' => $groupid2, 'userid' => $this->student->id]);
         return [$groupid1, $groupid2];
@@ -431,6 +433,7 @@ final class hook_test extends advanced_testcase {
             $this->assertEquals($rec->userid, $this->student->id);
             $this->assertEquals($rec->attemptsavailable, 12);
         }
+
         $this->assertEquals(4, $DB->count_records('course', []));
         delete_course($this->course2, false);
         $this->assertEquals(3, $DB->count_records('course', []));

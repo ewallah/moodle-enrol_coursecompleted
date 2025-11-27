@@ -75,7 +75,7 @@ jobs:
 
       - name: grunt
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi grunt || true
+        run: moodle-plugin-ci --ansi grunt
 
       - name: mustache
         if: ${{ !cancelled() }}

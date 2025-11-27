@@ -46,7 +46,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(
         new admin_setting_configcheckbox(
-            "$plugin/defaultenrol",
+            "{$plugin}/defaultenrol",
             get_string('defaultenrol', 'enrol'),
             get_string('defaultenrol_desc', 'enrol'),
             0
@@ -66,7 +66,7 @@ if ($ADMIN->fulltree) {
 
         $settings->add(
             new admin_setting_configselect(
-                name: "$plugin/expiredaction",
+                name: "{$plugin}/expiredaction",
                 visiblename: get_string(
                     identifier: 'expiredaction',
                     component: 'enrol_fee'
@@ -82,7 +82,7 @@ if ($ADMIN->fulltree) {
 
         $settings->add(
             new admin_setting_configselect(
-                name: "$plugin/roleid",
+                name: "{$plugin}/roleid",
                 visiblename: get_string(
                     identifier: 'defaultrole',
                     component: $plugin
@@ -99,7 +99,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(
         new admin_setting_configduration(
-            "$plugin/enrolperiod",
+            "{$plugin}/enrolperiod",
             get_string('enrolperiod', 'enrol_fee'),
             get_string('enrolperiod_desc', 'enrol_fee'),
             0
@@ -108,7 +108,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(
         new admin_setting_configcheckbox(
-            "$plugin/tryunenrol",
+            "{$plugin}/tryunenrol",
             get_string('tryunenrol', $plugin),
             get_string('tryunenrol_help', $plugin),
             0
@@ -117,7 +117,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(
         new admin_setting_configselect(
-            name: "$plugin/welcome",
+            name: "{$plugin}/welcome",
             visiblename: get_string(
                 identifier: 'welcome',
                 component: $plugin
@@ -133,7 +133,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(
         new admin_setting_configcheckbox(
-            "$plugin/svglearnpath",
+            "{$plugin}/svglearnpath",
             get_string('svglearnpath', $plugin),
             get_string('svglearnpath_help', $plugin),
             1
@@ -142,7 +142,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(
         new admin_setting_configcheckbox(
-            "$plugin/keepgroup",
+            "{$plugin}/keepgroup",
             get_string('keepgroup', $plugin),
             get_string('keepgroup_help', $plugin),
             1

@@ -46,7 +46,7 @@ class process_expirations extends \core\task\scheduled_task {
     /**
      * Run task for processing expirations.
      */
-    public function execute() {
+    public function execute(): void {
         $enrol = enrol_get_plugin('coursecompleted');
         $trace = new \text_progress_trace();
         $enrol->process_expirations($trace);

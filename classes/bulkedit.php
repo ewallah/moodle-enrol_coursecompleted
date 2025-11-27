@@ -45,7 +45,7 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
      * Returns the identifier for this bulk operation. This is the key used when the plugin
      * returns an array containing all of the bulk operations it supports.
      *
-     * @return string
+     * @return string Identifier
      */
     public function get_identifier() {
         return 'editselectedusers';
@@ -64,9 +64,9 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
      * Returns a enrol_bulk_enrolment_operation extension form to be used
      * in collecting required information for this operation to be processed.
      *
-     * @param string|\moodle_url|null $defaultaction
-     * @param mixed $defaultcustomdata
-     * @return \enrol_coursecompleted\bulkedit_form
+     * @param string|\moodle_url|null $defaultaction Default action
+     * @param mixed $defaultcustomdata Default custom data
+     * @return \enrol_coursecompleted\bulkedit_form form
      */
     public function get_form($defaultaction = null, $defaultcustomdata = null) {
         $data = is_array($defaultcustomdata) ? $defaultcustomdata : [];
@@ -79,10 +79,10 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
     /**
      * Processes the bulk operation request for the given userids with the provided properties.
      *
-     * @param \course_enrolment_manager $manager
-     * @param array $users
+     * @param \course_enrolment_manager $manager Manager
+     * @param array $users Users
      * @param \stdClass $properties The data returned by the form.
-     * @return bool
+     * @return bool True is database operation succeeds
      */
     public function process(\course_enrolment_manager $manager, array $users, \stdClass $properties): bool {
         global $DB, $USER;
@@ -90,7 +90,9 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
         if (!has_capability("enrol/coursecompleted:manage", $context)) {
             return false;
         }
-        $ueids = $updatesql = [];
+
+        $ueids = [];
+        $updatesql = [];
         foreach ($users as $user) {
             foreach ($user->enrolments as $enrolment) {
                 $ueids[] = $enrolment->id;
@@ -105,19 +107,23 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
                 \core\event\user_enrolment_updated::create($data)->trigger();
             }
         }
+
         [$ueidsql, $params] = $DB->get_in_or_equal($ueids, SQL_PARAMS_NAMED);
         if (!empty($properties->status)) {
             $updatesql[] = 'status = :status';
             $params['status'] = $properties->status;
         }
+
         if (!empty($properties->timestart)) {
             $updatesql[] = 'timestart = :timestart';
             $params['timestart'] = $properties->timestart;
         }
+
         if (!empty($properties->timeend)) {
             $updatesql[] = 'timeend = :timeend';
             $params['timeend'] = $properties->timeend;
         }
+
         $updatesql[] = 'modifierid = :modifierid';
         $params['modifierid'] = $USER->id;
 
@@ -125,7 +131,7 @@ class bulkedit extends \enrol_bulk_enrolment_operation {
         $params['timemodified'] = time();
 
         $updatesql = implode(', ', $updatesql);
-        $sql = "UPDATE {user_enrolments} SET $updatesql WHERE id $ueidsql";
+        $sql = "UPDATE {user_enrolments} SET {$updatesql} WHERE id {$ueidsql}";
         return $DB->execute($sql, $params);
     }
 }

@@ -78,7 +78,7 @@ jobs:
 
       - name: codechecker
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi codechecker || true
+        run: moodle-plugin-ci --ansi codechecker
 
       - name: validate
         if: ${{ !cancelled() }}
@@ -112,7 +112,7 @@ jobs:
 
       - name: coveralls
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci coveralls-upload || true
+        run: moodle-plugin-ci coveralls-upload
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

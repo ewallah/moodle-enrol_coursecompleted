@@ -84,6 +84,7 @@ final class backup_test extends advanced_testcase {
 
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
+
         $bc = new \backup_controller(
             \backup::TYPE_1COURSE,
             $this->course2->id,
@@ -93,6 +94,7 @@ final class backup_test extends advanced_testcase {
             2
         );
         $bc->execute_plan();
+
         $results = $bc->get_results();
         $file = $results['backup_destination'];
         $fp = get_file_packer('application/vnd.moodle.backup');
@@ -109,6 +111,7 @@ final class backup_test extends advanced_testcase {
         );
         $rc->execute_precheck();
         $rc->execute_plan();
+
         $newid = $rc->get_courseid();
         $rc->destroy();
         $this->assertEquals(2, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
@@ -128,6 +131,7 @@ final class backup_test extends advanced_testcase {
             2
         );
         $bc->execute_plan();
+
         $results = $bc->get_results();
         $file = $results['backup_destination'];
         $fp = get_file_packer('application/vnd.moodle.backup');

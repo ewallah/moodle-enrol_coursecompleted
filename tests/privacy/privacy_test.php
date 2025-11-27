@@ -44,9 +44,7 @@ final class privacy_test extends provider_testcase {
      * Test returning metadata.
      */
     public function test_get_metadata(): void {
-        $this->resetAfterTest(true);
-        $collection = new \core_privacy\local\metadata\collection('enrol_coursecompleted');
-        $reason = \enrol_coursecompleted\privacy\provider::get_reason($collection);
+        $reason = provider::get_reason();
         $this->assertEquals($reason, 'privacy:metadata');
         $this->assertStringContainsString('does not store', get_string($reason, 'enrol_coursecompleted'));
     }

@@ -117,6 +117,7 @@ final class other_test extends advanced_testcase {
         $generator->create_and_enrol($course2, 'student');
         $generator->create_and_enrol($course2, 'teacher');
         $generator->create_and_enrol($course1, 'teacher');
+
         $plugin->add_instance(
             $course1,
             [
@@ -145,23 +146,25 @@ final class other_test extends advanced_testcase {
         $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
         $observer->enroluser($compevent);
         $this->assertEquals(5, $DB->count_records('user_enrolments', []));
-        $recs = $DB->get_records_select('task_adhoc', "component = :component AND $sqllike", $params);
+        $recs = $DB->get_records_select('task_adhoc', "component = :component AND {$sqllike}", $params);
         foreach ($recs as $rec) {
             $this->assertEquals($rec->component, 'enrol_coursecompleted');
             $this->assertEquals($rec->userid, $student1);
             $this->assertEquals($rec->faildelay, 0);
         }
-        $this->assertEquals(1, $DB->count_records_select('task_adhoc', "component = :component AND $sqllike", $params));
+
+        $this->assertEquals(1, $DB->count_records_select('task_adhoc', "component = :component AND {$sqllike}", $params));
         $data = new stdClass();
         $data->status = ENROL_INSTANCE_DISABLED;
+
         $plugin->update_instance($instance, $data);
-        $this->assertEquals(0, $DB->count_records_select('task_adhoc', "component = :component AND $sqllike", $params));
+        $this->assertEquals(0, $DB->count_records_select('task_adhoc', "component = :component AND {$sqllike}", $params));
         $data->status = ENROL_INSTANCE_ENABLED;
         $plugin->update_instance($instance, $data);
         delete_course($course1, false);
         delete_course($course2, false);
         $this->assertEquals(0, $DB->count_records('user_enrolments', []));
-        $this->assertEquals(0, $DB->count_records_select('task_adhoc', "component = :component AND $sqllike", $params));
+        $this->assertEquals(0, $DB->count_records_select('task_adhoc', "component = :component AND {$sqllike}", $params));
     }
 
     /**
@@ -235,6 +238,7 @@ final class other_test extends advanced_testcase {
         $manual->add_instance($course12, ['customint1' => $course11->id, 'roleid' => 5]);
         $manual->add_instance($course14, ['customint1' => $course1->id, 'roleid' => 5]);
         $manual->add_instance($course13, ['customint1' => $course14->id, 'roleid' => 5]);
+
         $path = \phpunit_util::call_internal_method($plugin, 'build_course_path', [$instance], '\enrol_coursecompleted_plugin');
         $this->assertCount(10, $path);
         $instance = $DB->get_record('enrol', ['courseid' => $course5->id, 'enrol' => 'coursecompleted'], '*', MUST_EXIST);
@@ -288,11 +292,13 @@ final class other_test extends advanced_testcase {
         $data->name = 'A group';
         $data->description = '';
         $data->descriptionformat = FORMAT_HTML;
+
         $groupid1 = groups_create_group($data);
         rebuild_course_cache((int)$course1->id, true);
         $course2 = $generator->create_course(['shortname' => 'B2', 'enablecompletion' => 1]);
         $data->courseid = $course2->id;
         $data->idnumber = $course2->id . 'A';
+
         $groupid2 = groups_create_group($data);
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->setAdminUser();
@@ -391,6 +397,7 @@ final class other_test extends advanced_testcase {
             $path = \phpunit_util::call_internal_method($plugin, 'build_course_path', [$instance], '\enrol_coursecompleted_plugin');
             $this->assertCount(3, $path);
         }
+
         \phpunit_util::run_all_adhoc_tasks();
         $context = \context_course::instance($course3->id);
         $this->assertTrue(user_has_role_assignment($student->id, 5, $context->id));

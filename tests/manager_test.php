@@ -66,6 +66,7 @@ final class manager_test extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['shortname' => 'A1', 'enablecompletion' => 1]);
         $this->course = $generator->create_course(['shortname' => 'A2', 'enablecompletion' => 1]);
+
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->setAdminUser();
         $plugin = enrol_get_plugin('coursecompleted');
@@ -146,6 +147,7 @@ final class manager_test extends advanced_testcase {
         $cc->timestarted = time() - 100;
         $cc->timeenrolled = 0;
         $cc->timecompleted = time() - 50;
+
         $DB->insert_record('course_completions', $cc);
         chdir($CFG->dirroot . '/enrol/coursecompleted');
         $_POST['enrolid'] = $this->instance->id;
@@ -170,6 +172,7 @@ final class manager_test extends advanced_testcase {
         $cc->timestarted = time() - 100;
         $cc->timeenrolled = 0;
         $cc->timecompleted = time() - 50;
+
         $DB->insert_record('course_completions', $cc);
 
         chdir($CFG->dirroot . '/enrol/coursecompleted');

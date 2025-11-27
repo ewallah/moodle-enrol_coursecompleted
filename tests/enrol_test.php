@@ -69,7 +69,7 @@ final class enrol_test extends advanced_testcase {
     private $plugin;
 
     /** @var moodle_page Page. */
-    private $page;
+    private ?\moodle_page $page = null;
 
     /**
      * Setup to ensure that forms and locallib are loaded.
@@ -153,6 +153,7 @@ final class enrol_test extends advanced_testcase {
         $this->page->set_context(context_course::instance($this->course1->id));
         $this->page->set_course($this->course1);
         $this->page->set_pagelayout('admin');
+
         $url = new moodle_url(
             '/enrol/editinstance.php',
             [
@@ -330,7 +331,7 @@ final class enrol_test extends advanced_testcase {
 
         $this->plugin->set_config('svglearnpath', 1);
         $out = $this->plugin->enrol_page_hook($this->instance);
-        $cleaned = preg_replace('/\s+/', '', $out);
+        $cleaned = preg_replace('/\s+/', '', (string) $out);
         $this->assertStringContainsString('title="Testcourse1"', $cleaned);
         $this->assertStringContainsString('"Testcourse1"><spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
         $this->assertStringContainsString('<spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
@@ -345,8 +346,9 @@ final class enrol_test extends advanced_testcase {
             $this->course4->id,
         ];
         foreach ($arr as $value) {
-            $this->assertStringContainsString("https://www.example.com/moodle/course/view.php?id=$value", $cleaned);
+            $this->assertStringContainsString("https://www.example.com/moodle/course/view.php?id={$value}", $cleaned);
         }
+
         $this->assertStringNotContainsString('https://www.example.com/moodle/course/view.php?id=' . $this->course2->id, $cleaned);
         $arr = [
             'Test course 1</a>',
@@ -399,6 +401,7 @@ final class enrol_test extends advanced_testcase {
         );
         $observer = new observer();
         $observer->enroluser($compevent);
+
         $tmp = $this->plugin->enrol_page_hook($this->instance);
         $this->assertStringContainsString('Test course 1', $tmp);
         $this->assertStringContainsString('You will be enrolled in this course when you complete course', $tmp);
@@ -429,6 +432,7 @@ final class enrol_test extends advanced_testcase {
         $page->set_pagelayout('standard');
         $page->set_pagetype('course-view');
         $page->set_url('/enrol/coursecompleted/manage.php?enrolid=' . $this->instance->id);
+
         $form = $this->tempform();
         $mform = $form->getform();
         $this->plugin->edit_instance_form($this->instance, $mform, $context);
@@ -466,12 +470,14 @@ final class enrol_test extends advanced_testcase {
         foreach ($arr as $value) {
             $this->assertStringContainsString('title="Helpwith' . $value . '"role="img"', $cleaned);
         }
+
         $strm = get_string_manager();
         $arr = ['compcourse', 'customwelcome', 'enrolenddate', 'enrolstartdate', 'group'];
         foreach ($arr as $value) {
             if ($strm->string_exists($value, 'enrol_coursecompleted')) {
                 $this->assertStringContainsString(get_string($value, 'enrol_coursecompleted'), $html);
             }
+
             if ($strm->string_exists($value . '_desc', 'enrol_coursecompleted')) {
                 $this->assertStringContainsString(get_string($value . '_desc', 'enrol_coursecompleted'), $html);
             }
@@ -516,6 +522,7 @@ final class enrol_test extends advanced_testcase {
         $page->set_pagelayout('standard');
         $page->set_pagetype('course-view');
         $page->set_url('/enrol/coursecompleted/manage.php?enrolid=' . $instance->id);
+
         $form = $this->tempform();
         $mform = $form->getform();
         $this->plugin->edit_instance_form($instance, $mform, $context);
@@ -550,9 +557,8 @@ final class enrol_test extends advanced_testcase {
 
     /**
      * Test form.
-     * @return \moodleform
      */
-    private function tempform() {
+    private function tempform(): \moodleform {
         /**
          * Coursecompleted enrolment form tests.
          *
@@ -565,9 +571,10 @@ final class enrol_test extends advanced_testcase {
             /**
              * Form definition.
              */
-            public function definition() {
+            public function definition(): void {
                 // No definition required.
             }
+
             /**
              * Returns form reference
              * @return MoodleQuickForm

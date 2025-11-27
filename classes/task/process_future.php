@@ -37,7 +37,7 @@ class process_future extends \core\task\adhoc_task {
     /**
      * Run task for future enrolments.
      */
-    public function execute() {
+    public function execute(): void {
         $enrol = enrol_get_plugin('coursecompleted');
         $enrol->enrol_user($this->get_custom_data(), $this->get_userid());
     }

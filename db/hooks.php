@@ -18,7 +18,7 @@
  * * Hook callbacks for enrol_coursecompleted.
  *
  * @package   enrol_coursecompleted
- * @copyright 2024 eWallah (www.eWallah.net)
+ * @copyright eWallah (www.eWallah.net)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,14 +28,14 @@ defined('MOODLE_INTERNAL') || die();
 $callbacks = [
     [
         'hook' => core_enrol\hook\after_user_enrolled::class,
-        'callback' => 'enrol_coursecompleted\hook_listener::send_course_welcome_message',
+        'callback' => [enrol_coursecompleted\hook_listener::class, 'send_course_welcome_message'],
     ],
     [
         'hook' => core_course\hook\before_course_deleted::class,
-        'callback' => 'enrol_coursecompleted\hook_listener::before_course_deleted',
+        'callback' => [enrol_coursecompleted\hook_listener::class, 'before_course_deleted'],
     ],
     [
         'hook' => core_enrol\hook\after_enrol_instance_status_updated::class,
-        'callback' => 'enrol_coursecompleted\hook_listener::after_enrol_instance_status_updated',
+        'callback' => [enrol_coursecompleted\hook_listener::class, 'after_enrol_instance_status_updated'],
     ],
 ];
