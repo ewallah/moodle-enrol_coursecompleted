@@ -1,3 +1,11 @@
+## v5.2.1 (2025-11-30)
+
+* Version update
+* Removed unnecessary hook 
+* rector review
+* code review
+* Removed dependancy to enrol_fee
+
 ## v5.1.1 (2025-10-07)
 
 * Version update

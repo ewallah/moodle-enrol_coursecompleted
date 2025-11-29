@@ -312,9 +312,8 @@ final class enrol_test extends advanced_testcase {
         $this->assertEquals($icons[0]->attributes['title'], 'After completing course: Test course 1');
         $icons = $this->plugin->get_action_icons($this->instance);
         $this->assertCount(2, $icons);
-        $this->assertStringContainsString('iconsmall', $icons[0]);
-        $this->assertStringContainsString('icon fa fa-', $icons[0]);
-        $this->assertStringContainsString('icon fa fa-', $icons[1]);
+        $this->assertStringContainsString('icon fa fa-pen fa-fw iconsmall', $icons[0]);
+        $this->assertStringContainsString('"icon fa fa-user-plus fa-fw iconsmall', $icons[1]);
         $this->assertStringContainsString(
             '<a href="https://www.example.com/moodle/enrol/editinstance.php?courseid=' . $this->course2->id,
             $icons[0]
@@ -338,10 +337,12 @@ final class enrol_test extends advanced_testcase {
         $this->plugin->set_config('svglearnpath', 1);
         $out = $this->plugin->enrol_page_hook($this->instance);
         $cleaned = preg_replace('/\s+/', '', (string) $out);
+        $this->assertStringContainsString('<spanclass="float-end"><spanclass="fa-stackfa-2x">', $cleaned);
         $this->assertStringContainsString('title="Testcourse1"', $cleaned);
         $this->assertStringContainsString('"Testcourse1"><spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
         $this->assertStringContainsString('<spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
         $this->assertStringContainsString('<strongclass="fa-stack-1x">1</strong></a></span>', $cleaned);
+        $this->assertStringContainsString('<strongclass="fa-stack-1xtext-light">2</strong></span>', $cleaned);
         $this->assertStringContainsString('spanclass="fa-stackfa-2x"><spanclass="fafa-arrow-rightfa-stack-1xtext-dark"', $cleaned);
         $this->assertStringContainsString('<spanclass="fa-stackfa-2x"><spanclass="fafa-circlefa-stack-2xtext-dark">', $cleaned);
         $this->assertStringContainsString('<strongclass="fa-stack-1xtext-light">2</strong></span>', $cleaned);

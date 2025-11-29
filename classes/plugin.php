@@ -419,17 +419,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
         $mform->setDefault('status', $this->get_config('status'));
 
-        $role = $this->get_config('roleid');
-        $start = time();
-        if ($instance) {
-            if (isset($instance->roleid)) {
-                $role = $instance->roleid;
-            }
-
-            if (isset($instance->customint1)) {
-                $start = get_course($instance->customint1)->startdate;
-            }
-        }
+        $role = ($instance && isset($instance->roleid)) ? $instance->roleid : $this->get_config('roleid');
+        $start = ($instance && isset($instance->customint1)) ? get_course($instance->customint1)->startdate : time();
 
         $roles = get_default_enrol_roles($context, $role);
         $mform->addElement('select', 'roleid', get_string('assignrole', $plugin), $roles);
