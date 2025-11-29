@@ -24,6 +24,7 @@
  */
 
 $string['aftercourse'] = 'After completing course: {$a}';
+$string['assignrole'] = 'Assign role';
 $string['cachedef_compcourses'] = 'Enrolment on course completion cache';
 $string['compcourse'] = 'Completed course';
 $string['compcourse_help'] = 'Which course have to be completed.';
@@ -53,11 +54,14 @@ $string['enroldate'] = 'Enrolment date';
 $string['enroldate_help'] = 'If enabled, users will be automatically enrolled on a specific moment in the future.';
 $string['enrolenddate'] = 'End date';
 $string['enrolenddate_help'] = 'If enabled, users will be automatically enrolled until this date only. All course completions after this date will be ignored.';
+$string['enrolenddaterror'] = 'The enrolment end date cannot be earlier than the start date.';
 $string['enrolperiod'] = 'Enrolment duration';
 $string['enrolperiod_desc'] = 'Default length of time that the enrolment is valid. If set to zero, the enrolment duration will be unlimited by default.';
 $string['enrolperiod_help'] = 'Length of time that the enrolment is valid, starting with the moment the user is enrolled. If disabled, the enrolment duration will be unlimited.';
 $string['enrolstartdate'] = 'Start date';
 $string['enrolstartdate_help'] = 'If enabled, users will only be enrolled automatically from this date onwards. All course completions before this date will be ignored.';
+$string['expiredaction'] = 'Enrolment expiry action';
+$string['expiredaction_help'] = 'Select the action to be performed when a user\'s enrolment expires. Please note that some user data and settings are deleted when a user is unenrolled.';
 $string['group'] = 'Keep group';
 $string['group_help'] = 'Try to add users to a group with the same name';
 $string['keepgroup'] = 'Default keep group setting';
