@@ -67,14 +67,8 @@ if ($ADMIN->fulltree) {
         $settings->add(
             new admin_setting_configselect(
                 name: "{$plugin}/expiredaction",
-                visiblename: get_string(
-                    identifier: 'expiredaction',
-                    component: 'enrol_fee'
-                ),
-                description: get_string(
-                    identifier: 'expiredaction_help',
-                    component: 'enrol_fee'
-                ),
+                visiblename: get_string(identifier: 'expiredaction', component: $plugin),
+                description: get_string(identifier: 'expiredaction_help', component: $plugin),
                 defaultsetting: ENROL_EXT_REMOVED_SUSPENDNOROLES,
                 choices: $roptions
             )
@@ -83,14 +77,8 @@ if ($ADMIN->fulltree) {
         $settings->add(
             new admin_setting_configselect(
                 name: "{$plugin}/roleid",
-                visiblename: get_string(
-                    identifier: 'defaultrole',
-                    component: $plugin
-                ),
-                description: get_string(
-                    identifier: 'defaultrole_desc',
-                    component: $plugin
-                ),
+                visiblename: get_string(identifier: 'defaultrole', component: $plugin),
+                description: get_string(identifier: 'defaultrole_desc', component: $plugin),
                 defaultsetting: $student->id,
                 choices: $options
             )
@@ -100,8 +88,8 @@ if ($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configduration(
             "{$plugin}/enrolperiod",
-            get_string('enrolperiod', 'enrol_fee'),
-            get_string('enrolperiod_desc', 'enrol_fee'),
+            get_string('enrolperiod', $plugin),
+            get_string('enrolperiod_desc', $plugin),
             0
         )
     );
@@ -118,14 +106,8 @@ if ($ADMIN->fulltree) {
     $settings->add(
         new admin_setting_configselect(
             name: "{$plugin}/welcome",
-            visiblename: get_string(
-                identifier: 'welcome',
-                component: $plugin
-            ),
-            description: get_string(
-                identifier: 'welcome_help',
-                component: $plugin
-            ),
+            visiblename: get_string(identifier: 'welcome', component: $plugin),
+            description: get_string(identifier: 'welcome_help', component: $plugin),
             defaultsetting: ENROL_SEND_EMAIL_FROM_COURSE_CONTACT,
             choices: enrol_coursecompleted_plugin::email_options()
         )
