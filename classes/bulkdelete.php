@@ -47,7 +47,7 @@ class bulkdelete extends \enrol_bulk_enrolment_operation {
      * Returns the identifier for this bulk operation. This is the key used when the plugin
      * returns an array containing all of the bulk operations it supports.
      *
-     * @return string
+     * @return string Identifier
      */
     public function get_identifier() {
         return 'deleteselectedusers';
@@ -56,7 +56,7 @@ class bulkdelete extends \enrol_bulk_enrolment_operation {
     /**
      * Returns the title to display for this bulk operation.
      *
-     * @return string
+     * @return string Title
      */
     public function get_title() {
         return get_string('deleteselectedusers', 'enrol_coursecompleted');

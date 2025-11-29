@@ -58,9 +58,7 @@ final class bulk_test extends \advanced_testcase {
     /** @var stdClass Instance. */
     private $instance;
 
-    /**
-     * Setup to ensure that forms and locallib are loaded.
-     */
+    #[\core\attribute\label('Setup to ensure that forms and locallib are loaded.')]
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->libdir . '/formslib.php');
@@ -68,9 +66,7 @@ final class bulk_test extends \advanced_testcase {
         parent::setUpBeforeClass();
     }
 
-    /**
-     * Tests initial setup.
-     */
+    #[\core\attribute\label('Test initial setup')]
     protected function setUp(): void {
         global $CFG, $DB;
         parent::setUp();
@@ -93,9 +89,7 @@ final class bulk_test extends \advanced_testcase {
         $plugin->enrol_user($this->instance, $suspendedid);
     }
 
-    /**
-     * Test bulk delete.
-     */
+    #[\core\attribute\label('Test bulk delete')]
     public function test_bulk_delete(): void {
         $plugin = enrol_get_plugin('coursecompleted');
         $page = new moodle_page();
@@ -134,9 +128,7 @@ final class bulk_test extends \advanced_testcase {
         $this->assertStringContainsString('<th class="header c3 lastcol" style="" scope="col">Enrolment ends</th>', $html);
     }
 
-    /**
-     * Test bulk delete.
-     */
+    #[\core\attribute\label('Test bulk delete 2')]
     public function test_bulk_delete2(): void {
         $this->setAdminUser();
         $plugin = enrol_get_plugin('coursecompleted');
@@ -162,9 +154,7 @@ final class bulk_test extends \advanced_testcase {
         $this->assertStringContainsString('<th class="header c3 lastcol" style="" scope="col">Enrolment ends</th>', $html);
     }
 
-    /**
-     * Test bulk edit.
-     */
+    #[\core\attribute\label('Test bulk edit')]
     public function test_bulk_edit(): void {
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, context_course::instance($this->course2->id)->id));
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, context_course::instance($this->course1->id)->id));

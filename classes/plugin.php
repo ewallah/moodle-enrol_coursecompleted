@@ -379,7 +379,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         }
 
         $roles = get_default_enrol_roles($context, $role);
-        $mform->addElement('select', 'roleid', get_string('assignrole', 'enrol_fee'), $roles);
+        $mform->addElement('select', 'roleid', get_string('assignrole', $plugin), $roles);
         $mform->setDefault('roleid', $this->get_config('roleid'));
 
         $arr = ['optional' => true, 'defaulttime' => $start];
@@ -481,7 +481,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $errors = [];
         // Minimum duration of a course is one hour.
         if (!empty($data['enrolenddate']) && $data['enrolenddate'] <= $data['enrolstartdate'] + HOURSECS) {
-            $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_fee');
+            $errors['enrolenddate'] = get_string('enrolenddaterror', 'enrol_coursecompleted');
         }
 
         if (

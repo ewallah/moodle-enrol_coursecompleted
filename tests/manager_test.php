@@ -55,9 +55,7 @@ final class manager_test extends advanced_testcase {
     /** @var stdClass course. */
     private $course;
 
-    /**
-     * Tests initial setup.
-     */
+    #[\core\attribute\label('Setup')]
     protected function setUp(): void {
         global $CFG, $DB;
         parent::setUp();
@@ -76,9 +74,7 @@ final class manager_test extends advanced_testcase {
         mark_user_dirty($this->student->id);
     }
 
-    /**
-     * Test missing enrolid param.
-     */
+    #[\core\attribute\label('Test manager missing enrolid parameter')]
     public function test_manager_empty_param(): void {
         global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
@@ -87,9 +83,7 @@ final class manager_test extends advanced_testcase {
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
 
-    /**
-     * Test manager without permission.
-     */
+    #[\core\attribute\label('Test manager without permissions')]
     public function test_manager_without_permission(): void {
         global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
@@ -100,9 +94,7 @@ final class manager_test extends advanced_testcase {
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
 
-    /**
-     * Test manager wrong permission.
-     */
+    #[\core\attribute\label('Test manager wrong permissions')]
     public function test_manager_wrong_permission(): void {
         global $CFG, $DB;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
@@ -121,9 +113,7 @@ final class manager_test extends advanced_testcase {
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
 
-    /**
-     * Test manager bare.
-     */
+    #[\core\attribute\label('Test manager bare')]
     public function test_manager_bare(): void {
         global $CFG;
         chdir($CFG->dirroot . '/enrol/coursecompleted');
@@ -134,9 +124,7 @@ final class manager_test extends advanced_testcase {
         $this->assertStringContainsString('No users found', $html);
     }
 
-    /**
-     * Test manager old users.
-     */
+    #[\core\attribute\label('Test manager old users')]
     public function test_manager_old_users(): void {
         global $CFG, $DB;
         $this->preventResetByRollback();
@@ -158,9 +146,7 @@ final class manager_test extends advanced_testcase {
         $this->assertStringNotContainsString('No users found', $html);
     }
 
-    /**
-     * Test submit manager oldusers.
-     */
+    #[\core\attribute\label('Test manager submit old users')]
     public function test_manager_submit(): void {
         global $CFG, $DB;
         $this->preventResetByRollback();
@@ -185,9 +171,7 @@ final class manager_test extends advanced_testcase {
         $this->assertStringContainsString('1 Users enrolled', $html);
     }
 
-    /**
-     * Tests settings.
-     */
+    #[\core\attribute\label('Test enrol coursecompleted settings')]
     public function test_enrol_courescompleted_settings(): void {
         global $ADMIN, $CFG;
         require_once($CFG->dirroot . '/lib/adminlib.php');
@@ -195,9 +179,7 @@ final class manager_test extends advanced_testcase {
         $this->assertTrue($ADMIN->fulltree);
     }
 
-    /**
-     * Test settings page.
-     */
+    #[\core\attribute\label('Test settings page')]
     public function test_settings_page(): void {
         global $CFG, $OUTPUT, $PAGE;
         $this->preventResetByRollback();
@@ -221,9 +203,7 @@ final class manager_test extends advanced_testcase {
         $this->assertNotEmpty($OUTPUT);
     }
 
-    /**
-     * Test access.
-     */
+    #[\core\attribute\label('Test access')]
     public function test_access(): void {
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['enablecompletion' => 1]);

@@ -51,9 +51,7 @@ final class backup_test extends advanced_testcase {
     /** @var stdClass Second course. */
     private $course2;
 
-    /**
-     * Tests initial setup.
-     */
+    #[\core\attribute\label('Initial setup')]
     protected function setUp(): void {
         global $CFG, $DB;
         parent::setUp();
@@ -73,9 +71,7 @@ final class backup_test extends advanced_testcase {
         $this->student = $generator->create_and_enrol($this->course1, 'student');
     }
 
-    /**
-     * Test backup.
-     */
+    #[\core\attribute\label('Backup and restore')]
     public function test_backup_restore(): void {
         global $CFG, $DB, $PAGE;
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');

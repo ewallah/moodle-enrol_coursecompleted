@@ -44,9 +44,7 @@ use PHPUnit\Framework\Attributes\{DataProvider, CoversClass};
 #[CoversClass(observer::class)]
 #[CoversClass(task\process_future::class)]
 final class time_enrolled_test extends advanced_testcase {
-    /**
-     * Tests initial setup.
-     */
+    #[\core\attribute\label('Initial setup')]
     protected function setUp(): void {
         global $CFG;
         require_once($CFG->dirroot . '/enrol/locallib.php');
@@ -55,9 +53,7 @@ final class time_enrolled_test extends advanced_testcase {
         $this->resetAfterTest(true);
     }
 
-    /**
-     * Test if adhoc.
-     */
+    #[\core\attribute\label('Test adhoc task')]
     public function test_adhoc_task(): void {
         global $DB;
         $gen = $this->getDataGenerator();
@@ -88,9 +84,7 @@ final class time_enrolled_test extends advanced_testcase {
         delete_course($course2, false);
     }
 
-    /**
-     * Test if user is enrolled for a specific time after completing a course.
-     */
+    #[\core\attribute\label('Test if user is enrolled for a specific time after completing a course')]
     public function test_time_enrolled(): void {
         global $DB, $PAGE;
         $generator = $this->getDataGenerator();
