@@ -272,22 +272,28 @@ final class enrol_test extends advanced_testcase {
         }
     }
 
-    /**
-     * Test builld course path.
-     */
+    #[\core\attribute\label('Test build course path.')]
     public function test_build_course_path(): void {
         global $DB;
-        $plug = enrol_get_plugin('coursecompleted');
-        $instances = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
-        foreach ($instances as $instance) {
-            $path = \phpunit_util::call_internal_method($plug, 'build_course_path', [$instance], '\enrol_coursecompleted_plugin');
+        $plugin = enrol_get_plugin('coursecompleted');
+        $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
+        $ccompletion->mark_complete(time());
+        $enrols = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
+
+        // Create other pseudo enrolments.
+        foreach ($enrols as $enrol) {
+            $enrol->enrol = 'other';
+            unset($enrol->id);
+            $DB->insert_record('enrol', $enrol);
+        }
+
+        foreach ($enrols as $enrol) {
+            $path = \phpunit_util::call_internal_method($plugin, 'build_course_path', [$enrol], '\enrol_coursecompleted_plugin');
             $this->assertGreaterThan(4, $path);
         }
     }
 
-    /**
-     * Test library.
-     */
+    #[\core\attribute\label('Test library functions.')]
     public function test_library_functions(): void {
         $this->assertEquals($this->plugin->get_name(), 'coursecompleted');
         $this->assertEquals($this->plugin->get_config('enabled'), null);
@@ -364,9 +370,7 @@ final class enrol_test extends advanced_testcase {
         }
     }
 
-    /**
-     * Test library 2.
-     */
+    #[\core\attribute\label('Test library other functionality')]
     public function test_library_other_functionality(): void {
         global $DB;
         $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
@@ -421,9 +425,7 @@ final class enrol_test extends advanced_testcase {
         $this->assertStringNotContainsString('You will be enrolled in this course when you complete course', $tmp);
     }
 
-    /**
-     * Test form.
-     */
+    #[\core\attribute\label('Test Form')]
     public function test_form(): void {
         $page = new moodle_page();
         $context = context_course::instance($this->course1->id);
@@ -484,9 +486,7 @@ final class enrol_test extends advanced_testcase {
         }
     }
 
-    /**
-     * Test other config.
-     */
+    #[\core\attribute\label('Test other config.')]
     public function test_other_config(): void {
         global $DB;
         $this->plugin->set_config('status', 1);

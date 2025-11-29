@@ -233,15 +233,13 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $status = null,
         $recovergrades = null
     ): void {
-        global $DB;
+        global $CFG, $DB;
         if ($this->is_active($instance)) {
             // We ignore the role, timestart, timeend and status parameters and fall back on the instance settings.
             $roleid = $instance->roleid ?? $this->get_config('roleid');
-            if (
-                $DB->record_exists('role', ['id' => $roleid]) &&
-                context_course::instance($instance->customint1, IGNORE_MISSING) &&
-                context_course::instance($instance->courseid, IGNORE_MISSING)
-            ) {
+            $context1 = context_course::instance($instance->customint1, IGNORE_MISSING);
+            $context2 = context_course::instance($instance->courseid, IGNORE_MISSING);
+            if ($DB->record_exists('role', ['id' => $roleid]) && $context1 && $context2) {
                 $timestart = time();
                 $timeend = 0;
                 if (isset($instance->customint4) && $instance->customint4 > 0) {
@@ -253,6 +251,61 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 }
 
                 parent::enrol_user($instance, $userid, $roleid, $timestart, $timeend, $status, $recovergrades);
+                // Handle welcome message.
+                if ($instance->customint2 != ENROL_DO_NOT_SEND_EMAIL) {
+                    $course = get_course($instance->customint1);
+                    $formatter = \core\di::get(\core\formatting::class);
+                    $a = new stdClass();
+                    $a->completed = $formatter->format_string($course->fullname, context: $context1);
+                    if ($instance->customtext1 == '') {
+                        $message = get_string('welcometocourse', 'enrol_coursecompleted', $a);
+                    } else {
+                        $key = ['{$a->completed}'];
+                        $value = [$a->completed];
+                        $message = str_replace($key, $value, $instance->customtext1);
+                    }
+
+                    $this->send_course_welcome_message_to_user(
+                        instance: $instance,
+                        userid: (int)$userid,
+                        sendoption: (int)$instance->customint2,
+                        message: $message,
+                        roleid: (int)$roleid,
+                    );
+                }
+
+                // Keep the user in a group when needed.
+                if ($instance->customint3 > 0) {
+                    require_once($CFG->dirroot . '/group/lib.php');
+                    $groups = groups_get_user_groups((int)$instance->customint1, (int)$userid);
+                    foreach ($groups as $group) {
+                        foreach ($group as $sub) {
+                            $groupnamea = groups_get_group_name($sub);
+                            $groupnameb = groups_get_group_by_name((int)$instance->courseid, $groupnamea);
+                            if ($groupnameb) {
+                                groups_add_member($groupnameb, (int)$userid);
+                            }
+                        }
+                    }
+                }
+
+                // Try unenrol the user from the completed course.
+                if ($instance->customint5 > 0) {
+                    $page = new moodle_page();
+                    require_once($CFG->dirroot . '/enrol/locallib.php');
+                    $course = get_course($instance->customint1);
+                    $cem = new \course_enrolment_manager($page, $course);
+                    $enrols = $cem->get_user_enrolments($userid);
+
+                    foreach ($enrols as $enrol) {
+                        $plugin = enrol_get_plugin($enrol->enrolmentinstance->enrol);
+                        if ($instance = $DB->get_record('enrol', ['id' => $enrol->enrolid], '*', MUST_EXIST)) {
+                            if ($plugin->allow_unenrol_user($instance, $enrol)) {
+                                $plugin->unenrol_user($instance, $userid);
+                            }
+                        }
+                    }
+                }
             } else {
                 debugging('Role does not exist', DEBUG_DEVELOPER);
             }

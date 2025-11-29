@@ -51,6 +51,12 @@ final class hook_test extends advanced_testcase {
     /** @var stdClass Second course. */
     private $course2;
 
+    /** @var stdClass Context course 1. */
+    private $context1;
+
+    /** @var stdClass Context course 2. */
+    private $context2;
+
     /** @var stdClass Student. */
     private $student;
 
@@ -80,6 +86,9 @@ final class hook_test extends advanced_testcase {
         $generator = $this->getDataGenerator();
         $this->course1 = $generator->create_course(['enablecompletion' => 1]);
         $this->course2 = $generator->create_course(['enablecompletion' => 1]);
+        $this->context1 = context_course::instance($this->course1->id);
+        $this->context2 = context_course::instance($this->course2->id);
+
         $course3 = $generator->create_course(['enablecompletion' => 0]);
         $generator->create_and_enrol($this->course1, 'student');
         $generator->create_and_enrol($this->course2, 'student');
@@ -93,7 +102,7 @@ final class hook_test extends advanced_testcase {
             [
                 'objectid' => $this->course2->id,
                 'relateduserid' => $this->student->id,
-                'context' => context_course::instance($this->course2->id),
+                'context' => $this->context2,
                 'courseid' => $this->course2->id,
                 'other' => ['relateduserid' => $this->student->id],
             ]
@@ -133,8 +142,7 @@ final class hook_test extends advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = context_course::instance($this->course1->id);
-        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $this->context1->id));
         $messages = $sink->get_messages_by_component_and_type('moodle', 'enrolcoursewelcomemessage');
         $this->assertCount(1, $messages);
         $this->assertEquals('Test course 1', $messages[0]->contexturlname);
@@ -156,8 +164,7 @@ final class hook_test extends advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = context_course::instance($this->course1->id);
-        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $this->context1->id));
         $messages = $sink->get_messages_by_component_and_type('moodle', 'enrolcoursewelcomemessage');
         $this->assertCount(1, $messages);
         $this->assertEquals('Test course 1', $messages[0]->contexturlname);
@@ -178,8 +185,7 @@ final class hook_test extends advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = context_course::instance($this->course1->id);
-        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $this->context1->id));
         $messages = $sink->get_messages_by_component_and_type('moodle', 'enrolcoursewelcomemessage');
         $this->assertCount(0, $messages);
         $sink->close();
@@ -199,8 +205,7 @@ final class hook_test extends advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = context_course::instance($this->course1->id);
-        $this->assertFalse(user_has_role_assignment($this->student->id, 5, $context->id));
+        $this->assertFalse(user_has_role_assignment($this->student->id, 5, $this->context1->id));
         $this->assertEquals(4, $DB->count_records('course', []));
         delete_course($this->course2, false);
         delete_course($this->course1, false);
@@ -218,14 +223,12 @@ final class hook_test extends advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = context_course::instance($this->course1->id);
-        $this->assertTrue(user_has_role_assignment($this->student->id, 6, $context->id));
+        $this->assertTrue(user_has_role_assignment($this->student->id, 6, $this->context1->id));
     }
 
     #[\core\attribute\label('Test unenrol')]
     public function test_unenrol(): void {
-        $context = context_course::instance($this->course2->id);
-        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $this->context2->id));
 
         $this->plugin->add_instance(
             $this->course1,
@@ -237,16 +240,14 @@ final class hook_test extends advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = context_course::instance($this->course1->id);
-        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
-        $context = context_course::instance($this->course2->id);
-        $this->assertFalse(user_has_role_assignment($this->student->id, 5, $context->id));
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $this->context1->id));
+        // TODO: Not working.
+        $this->assertFalse(user_has_role_assignment($this->student->id, 5, $this->context2->id));
     }
 
     #[\core\attribute\label('Test not unenrol')]
     public function test_not_unenrol(): void {
-        $context = context_course::instance($this->course2->id);
-        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $this->context2->id));
 
         $this->plugin->add_instance(
             $this->course1,
@@ -258,10 +259,8 @@ final class hook_test extends advanced_testcase {
             ]
         );
         $this->event->trigger();
-        $context = context_course::instance($this->course1->id);
-        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
-        $context = context_course::instance($this->course2->id);
-        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $context->id));
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $this->context1->id));
+        $this->assertTrue(user_has_role_assignment($this->student->id, 5, $this->context2->id));
     }
 
     #[\core\attribute\label('Test group')]
