@@ -31,13 +31,14 @@
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function xmldb_enrol_coursecompleted_uninstall() {
+function xmldb_enrol_coursecompleted_uninstall(): bool {
     global $DB;
     $plugin = enrol_get_plugin('coursecompleted');
     $rs = $DB->get_recordset('enrol', ['enrol' => 'coursecompleted']);
     foreach ($rs as $instance) {
         $plugin->delete_instance($instance);
     }
+
     $rs->close();
     role_unassign_all(['component' => 'enrol_coursecompleted']);
     // Delete all planned enrolments.

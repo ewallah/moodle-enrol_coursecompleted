@@ -31,7 +31,7 @@
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-function xmldb_enrol_coursecompleted_install() {
+function xmldb_enrol_coursecompleted_install(): bool {
     $enabled = enrol_get_plugins(true);
     $enabled['coursecompleted'] = true;
     set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
