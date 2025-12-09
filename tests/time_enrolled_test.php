@@ -195,8 +195,7 @@ final class time_enrolled_test extends advanced_testcase {
         $course2 = $generator->create_course();
         $plugin = enrol_get_plugin('coursecompleted');
         $student = $generator->create_and_enrol($course1, 'student');
-        $input = array_merge($input, ['customint1' => $course1->id, 'roleid' => 5]);
-        $plugin->add_instance($course2, $input);
+        $plugin->add_instance($course2, ['customint1' => $course1->id, 'roleid' => 5] + $input);
         $compevent = \core\event\course_completed::create(
             [
                 'objectid' => $course2->id,
