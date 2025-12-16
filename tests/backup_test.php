@@ -29,6 +29,8 @@ namespace enrol_coursecompleted;
 
 use advanced_testcase;
 use stdClass;
+use restore_controller_dbops;
+use restore_dbops;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 /**
@@ -69,6 +71,23 @@ final class backup_test extends advanced_testcase {
             ['customint1' => $this->course1->id, 'customint2' => 0, 'roleid' => $studentrole]
         );
         $this->student = $generator->create_and_enrol($this->course1, 'student');
+
+        // Random data.
+        $course = $generator->create_course(['enablecompletion' => 1]);
+        $plugin->add_instance(
+            $course,
+            ['customint1' => $this->course1->id, 'customint2' => 0, 'roleid' => $studentrole]
+        );
+        $generator->create_and_enrol($course, 'student');
+        $generator->create_and_enrol($course, 'student');
+        $records = $DB->get_records('user_enrolments', []);
+        foreach ($records as $record) {
+            $record->customint1 = 1;
+            $record->customint2 = 1;
+            $record->customint4 = 1;
+            $DB->update_record('user_enrolments', $record);
+        }
+
     }
 
     #[\core\attribute\label('Backup and restore')]
@@ -110,7 +129,7 @@ final class backup_test extends advanced_testcase {
 
         $newid = $rc->get_courseid();
         $rc->destroy();
-        $this->assertEquals(2, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
+        $this->assertEquals(3, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
         $this->assertTrue(is_enrolled(\context_course::instance($newid), $this->student->id));
         $url = new \moodle_url('/user/index.php', ['id' => $newid]);
         $PAGE->set_url($url);
@@ -145,7 +164,7 @@ final class backup_test extends advanced_testcase {
         $rc->execute_precheck();
         $rc->execute_plan();
         $rc->destroy();
-        $this->assertEquals(2, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
+        $this->assertEquals(3, $DB->count_records('enrol', ['enrol' => 'coursecompleted']));
         $this->assertTrue(is_enrolled(\context_course::instance($newid), $this->student->id));
     }
 }

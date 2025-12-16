@@ -42,6 +42,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[CoversClass(\enrol_coursecompleted_plugin::class)]
+#[CoversClass(task\process_future::class)]
 #[CoversClass(hook_listener::class)]
 #[CoversClass(observer::class)]
 final class hook_test extends advanced_testcase {

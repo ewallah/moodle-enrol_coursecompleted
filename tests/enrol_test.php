@@ -278,6 +278,7 @@ final class enrol_test extends advanced_testcase {
         $plugin = enrol_get_plugin('coursecompleted');
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);
         $ccompletion->mark_complete(time());
+
         $enrols = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
 
         // Create other pseudo enrolments.

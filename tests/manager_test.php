@@ -193,6 +193,7 @@ final class manager_test extends advanced_testcase {
         $this->assertStringContainsString('Default: No', $html);
         $this->assertStringContainsString('value="3" selected>Disable course enrolment and remove role', $html);
         $this->assertStringContainsString('<option value="5" selected>Student</option>', $html);
+        // TODO: why are 2 items selected?
         $this->assertStringContainsString('value="604800" selected>weeks', $html);
         $this->assertStringContainsString('value="86400" selected>days', $html);
         $this->assertStringContainsString('value="1" selected>From the course contact', $html);

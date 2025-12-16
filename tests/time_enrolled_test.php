@@ -46,11 +46,24 @@ use PHPUnit\Framework\Attributes\{DataProvider, CoversClass};
 final class time_enrolled_test extends advanced_testcase {
     #[\core\attribute\label('Initial setup')]
     protected function setUp(): void {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->dirroot . '/enrol/locallib.php');
         parent::setUp();
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
+
+        // Add random data.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['enablecompletion' => 1]);
+        $generator->create_and_enrol($course, 'student');
+        $records = $DB->get_records('user_enrolments', []);
+        foreach ($records as $record) {
+            $record->customint1 = 1;
+            $record->customint2 = 1;
+            $record->customint4 = 1;
+            $DB->update_record('user_enrolments', $record);
+        }
+
     }
 
     #[\core\attribute\label('Test adhoc task')]

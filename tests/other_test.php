@@ -44,15 +44,28 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(hook_listener::class)]
 #[CoversClass(observer::class)]
 #[CoversClass(task\process_expirations::class)]
+#[CoversClass(task\process_future::class)]
 final class other_test extends advanced_testcase {
     /**
      * Tests initial setup.
      */
     protected function setUp(): void {
-        global $CFG;
+        global $CFG, $DB;
         parent::setUp();
         $CFG->enablecompletion = true;
         $this->resetAfterTest(true);
+
+        // Add random data.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['enablecompletion' => 1]);
+        $generator->create_and_enrol($course, 'student');
+        $records = $DB->get_records('user_enrolments', []);
+        foreach ($records as $record) {
+            $record->customint1 = 1;
+            $record->customint2 = 1;
+            $record->customint4 = 1;
+            $DB->update_record('user_enrolments', $record);
+        }
     }
 
     /**
@@ -142,10 +155,10 @@ final class other_test extends advanced_testcase {
         $params = ['component' => 'enrol_coursecompleted', 'customdata' => '{"id":"' . $instance->id . '"%'];
         $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
         $observer->enroluser($compevent);
-        $this->assertEquals(5, $DB->count_records('user_enrolments', []));
+        $this->assertEquals(6, $DB->count_records('user_enrolments', []));
         $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
         $observer->enroluser($compevent);
-        $this->assertEquals(5, $DB->count_records('user_enrolments', []));
+        $this->assertEquals(6, $DB->count_records('user_enrolments', []));
         $recs = $DB->get_records_select('task_adhoc', "component = :component AND {$sqllike}", $params);
         foreach ($recs as $rec) {
             $this->assertEquals($rec->component, 'enrol_coursecompleted');
@@ -163,7 +176,7 @@ final class other_test extends advanced_testcase {
         $plugin->update_instance($instance, $data);
         delete_course($course1, false);
         delete_course($course2, false);
-        $this->assertEquals(0, $DB->count_records('user_enrolments', []));
+        $this->assertEquals(1, $DB->count_records('user_enrolments', []));
         $this->assertEquals(0, $DB->count_records_select('task_adhoc', "component = :component AND {$sqllike}", $params));
     }
 
@@ -387,7 +400,7 @@ final class other_test extends advanced_testcase {
         );
         $instances = $DB->get_records('enrol', ['enrol' => 'coursecompleted']);
         $this->assertCount(3, $instances);
-        $this->assertEquals(0, $DB->count_records('user_enrolments', []));
+        $this->assertEquals(1, $DB->count_records('user_enrolments', []));
         foreach ($instances as $instance) {
             $adhock = new task\process_future();
             $adhock->set_userid($student->id);
@@ -402,7 +415,7 @@ final class other_test extends advanced_testcase {
         $context = \context_course::instance($course3->id);
         $this->assertTrue(user_has_role_assignment($student->id, 5, $context->id));
 
-        $this->assertEquals(3, $DB->count_records('user_enrolments', []));
+        $this->assertEquals(4, $DB->count_records('user_enrolments', []));
         $messages = $messagesink->get_messages_by_component_and_type(
             'moodle',
             'enrolcoursewelcomemessage',
