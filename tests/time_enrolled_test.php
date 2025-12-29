@@ -63,7 +63,6 @@ final class time_enrolled_test extends advanced_testcase {
             $record->customint4 = 1;
             $DB->update_record('user_enrolments', $record);
         }
-
     }
 
     #[\core\attribute\label('Test adhoc task')]
