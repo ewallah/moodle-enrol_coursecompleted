@@ -10,7 +10,7 @@
     },
     "phpUnit": {
         "configDir": ".",
-        "customPath": "./vendor/bin/phpunit"
+        "customPath": "../../../vendor/bin/phpunit"
     },
     "initialTestsPhpOptions": "-dxdebug.mode=off -dpcov.enabled=1 -dpcov.directory=.",
     "bootstrap": "./vendor/autoloadmoodle.php"
