@@ -88,7 +88,6 @@ final class form_test extends advanced_testcase {
             ]
         );
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
-
     }
 
     #[\core\attribute\label('Test edit instance validation')]
@@ -98,7 +97,12 @@ final class form_test extends advanced_testcase {
         $this->assertEquals('The specified course does not exist', $tmp['customint1']);
         $this->assertEquals('The enrolment end date cannot be earlier than the start date.', $tmp['enrolenddate']);
 
-        $arr = ['status' => 1, 'customint1' => $this->instance->customint1, 'enrolenddate' => time() + HOURSECS - 1, 'enrolstartdate' => time()];
+        $arr = [
+            'status' => 1,
+            'customint1' => $this->instance->customint1,
+            'enrolenddate' => time() + HOURSECS - 1,
+            'enrolstartdate' => time(),
+        ];
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
         $this->assertEquals('The enrolment end date cannot be earlier than the start date.', $tmp['enrolenddate']);
 
@@ -106,11 +110,11 @@ final class form_test extends advanced_testcase {
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
         $this->assertEquals('The enrolment end date cannot be earlier than the start date.', $tmp['enrolenddate']);
 
-        $arr = ['customint1' => $this->instance->customint1, 'enrolenddate' => time() + HOURSECS +1 , 'enrolstartdate' => time()];
+        $arr = ['customint1' => $this->instance->customint1, 'enrolenddate' => time() + HOURSECS + 1, 'enrolstartdate' => time()];
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
         $this->assertEquals([], $tmp);
 
-        $arr =['roleid' => 3, 'status' => 0, 'customint1' => $this->instance->courseid];
+        $arr = ['roleid' => 3, 'status' => 0, 'customint1' => $this->instance->courseid];
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
         $this->assertEquals([], $tmp);
     }

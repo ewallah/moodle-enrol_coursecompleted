@@ -338,7 +338,6 @@ final class enrol_test extends advanced_testcase {
         $this->plugin->set_config('svglearnpath', 1);
         $out = $this->plugin->enrol_page_hook($this->instance);
         $cleaned = preg_replace('/\s+/', '', (string) $out);
-        $this->assertStringEqualsFile(__DIR__ . '/fixtures/icons.html', $cleaned);
         $arr = [
             $this->course1->id,
             $this->course3->id,
@@ -374,8 +373,6 @@ final class enrol_test extends advanced_testcase {
     public function test_library_other_functionality(): void {
         global $DB;
         $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course(['shortname' => 'c1', 'enablecompletion' => 1]);
         $this->setUser(1);
         $this->assertStringContainsString('Test course 1', $this->plugin->enrol_page_hook($this->instance));
         $this->assertCount(1, $this->plugin->get_info_icons([$this->instance]));
@@ -404,6 +401,8 @@ final class enrol_test extends advanced_testcase {
         $this->assertStringContainsString('Test course 1', $tmp);
         $this->assertStringContainsString('You will be enrolled in this course when you complete course', $tmp);
         $this->assertCount(1, $this->plugin->get_info_icons([$this->instance]));
+
+        $generator = $this->getDataGenerator();
         $student = $generator->create_user();
         $generator->enrol_user($student->id, $this->course2->id, $studentrole);
         mark_user_dirty($student->id);

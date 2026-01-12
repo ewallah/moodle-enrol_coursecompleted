@@ -1,3 +1,10 @@
+## v5.3.1 (2026-01-12)
+
+* Version update
+* rector review
+* code review
+* infection 91%
+
 ## v5.2.1 (2025-11-30)
 
 * Version update

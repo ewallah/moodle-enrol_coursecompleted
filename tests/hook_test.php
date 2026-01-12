@@ -242,7 +242,7 @@ final class hook_test extends advanced_testcase {
         );
         $this->event->trigger();
         $this->assertTrue(user_has_role_assignment($this->student->id, 5, $this->context1->id));
-        // TODO: Not working.
+        // Works, the student has no more role.
         $this->assertFalse(user_has_role_assignment($this->student->id, 5, $this->context2->id));
     }
 
