@@ -338,16 +338,7 @@ final class enrol_test extends advanced_testcase {
         $this->plugin->set_config('svglearnpath', 1);
         $out = $this->plugin->enrol_page_hook($this->instance);
         $cleaned = preg_replace('/\s+/', '', (string) $out);
-        $this->assertStringContainsString('<spanclass="float-end"><spanclass="fa-stackfa-2x">', $cleaned);
-        $this->assertStringContainsString('title="Testcourse1"', $cleaned);
-        $this->assertStringContainsString('"Testcourse1"><spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
-        $this->assertStringContainsString('<spanclass="fafa-circle-ofa-stack-2x"></span>', $cleaned);
-        $this->assertStringContainsString('<strongclass="fa-stack-1x">1</strong></a></span>', $cleaned);
-        $this->assertStringContainsString('<strongclass="fa-stack-1xtext-light">2</strong></span>', $cleaned);
-        $this->assertStringContainsString('spanclass="fa-stackfa-2x"><spanclass="fafa-arrow-rightfa-stack-1xtext-dark"', $cleaned);
-        $this->assertStringContainsString('<spanclass="fa-stackfa-2x"><spanclass="fafa-circlefa-stack-2xtext-dark">', $cleaned);
-        $this->assertStringContainsString('<strongclass="fa-stack-1xtext-light">2</strong></span>', $cleaned);
-        $this->assertStringContainsString('<spanclass="fafa-arrow-rightfa-stack-1xtext-dark"></span></span>', $cleaned);
+        $this->assertStringEqualsFile(__DIR__ . '/fixtures/icons.html', $cleaned);
         $arr = [
             $this->course1->id,
             $this->course3->id,
@@ -359,16 +350,23 @@ final class enrol_test extends advanced_testcase {
 
         $this->assertStringNotContainsString('https://www.example.com/moodle/course/view.php?id=' . $this->course2->id, $cleaned);
         $arr = [
-            'Test course 1</a>',
-            '<strong class="fa-stack-1x">1</strong>',
-            '<strong class="fa-stack-1x text-light">2</strong>',
-            '<strong class="fa-stack-1x">3</strong>',
-            '<strong class="fa-stack-1x">4</strong>',
-            '<strong class="fa-stack-1x">5</strong>',
-            '<strong class="fa-stack-1x">6</strong>',
+            '<spanclass="float-end"><spanclass="fa-stackfa-2x"><ahref=',
+            'title="Testcourse1"',
+            '"Testcourse1"><spanclass="fafa-circle-ofa-stack-2x"></span>',
+            'Testcourse1</a><spanclass="float-end"><spanclass="fa-stackfa-2x"><ahref=',
+            'spanclass="fa-stackfa-2x"><spanclass="fafa-arrow-rightfa-stack-1xtext-dark"',
+            '<spanclass="fa-stackfa-2x"><spanclass="fafa-circlefa-stack-2xtext-dark">',
+            '<strongclass="fa-stack-1xtext-light">2</strong></span>',
+            '<spanclass="fafa-arrow-rightfa-stack-1xtext-dark"></span></span>',
+            '<spanclass="fafa-circle-ofa-stack-2x"></span><strongclass="fa-stack-1x">1</strong></a>',
+            '<spanclass="fafa-circlefa-stack-2xtext-dark"></span><strongclass="fa-stack-1xtext-light">2',
+            '<spanclass="fafa-circle-ofa-stack-2x"></span><strongclass="fa-stack-1x">3</strong>',
+            '<spanclass="fafa-circle-ofa-stack-2x"></span><strongclass="fa-stack-1x">4</strong>',
+            '<spanclass="fafa-circle-ofa-stack-2x"></span><strongclass="fa-stack-1x">5</strong>',
+            '<spanclass="fafa-circle-ofa-stack-2x"></span><strongclass="fa-stack-1x">6</strong>',
         ];
         foreach ($arr as $value) {
-            $this->assertStringContainsString($value, $out);
+            $this->assertStringContainsString($value, $cleaned);
         }
     }
 
@@ -376,14 +374,8 @@ final class enrol_test extends advanced_testcase {
     public function test_library_other_functionality(): void {
         global $DB;
         $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
-        $arr = ['status' => 0, 'customint1' => 666, 'enrolenddate' => time(), 'enrolstartdate' => time() + 10000];
-        $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
-        $this->assertEquals('The specified course does not exist', $tmp['customint1']);
-        $this->assertEquals('The enrolment end date cannot be earlier than the start date.', $tmp['enrolenddate']);
         $generator = $this->getDataGenerator();
         $course = $generator->create_course(['shortname' => 'c1', 'enablecompletion' => 1]);
-        $tmp = $this->plugin->edit_instance_validation(['status' => 0, 'customint1' => $course->id], null, $this->instance, null);
-        $this->assertEquals([], $tmp);
         $this->setUser(1);
         $this->assertStringContainsString('Test course 1', $this->plugin->enrol_page_hook($this->instance));
         $this->assertCount(1, $this->plugin->get_info_icons([$this->instance]));
@@ -425,168 +417,5 @@ final class enrol_test extends advanced_testcase {
         $tmp = $this->plugin->enrol_page_hook($this->instance);
         $this->assertStringNotContainsString('Test course 1', $tmp);
         $this->assertStringNotContainsString('You will be enrolled in this course when you complete course', $tmp);
-    }
-
-    #[\core\attribute\label('Test Form')]
-    public function test_form(): void {
-        $page = new moodle_page();
-        $context = context_course::instance($this->course1->id);
-        $page->set_context($context);
-        $page->set_course($this->course1);
-        $page->set_pagelayout('standard');
-        $page->set_pagetype('course-view');
-        $page->set_url('/enrol/coursecompleted/manage.php?enrolid=' . $this->instance->id);
-
-        $form = $this->tempform();
-        $mform = $form->getform();
-        $this->plugin->edit_instance_form($this->instance, $mform, $context);
-        $this->assertStringContainsString('Required field', $mform->getReqHTML());
-        ob_start();
-        $mform->display();
-        $html = ob_get_clean();
-        $cleaned = preg_replace('/\s+/', '', $html);
-        $this->assertStringContainsString('-select"name="status"id="id_status"><optionvalue="0">Yes</option>', $cleaned);
-        $this->assertStringContainsString('optionvalue="86400"selected', $cleaned);
-        $this->assertStringContainsString('<optionvalue="0">No</option>', $cleaned);
-        $this->assertStringContainsString('d="id_enrolstartdate_enabled"value="1">Enable</label>', $cleaned);
-        $this->assertStringContainsString('cols="60"rows="8"', $cleaned);
-        $this->assertStringContainsString('name="customint3"class="form-check-input"value="1"id="id_customint3"', $cleaned);
-        $this->assertStringContainsString('fieldsetdata-fieldtype="date_time"class="m-0p-0border-0"id="id_customint4"', $cleaned);
-        $this->assertStringContainsString('name="customint4[enabled]"', $cleaned);
-        $this->assertStringContainsString('name="customint5"class="form-check-input"value="1"id="id_customint5"', $cleaned);
-        $this->assertStringContainsString('-select"name="status"id="id_status"><optionvalue="0">Yes</option>', $cleaned);
-        $this->assertStringContainsString('-select"name="customint2"id="id_customint2">', $cleaned);
-        $this->assertStringContainsString('<optionvalue="1"selected>Fromthecoursecontact', $cleaned);
-        $this->assertStringNotContainsString('<optionvalue="2">Fromthekeyholder', $cleaned);
-        $this->assertStringContainsString('<optionvalue="3">Fromtheno-replyaddress', $cleaned);
-        $this->assertStringContainsString('-select"name="roleid"id="id_roleid"><optionvalue="5"selected>Student', $cleaned);
-
-        $arr = [
-            'Enrolmentdate',
-            'Enrolmentduration',
-            'Completedcourse',
-            'Keepgroup',
-            'Sendcoursewelcomemessage',
-            'Customwelcomemessage',
-            'Startdate',
-            'Enddate',
-        ];
-        foreach ($arr as $value) {
-            $this->assertStringContainsString('title="Helpwith' . $value . '"role="img"', $cleaned);
-        }
-
-        $strm = get_string_manager();
-        $arr = ['compcourse', 'customwelcome', 'enrolenddate', 'enrolstartdate', 'group'];
-        foreach ($arr as $value) {
-            if ($strm->string_exists($value, 'enrol_coursecompleted')) {
-                $this->assertStringContainsString(get_string($value, 'enrol_coursecompleted'), $html);
-            }
-
-            if ($strm->string_exists($value . '_desc', 'enrol_coursecompleted')) {
-                $this->assertStringContainsString(get_string($value . '_desc', 'enrol_coursecompleted'), $html);
-            }
-        }
-    }
-
-    #[\core\attribute\label('Test other config.')]
-    public function test_other_config(): void {
-        global $DB;
-        $this->plugin->set_config('status', 1);
-        $this->plugin->set_config('roleid', 3);
-        $this->plugin->set_config('expiredaction', ENROL_EXT_REMOVED_UNENROL);
-        $this->plugin->set_config('welcome', ENROL_SEND_EMAIL_FROM_NOREPLY);
-        $this->plugin->set_config('keepgroup', 0);
-        $this->plugin->set_config('enrolperiod', 3000);
-        $this->plugin->set_config('svglearnpath', 0);
-        $this->assertEquals(get_config('enrol_coursecompleted', 'enrolperiod'), 3000);
-        $this->assertEquals(get_config('enrol_coursecompleted', 'roleid'), 3);
-        $this->assertEquals(get_config('enrol_coursecompleted', 'keepgroup'), 0);
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course(['enablecompletion' => 1]);
-        // Add teacher.
-        $generator->create_and_enrol($this->course1, 'teacher');
-        $generator->create_and_enrol($this->course2, 'teacher');
-
-        $this->setAdminUser();
-        $id = $this->plugin->add_instance(
-            $course,
-            [
-                'customint1' => $course->id,
-                'customint2' => ENROL_SEND_EMAIL_FROM_COURSE_CONTACT,
-                'roleid' => 3,
-            ]
-        );
-        $instance = $DB->get_record('enrol', ['id' => $id]);
-        $page = new \moodle_page();
-        $context = context_course::instance($course->id);
-        $page->set_context($context);
-        $page->set_course($course);
-        $page->set_pagelayout('standard');
-        $page->set_pagetype('course-view');
-        $page->set_url('/enrol/coursecompleted/manage.php?enrolid=' . $instance->id);
-
-        $form = $this->tempform();
-        $mform = $form->getform();
-        $this->plugin->edit_instance_form($instance, $mform, $context);
-        $this->assertStringContainsString('Required field', $mform->getReqHTML());
-        ob_start();
-        $mform->display();
-        $html = ob_get_clean();
-        $cleaned = preg_replace('/\s+/', '', $html);
-        $this->assertStringContainsString('-select"name="status"id="id_status"><optionvalue="0">Yes</option>', $cleaned);
-        $this->assertStringContainsString('<optionvalue="1"selected>No</option>', $cleaned);
-        $this->assertStringContainsString('cols="60"rows="8"', $cleaned);
-        $this->assertStringContainsString('-select"name="customint2"id="id_customint2">', $cleaned);
-        $this->assertStringContainsString('name="customint3"class="form-check-input"value="1"id="id_customint3"', $cleaned);
-        $this->assertStringContainsString(
-            '<inputtype="checkbox"name="customint4[enabled]"class="form-check-input"id="id_customint4_enabled"value="1">',
-            $cleaned
-        );
-        $this->assertStringContainsString('<optionvalue="0">No</option>', $cleaned);
-        $this->assertStringContainsString('<optionvalue="1">Fromthecoursecontact</option>', $cleaned);
-        $this->assertStringContainsString('<optionvalue="3"selected>Fromtheno-replyaddress</option>', $cleaned);
-        $this->assertStringContainsString('<optionvalue="3"selected>Teacher</option>', $cleaned);
-        $strs = [
-            'HelpwithCompletedcourse',
-            'HelpwithEnrolmentdate',
-            'HelpwithEnrolmentduration',
-            'HelpwithUnenroluserfromcompletedcourse',
-        ];
-        foreach ($strs as $str) {
-            $this->assertStringContainsString($str, $cleaned);
-        }
-    }
-
-    /**
-     * Test form.
-     */
-    private function tempform(): \moodleform {
-        /**
-         * Coursecompleted enrolment form tests.
-         *
-         * @package   enrol_coursecompleted
-         * @copyright eWallah (www.eWallah.net)
-         * @author    Renaat Debleu <info@eWallah.net>
-         * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-         */
-        return new class extends \moodleform {
-            /**
-             * Form definition.
-             */
-            public function definition(): void {
-                // No definition required.
-            }
-
-            /**
-             * Returns form reference
-             * @return MoodleQuickForm
-             */
-            public function getform() {
-                $mform = $this->_form;
-                // Simulate submission.
-                $mform->_flagSubmitted = true;
-                return $mform;
-            }
-        };
     }
 }

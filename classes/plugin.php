@@ -192,7 +192,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public function restore_instance(\restore_enrolments_structure_step $step, stdClass $data, $course, $oldid): void {
         global $DB;
         if ($step->get_task()->get_target() == backup::TARGET_NEW_COURSE) {
-            $merge = false;
+            $instanceid = $this->add_instance($course, (array)$data);
+            $step->set_mapping('enrol', $oldid, $instanceid);
         } else {
             $merge = [
                 'courseid' => $course->id,
@@ -200,16 +201,11 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 'roleid' => $data->roleid,
                 'customint1' => $data->customint1,
             ];
+            if ($instances = $DB->get_records('enrol', $merge, 'id')) {
+                $instance = reset($instances);
+                $step->set_mapping('enrol', $oldid, $instance->id);
+            }
         }
-
-        if ($merge && $instances = $DB->get_records('enrol', $merge, 'id')) {
-            $instance = reset($instances);
-            $instanceid = $instance->id;
-        } else {
-            $instanceid = $this->add_instance($course, (array)$data);
-        }
-
-        $step->set_mapping('enrol', $oldid, $instanceid);
     }
 
     /**
@@ -301,7 +297,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                     foreach ($enrols as $enrol) {
                         $plugin = enrol_get_plugin($enrol->enrolmentinstance->enrol);
                         $instance = $DB->get_record('enrol', ['id' => $enrol->enrolid], '*', MUST_EXIST);
-                        if ($instance && $plugin->allow_unenrol_user($instance, $enrol)) {
+                        if ($plugin->allow_unenrol_user($instance, $enrol)) {
                             $plugin->unenrol_user($instance, $userid);
                         }
                     }
@@ -419,8 +415,8 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
         $mform->setDefault('status', $this->get_config('status'));
 
-        $role = ($instance && isset($instance->roleid)) ? $instance->roleid : $this->get_config('roleid');
-        $start = ($instance && isset($instance->customint1)) ? get_course($instance->customint1)->startdate : time();
+        $role = isset($instance->roleid) ? $instance->roleid : $this->get_config('roleid');
+        $start = isset($instance->customint1) ? get_course($instance->customint1)->startdate : time();
 
         $roles = get_default_enrol_roles($context, $role);
         $mform->addElement('select', 'roleid', get_string('assignrole', $plugin), $roles);

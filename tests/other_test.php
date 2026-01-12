@@ -170,10 +170,10 @@ final class other_test extends advanced_testcase {
         $data = new stdClass();
         $data->status = ENROL_INSTANCE_DISABLED;
 
-        $plugin->update_instance($instance, $data);
+        $this->assertTrue($plugin->update_instance($instance, $data));
         $this->assertEquals(0, $DB->count_records_select('task_adhoc', "component = :component AND {$sqllike}", $params));
         $data->status = ENROL_INSTANCE_ENABLED;
-        $plugin->update_instance($instance, $data);
+        $this->assertTrue($plugin->update_instance($instance, $data));
         delete_course($course1, false);
         delete_course($course2, false);
         $this->assertEquals(1, $DB->count_records('user_enrolments', []));
