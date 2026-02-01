@@ -71,9 +71,7 @@ final class enrol_test extends advanced_testcase {
     /** @var moodle_page Page. */
     private ?\moodle_page $page = null;
 
-    /**
-     * Setup to ensure that forms and locallib are loaded.
-     */
+    #[\core\attribute\label('Setup to ensure that forms and locallib are loaded.')]
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->libdir . '/formslib.php');
@@ -81,9 +79,7 @@ final class enrol_test extends advanced_testcase {
         parent::setUpBeforeClass();
     }
 
-    /**
-     * Tests initial setup.
-     */
+    #[\core\attribute\label('Test initial setup.')]
     protected function setUp(): void {
         global $CFG, $DB;
         parent::setUp();
@@ -165,9 +161,7 @@ final class enrol_test extends advanced_testcase {
         $this->page->set_url($url);
     }
 
-    /**
-     * Test if user is enrolled after completing a course.
-     */
+    #[\core\attribute\label('Test event if user is enrolled after completing a course.')]
     public function test_event_enrolled(): void {
         $manager1 = new \course_enrolment_manager($this->page, $this->course1);
         $this->assertCount(1, $manager1->get_user_enrolments($this->student->id));
@@ -194,9 +188,7 @@ final class enrol_test extends advanced_testcase {
         $this->assertCount(1, $manager2->get_user_enrolments($this->student->id));
     }
 
-    /**
-     * Test if user is enrolled after completing a course.
-     */
+    #[\core\attribute\label('Test if user is enrolled after completing a course.')]
     public function test_enrolled_after_completion(): void {
         global $PAGE;
         $manager = new \course_enrolment_manager($PAGE, $this->course2);
@@ -211,9 +203,7 @@ final class enrol_test extends advanced_testcase {
         $this->assertCount(1, $manager->get_user_enrolments($this->student->id));
     }
 
-    /**
-     * Test ue.
-     */
+    #[\core\attribute\label('Test user edit.')]
     public function test_user_edit(): void {
         global $PAGE;
         $ccompletion = new \completion_completion(['course' => $this->course1->id, 'userid' => $this->student->id]);

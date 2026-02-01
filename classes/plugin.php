@@ -595,15 +595,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool true is active
      */
     private function is_active($instance): bool {
-        $time = time();
-        $start = is_null($instance->enrolstartdate) ? 0 : $instance->enrolstartdate;
-        if ($start > $time) {
+        $now = time();
+        if ($instance->enrolstartdate && $instance->enrolstartdate > $now) {
             return false;
         }
 
-        $end = is_null($instance->enrolenddate) ? 0 : $instance->enrolenddate;
-        if ($end != 0 && $end < $time) {
-            // Past enrolment.
+        if ($instance->enrolenddate && $instance->enrolenddate < $now) {
             return false;
         }
 

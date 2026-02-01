@@ -134,9 +134,8 @@ final class form_test extends advanced_testcase {
         $mform = $form->getform();
         $this->plugin->edit_instance_form($this->instance, $mform, $context);
         $this->assertStringContainsString('Required field', $mform->getReqHTML());
-        ob_start();
-        $mform->display();
-        $html = ob_get_clean();
+
+        $html = $form->render();
         $cleaned = preg_replace('/\s+/', '', $html);
 
         $strs = [
