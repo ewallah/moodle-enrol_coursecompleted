@@ -1,3 +1,9 @@
+## v5.4.1 (2026-04-20)
+
+* Version update
+* MOODLE_502_STABLE
+* infection 90%
+
 ## v5.3.1 (2026-01-12)
 
 * Version update
