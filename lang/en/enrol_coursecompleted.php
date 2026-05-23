@@ -25,7 +25,6 @@
 
 $string['aftercourse'] = 'After completing course: {$a}';
 $string['assignrole'] = 'Assign role';
-$string['cachedef_compcourses'] = 'Enrolment on course completion cache';
 $string['compcourse'] = 'Completed course';
 $string['compcourse_help'] = 'Which course have to be completed.';
 $string['confirmbulkdeleteenrolment'] = 'Are you sure you want to delete these user enrolments?';

@@ -313,6 +313,7 @@ final class enrol_test extends advanced_testcase {
             '<a href="https://www.example.com/moodle/enrol/coursecompleted/manage.php?enrolid=' . $this->instance->id,
             $icons[1]
         );
+        $url = '<ahref="https://www.example.com/moodle/course/view.php?id=';
         $this->assertStringContainsString('title="Edit"', $icons[0]);
         $this->assertStringContainsString('title="Enrol users"', $icons[1]);
         $this->assertEquals('After completing course: A1', $this->plugin->get_instance_name($this->instance));
@@ -323,21 +324,16 @@ final class enrol_test extends advanced_testcase {
         );
         $this->plugin->set_config('svglearnpath', 0);
         $out = $this->plugin->enrol_page_hook($this->instance);
+        $this->assertStringContainsString($this->course1->id . '" title="Test course 1">Test course 1</a>', $out);
         $this->assertStringNotContainsString('<strong class="fa-stack-1x text-light">', $out);
 
         $this->plugin->set_config('svglearnpath', 1);
         $out = $this->plugin->enrol_page_hook($this->instance);
         $cleaned = preg_replace('/\s+/', '', (string) $out);
-        $arr = [
-            $this->course1->id,
-            $this->course3->id,
-            $this->course4->id,
-        ];
-        foreach ($arr as $value) {
-            $this->assertStringContainsString("https://www.example.com/moodle/course/view.php?id={$value}", $cleaned);
-        }
-
-        $this->assertStringNotContainsString('https://www.example.com/moodle/course/view.php?id=' . $this->course2->id, $cleaned);
+        $this->assertStringContainsString($url . $this->course1->id . '"title="Testcourse1">Testcourse1</a>', $cleaned);
+        $this->assertStringContainsString($url . $this->course3->id . '"title="Testcourse3"><spanclass=', $cleaned);
+        $this->assertStringContainsString($url . $this->course4->id . '"title="Testcourse4"><spanclass=', $cleaned);
+        $this->assertStringNotContainsString($url . $this->course2->id, $cleaned);
         $arr = [
             '<spanclass="float-end"><spanclass="fa-stackfa-2x"><ahref=',
             'title="Testcourse1"',

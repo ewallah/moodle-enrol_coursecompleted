@@ -90,7 +90,7 @@ final class manager_test extends advanced_testcase {
         $this->setUser($this->student);
         $_POST['enrolid'] = $this->instance->id;
         $this->expectException(moodle_exception::class);
-        $this->expectExceptionMessage('Sorry, but you do not currently have permissions to do that (Enrol users).');
+        $this->expectExceptionMessage('Unsupported redirect detected, script execution terminated');
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
 
@@ -109,7 +109,7 @@ final class manager_test extends advanced_testcase {
         $this->setUser($user);
         $_POST['enrolid'] = $this->instance->id;
         $this->expectException(moodle_exception::class);
-        $this->expectExceptionMessage('Sorry, but you do not currently have permissions to do that (Enrol users).');
+        $this->expectExceptionMessage('Unsupported redirect detected, script execution terminated');
         include($CFG->dirroot . '/enrol/coursecompleted/manage.php');
     }
 

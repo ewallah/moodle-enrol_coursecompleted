@@ -28,12 +28,13 @@ require_once($CFG->dirroot . '/enrol/coursecompleted/classes/plugin.php');
 global $DB, $OUTPUT, $PAGE;
 
 $enrolid = required_param('enrolid', PARAM_INT);
-$action = optional_param('action', '', PARAM_RAW);
+$action = optional_param('action', '', PARAM_ALPHA);
 
-if ($instance = $DB->get_record('enrol', ['id' => $enrolid, 'enrol' => 'coursecompleted'], '*', MUST_EXIST)) {
-    $course = get_course($instance->courseid);
-    $context = \context_course::instance($course->id, MUST_EXIST);
-}
+$instance = $DB->get_record('enrol', ['id' => $enrolid, 'enrol' => 'coursecompleted'], '*', MUST_EXIST);
+$course = get_course($instance->courseid);
+$context = \context_course::instance($course->id, MUST_EXIST);
+
+require_login($course);
 
 $canenrol = has_capability('enrol/coursecompleted:enrolpast', $context);
 $canunenrol = has_capability('enrol/coursecompleted:unenrol', $context);
@@ -42,8 +43,6 @@ if (!$canenrol && !$canunenrol) {
     // No need to invent new error strings here...
     require_capability('enrol/manual:enrol', $context);
 }
-
-require_login($course);
 
 $enrol = enrol_get_plugin('coursecompleted');
 $instancename = $enrol->get_instance_name($instance);
@@ -84,7 +83,7 @@ if ($enrolid > 0) {
             if (!isset($current[$candidate])) {
                 $user = \core_user::get_user($candidate);
                 if (!empty($user) && !$user->deleted) {
-                    $allusers[$candidate] = fullname($user);
+                    $allusers[$candidate] = s(fullname($user));
                 }
             }
         }

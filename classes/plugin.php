@@ -296,9 +296,9 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
 
                     foreach ($enrols as $enrol) {
                         $plugin = enrol_get_plugin($enrol->enrolmentinstance->enrol);
-                        $instance = $DB->get_record('enrol', ['id' => $enrol->enrolid], '*', MUST_EXIST);
-                        if ($plugin->allow_unenrol_user($instance, $enrol)) {
-                            $plugin->unenrol_user($instance, $userid);
+                        $sourceinstance = $DB->get_record('enrol', ['id' => $enrol->enrolid], '*', MUST_EXIST);
+                        if ($plugin->allow_unenrol_user($sourceinstance, $enrol)) {
+                            $plugin->unenrol_user($sourceinstance, $userid);
                         }
                     }
                 }
