@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: checkout plugin
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: this-plugin
 
@@ -123,7 +123,7 @@ jobs:
 
       - name: faildump
         if: ${{ failure() && steps.behat.outcome == 'failure' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: firefox faildump (${{ join(matrix.*, ', ') }})
           path: ${{ github.workspace }}/moodledata/behat_dump
