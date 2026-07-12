@@ -57,7 +57,8 @@ final class groupfilter_test extends advanced_testcase {
         $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
 
         // Group AGOSTO in the source course; only $inuser belongs to it.
-        $agosto = $generator->create_group(['courseid' => $source->id, 'name' => 'AGOSTO']);
+        // create_group() returns the record; the plugin stores group ids, so keep the id.
+        $agosto = (int)$generator->create_group(['courseid' => $source->id, 'name' => 'AGOSTO'])->id;
         $inuser = $generator->create_and_enrol($source, 'student');
         $outuser = $generator->create_and_enrol($source, 'student');
         groups_add_member($agosto, $inuser->id);
@@ -75,6 +76,7 @@ final class groupfilter_test extends advanced_testcase {
         ]);
         $instance = $DB->get_record('enrol', ['id' => $id], '*', MUST_EXIST);
         $this->assertSame(json_encode([$agosto]), $instance->customtext2);
+        $this->assertSame('[' . $agosto . ']', $instance->customtext2);
 
         $plugin->enrol_user($instance, $inuser->id);
         $plugin->enrol_user($instance, $outuser->id);
