@@ -1,3 +1,9 @@
+## v5.3.3-groups1 (fork)
+
+* New: per-instance group filter. Restrict auto-enrolment to members of selected
+  groups in the completed course (empty = everyone). Stored in customtext2, group
+  list loaded by AJAX from the chosen source course. Filter enforced in enrol_user.
+
 ## v5.4.1 (2026-04-20)
 
 * Version update
