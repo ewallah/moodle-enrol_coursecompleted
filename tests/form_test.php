@@ -50,6 +50,9 @@ final class form_test extends advanced_testcase {
     /** @var stdClass Plugin. */
     private $plugin;
 
+    /** @var stdClass Group. */
+    private $group;
+
     /**
      * Setup to ensure that forms and locallib are loaded.
      */
@@ -57,6 +60,7 @@ final class form_test extends advanced_testcase {
         global $CFG;
         require_once($CFG->libdir . '/formslib.php');
         require_once($CFG->dirroot . '/enrol/locallib.php');
+        require_once($CFG->dirroot . '/group/lib.php');
         parent::setUpBeforeClass();
     }
 
@@ -76,6 +80,7 @@ final class form_test extends advanced_testcase {
         $course2 = $generator->create_course(['shortname' => 'F2', 'enablecompletion' => 1]);
         $generator->create_course(['enablecompletion' => 1]);
         $generator->create_course(['enablecompletion' => 0]);
+        $this->group = $generator->create_group(['courseid' => $course2->id]);
 
         $id = $this->plugin->add_instance(
             $course2,
@@ -85,6 +90,7 @@ final class form_test extends advanced_testcase {
                 'customint2' => ENROL_SEND_EMAIL_FROM_NOREPLY,
                 'customint4' => 100,
                 'roleid' => 3,
+                'groupfilter' => [$this->group->id => $this->group->name],
             ]
         );
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
@@ -92,7 +98,14 @@ final class form_test extends advanced_testcase {
 
     #[\core\attribute\label('Test edit instance validation')]
     public function test_edit_instance_validation(): void {
-        $arr = ['status' => 0, 'customint1' => 666, 'enrolenddate' => time(), 'enrolstartdate' => time() + 10000];
+        $arr = [
+            'status' => 0,
+            'customint1' => 666,
+            'enrolenddate' => time(),
+            'enrolstartdate' => time() + 10000,
+            'customtext2' => json_encode([$this->group->id => $this->group->name]),
+        ];
+        print_object($this->instance);
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
         $this->assertEquals('The specified course does not exist', $tmp['customint1']);
         $this->assertEquals('The enrolment end date cannot be earlier than the start date.', $tmp['enrolenddate']);

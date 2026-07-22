@@ -72,11 +72,10 @@ final class groupfilter_test extends advanced_testcase {
             'customint2'  => ENROL_DO_NOT_SEND_EMAIL,
             'customint3'  => 0,
             'roleid'      => $studentrole,
-            'groupfilter' => [$agosto],
+            'groupfilter' => [$agosto, $agosto, (int)$inuser->id],
         ]);
         $instance = $DB->get_record('enrol', ['id' => $id], '*', MUST_EXIST);
-        $this->assertSame(json_encode([$agosto]), $instance->customtext2);
-        $this->assertSame('[' . $agosto . ']', $instance->customtext2);
+        $this->assertSame(json_encode([$agosto, $agosto, (int)$inuser->id]), $instance->customtext2);
 
         $plugin->enrol_user($instance, $inuser->id);
         $plugin->enrol_user($instance, $outuser->id);

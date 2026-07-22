@@ -458,6 +458,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         if (!empty($instance->customtext2)) {
             require_once($CFG->dirroot . '/group/lib.php');
             $selectedgroups = json_decode($instance->customtext2) ?: [];
+            print_object($instance);
             foreach ($selectedgroups as $gid) {
                 $gname = groups_get_group_name((int)$gid);
                 if ($gname !== false) {
