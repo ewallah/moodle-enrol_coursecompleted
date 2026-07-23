@@ -98,8 +98,13 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        global $OUTPUT;
+        global $OUTPUT, $USER;
         if (!$this->is_active($instance)) {
+            return '';
+        }
+
+        // Do not promise enrolment to users who would be skipped by the group filter.
+        if (!$this->passes_group_filter($instance, (int)$USER->id)) {
             return '';
         }
 
@@ -232,6 +237,12 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         global $CFG, $DB;
         if ($this->is_active($instance)) {
             $userid = (int)$userid;
+
+            // Group filter: skip users who do not belong to one of the selected source-course groups.
+            if (!$this->passes_group_filter($instance, $userid)) {
+                return;
+            }
+
             // We ignore the role, timestart, timeend and status parameters and fall back on the instance settings.
             $roleid = $instance->roleid ?? $this->get_config('roleid');
             $context1 = context_course::instance($instance->customint1, IGNORE_MISSING);
@@ -410,6 +421,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @param context $context Context
      */
     public function edit_instance_form($instance, \MoodleQuickForm $mform, $context): void {
+        global $CFG;
         $plugin = 'enrol_coursecompleted';
         $options = [ENROL_INSTANCE_ENABLED => get_string('yes'), ENROL_INSTANCE_DISABLED => get_string('no')];
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
@@ -435,6 +447,34 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('course', 'customint1', get_string('course'), $conditions);
         $mform->addRule('customint1', get_string('required'), 'required', null, 'client');
         $mform->addHelpButton('customint1', 'compcourse', $plugin);
+
+        // Group filter: restrict auto-enrolment to members of the chosen groups in the completed course.
+        // The list is loaded by AJAX from the course selected above; already-selected groups are preloaded.
+        $preopts = [];
+        $selectedgroups = [];
+        if (!empty($instance->customtext2)) {
+            require_once($CFG->dirroot . '/group/lib.php');
+            $selectedgroups = json_decode($instance->customtext2) ?: [];
+            foreach ($selectedgroups as $gid) {
+                $gname = groups_get_group_name((int)$gid);
+                if ($gname !== false) {
+                    $preopts[(int)$gid] = $gname;
+                }
+            }
+        }
+        $mform->addElement(
+            'autocomplete',
+            'groupfilter',
+            get_string('groupfilter', $plugin),
+            $preopts,
+            [
+                'multiple' => true,
+                'ajax' => 'enrol_coursecompleted/groupselector',
+                'noselectionstring' => get_string('groupfilter_all', $plugin),
+            ]
+        );
+        $mform->setDefault('groupfilter', $selectedgroups);
+        $mform->addHelpButton('groupfilter', 'groupfilter', $plugin);
 
         $mform->addElement('advcheckbox', 'customint5', get_string('unenrol', 'enrol'), get_string('tryunenrol', $plugin));
         $mform->addHelpButton('customint5', 'tryunenrol', $plugin);
@@ -489,9 +529,48 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             if (!isset($fields['customint3'])) {
                 $fields['customint3'] = $this->get_config('keepgroup', 1);
             }
+
+            $fields['customtext2'] = self::encode_groupfilter($fields['groupfilter'] ?? []);
+            unset($fields['groupfilter']);
         }
 
         return parent::add_instance($course, $fields);
+    }
+
+    /**
+     * Encode the selected group ids into the JSON stored in customtext2.
+     *
+     * @param mixed $value array of group ids from the form (or anything falsy)
+     * @return string JSON array of ints ("[]" when none)
+     */
+    protected static function encode_groupfilter($value): string {
+        $arr = is_array($value) ? array_values(array_filter(array_map('intval', $value))) : [];
+        return json_encode($arr);
+    }
+
+    /**
+     * Whether a user passes the group filter of an instance.
+     *
+     * When groups are selected (customtext2) the user must belong to at least one of them in the
+     * completed course. No filter set = everyone passes. Only the user's own membership is checked,
+     * so no hidden-group information about other users is revealed.
+     *
+     * @param stdClass $instance Enrol instance
+     * @param int $userid User id
+     * @return bool True when the user may be enrolled
+     */
+    public function passes_group_filter(stdClass $instance, int $userid): bool {
+        global $CFG;
+        if (empty($instance->customtext2)) {
+            return true;
+        }
+        $groupids = json_decode($instance->customtext2);
+        if (!is_array($groupids) || count($groupids) === 0) {
+            return true;
+        }
+        require_once($CFG->dirroot . '/group/lib.php');
+        $usergroups = groups_get_user_groups((int)$instance->customint1, $userid)[0] ?? [];
+        return !empty(array_intersect(array_map('intval', $groupids), array_map('intval', $usergroups)));
     }
 
     /**
@@ -502,6 +581,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return bool True if updated
      */
     public function update_instance($instance, $data) {
+        $data->customtext2 = self::encode_groupfilter($data->groupfilter ?? []);
         $update = parent::update_instance($instance, $data);
         $hook = new \core_enrol\hook\after_enrol_instance_status_updated(enrolinstance: $instance, newstatus: (int)$data->status);
         \core\di::get(\core\hook\manager::class)->dispatch($hook);
