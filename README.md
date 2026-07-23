@@ -16,6 +16,18 @@ Course completed enrolment handles the enrolment of users upon completion of a c
 * When you want to enrol all users only after a particular date, configure this date as part of the course completion.
 * When you want that this plugin only works for a limited period, configure enrolment start and end date. Before and after this date, this plugin will do nothing.
 * Now you can also enrol a user in the future (the welcome message will also be sent only the moment the user is enrolled).
+* You can optionally restrict the automatic enrolment to members of selected groups in the completed course (see "Group filter" below).
+
+## Group filter
+
+By default every user who completes the source course is enrolled. With the **Restrict to groups** setting on the enrolment instance you can limit this to users who belong to at least one of the selected groups **in the completed (source) course**.
+
+* The group list is loaded from the source course you choose in the instance; pick the completed course first.
+* Leave it empty to keep the default behaviour (enrol everyone who completes the course).
+* This is a filter on *who* gets enrolled — it does not create groups or assign users to groups. Group carry-over into the target course is a separate, existing setting (a user in a group in the source course joins the group with the same name in the target course).
+* On the enrolment page a student only sees the "you will be enrolled on completion" message when they actually pass the filter. Only the viewing user's own group membership is checked, so hidden groups of other users are never revealed.
+
+Note: enrolment still happens **on course completion**, exactly as without the filter. The filter only decides whether that completion results in an enrolment — it does not change what Moodle counts as course completion.
 
 ## Warning
 
