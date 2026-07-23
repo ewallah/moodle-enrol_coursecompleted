@@ -98,8 +98,13 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        global $OUTPUT;
+        global $OUTPUT, $USER;
         if (!$this->is_active($instance)) {
+            return '';
+        }
+
+        // Do not promise enrolment to users who would be skipped by the group filter.
+        if (!$this->passes_group_filter($instance, (int)$USER->id)) {
             return '';
         }
 
@@ -233,17 +238,9 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         if ($this->is_active($instance)) {
             $userid = (int)$userid;
 
-            // Group filter: when groups are selected (customtext2), only enrol users who belong to at
-            // least one of those groups in the completed course. Empty/absent = enrol everyone.
-            if (!empty($instance->customtext2)) {
-                $groupids = json_decode($instance->customtext2);
-                if (is_array($groupids) && count($groupids) > 0) {
-                    require_once($CFG->dirroot . '/group/lib.php');
-                    $usergroups = groups_get_user_groups((int)$instance->customint1, $userid)[0] ?? [];
-                    if (empty(array_intersect(array_map('intval', $groupids), array_map('intval', $usergroups)))) {
-                        return;
-                    }
-                }
+            // Group filter: skip users who do not belong to one of the selected source-course groups.
+            if (!$this->passes_group_filter($instance, $userid)) {
+                return;
             }
 
             // We ignore the role, timestart, timeend and status parameters and fall back on the instance settings.
@@ -549,6 +546,31 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     protected static function encode_groupfilter($value): string {
         $arr = is_array($value) ? array_values(array_filter(array_map('intval', $value))) : [];
         return json_encode($arr);
+    }
+
+    /**
+     * Whether a user passes the group filter of an instance.
+     *
+     * When groups are selected (customtext2) the user must belong to at least one of them in the
+     * completed course. No filter set = everyone passes. Only the user's own membership is checked,
+     * so no hidden-group information about other users is revealed.
+     *
+     * @param stdClass $instance Enrol instance
+     * @param int $userid User id
+     * @return bool True when the user may be enrolled
+     */
+    public function passes_group_filter(stdClass $instance, int $userid): bool {
+        global $CFG;
+        if (empty($instance->customtext2)) {
+            return true;
+        }
+        $groupids = json_decode($instance->customtext2);
+        if (!is_array($groupids) || count($groupids) === 0) {
+            return true;
+        }
+        require_once($CFG->dirroot . '/group/lib.php');
+        $usergroups = groups_get_user_groups((int)$instance->customint1, $userid)[0] ?? [];
+        return !empty(array_intersect(array_map('intval', $groupids), array_map('intval', $usergroups)));
     }
 
     /**
