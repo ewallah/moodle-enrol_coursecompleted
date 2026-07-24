@@ -90,7 +90,7 @@ final class form_test extends advanced_testcase {
                 'customint2' => ENROL_SEND_EMAIL_FROM_NOREPLY,
                 'customint4' => 100,
                 'roleid' => 3,
-                'groupfilter' => [$this->group->id => $this->group->name],
+                'groupfilter' => [$this->group->id],
             ]
         );
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
@@ -103,9 +103,8 @@ final class form_test extends advanced_testcase {
             'customint1' => 666,
             'enrolenddate' => time(),
             'enrolstartdate' => time() + 10000,
-            'customtext2' => json_encode([$this->group->id => $this->group->name]),
+            'groupfilter' => json_encode([$this->group->id => $this->group->name]),
         ];
-        print_object($this->instance);
         $tmp = $this->plugin->edit_instance_validation($arr, null, $this->instance, null);
         $this->assertEquals('The specified course does not exist', $tmp['customint1']);
         $this->assertEquals('The enrolment end date cannot be earlier than the start date.', $tmp['enrolenddate']);

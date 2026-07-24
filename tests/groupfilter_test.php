@@ -93,6 +93,7 @@ final class groupfilter_test extends advanced_testcase {
         ]);
         $instance2 = $DB->get_record('enrol', ['id' => $id2], '*', MUST_EXIST);
         $this->assertSame('[]', $instance2->customtext2);
+        $this->assertFalse($plugin->passes_group_filter($instance, 0));
 
         $plugin->enrol_user($instance2, $inuser->id);
         $plugin->enrol_user($instance2, $outuser->id);

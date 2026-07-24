@@ -63,6 +63,9 @@ $string['expiredaction'] = 'Enrolment expiry action';
 $string['expiredaction_help'] = "Select the action to be performed when a user's enrolment expires. Please note that some user data and settings are deleted when a user is unenrolled.";
 $string['group'] = 'Keep group';
 $string['group_help'] = 'Try to add users to a group with the same name';
+$string['groupfilter'] = 'Restrict to groups';
+$string['groupfilter_all'] = 'All students (no group restriction)';
+$string['groupfilter_help'] = 'Only students belonging to at least one of the selected groups in the completed course will be automatically enrolled. Leave empty to enrol every student who completes the course. Pick the completed course first — the list loads that course\'s groups.';
 $string['keepgroup'] = 'Default keep group setting';
 $string['keepgroup_help'] = 'Default try to add users to a group with the same name';
 $string['pluginname'] = 'Course completed enrolment';
@@ -89,6 +92,3 @@ Congratulations!
 
 After successfully completing {$a->completed}, you are now automatically enrolled in the following course {$a->coursename}.';
 $string['willbeenrolled'] = 'You will be enrolled in this course when you complete course {$a}';
-$string['groupfilter'] = 'Restrict to groups';
-$string['groupfilter_help'] = 'Only students belonging to at least one of the selected groups in the completed course will be automatically enrolled. Leave empty to enrol every student who completes the course. Pick the completed course first — the list loads that course\'s groups.';
-$string['groupfilter_all'] = 'All students (no group restriction)';

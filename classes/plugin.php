@@ -455,7 +455,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         if (!empty($instance->customtext2)) {
             require_once($CFG->dirroot . '/group/lib.php');
             $selectedgroups = json_decode($instance->customtext2) ?: [];
-            print_object($instance);
             foreach ($selectedgroups as $gid) {
                 $gname = groups_get_group_name((int)$gid);
                 if ($gname !== false) {
@@ -562,9 +561,6 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      */
     public function passes_group_filter(stdClass $instance, int $userid): bool {
         global $CFG;
-        if (empty($instance->customtext2)) {
-            return true;
-        }
         $groupids = json_decode($instance->customtext2);
         if (!is_array($groupids) || count($groupids) === 0) {
             return true;
