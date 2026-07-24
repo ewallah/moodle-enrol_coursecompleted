@@ -100,4 +100,42 @@ final class groupfilter_test extends advanced_testcase {
         $this->assertTrue(is_enrolled($filteredctx, $inuser->id));
         $this->assertTrue(is_enrolled($filteredctx, $outuser->id));
     }
+
+    /**
+     * The enrolment page only promises enrolment to users who pass the group filter.
+     */
+    public function test_enrol_page_hook_respects_group_filter(): void {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/group/lib.php');
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+
+        $source = $generator->create_course(['shortname' => 'src', 'enablecompletion' => 1]);
+        $target = $generator->create_course(['shortname' => 'tgt']);
+        $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
+
+        $agosto = (int)$generator->create_group(['courseid' => $source->id, 'name' => 'AGOSTO'])->id;
+        $inuser = $generator->create_and_enrol($source, 'student');
+        $outuser = $generator->create_and_enrol($source, 'student');
+        groups_add_member($agosto, $inuser->id);
+
+        $plugin = enrol_get_plugin('coursecompleted');
+        $id = $plugin->add_instance($target, [
+            'status'      => ENROL_INSTANCE_ENABLED,
+            'customint1'  => $source->id,
+            'customint2'  => ENROL_DO_NOT_SEND_EMAIL,
+            'customint3'  => 0,
+            'roleid'      => $studentrole,
+            'groupfilter' => [$agosto],
+        ]);
+        $instance = $DB->get_record('enrol', ['id' => $id], '*', MUST_EXIST);
+
+        $this->setUser($inuser);
+        $this->assertNotEmpty($plugin->enrol_page_hook($instance));
+
+        $this->setUser($outuser);
+        $this->assertSame('', $plugin->enrol_page_hook($instance));
+    }
 }

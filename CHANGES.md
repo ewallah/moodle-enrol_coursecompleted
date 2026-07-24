@@ -2,7 +2,9 @@
 
 * New: per-instance group filter. Restrict auto-enrolment to members of selected
   groups in the completed course (empty = everyone). Stored in customtext2, group
-  list loaded by AJAX from the chosen source course. Filter enforced in enrol_user.
+  list loaded by AJAX from the chosen source course. Filter enforced in enrol_user
+  and reflected on the enrolment page: a student only sees the "you will be enrolled"
+  message when they pass the filter (own membership only, no hidden-group leak).
 
 ## v5.4.1 (2026-04-20)
 
