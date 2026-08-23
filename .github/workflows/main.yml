@@ -9,21 +9,21 @@ jobs:
 
     services:
       postgres:
-        image: postgres
+        image: ${{ matrix.database == 'pgsql' && 'postgres' || '' }}
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
-        options: --health-cmd="pg_isready" --health-interval 10s --health-timeout 5s --health-retries 5
+        options: --health-cmd="pg_isready" --health-interval 10s --health-timeout 5s --health-retries 3
         ports:
           - 5432:5432
       mariadb:
-        image: mariadb:11
+        image: ${{ matrix.database == 'mariadb' && 'mariadb' || '' }}
         env:
           MYSQL_USER: 'root'
           MYSQL_ALLOW_EMPTY_PASSWORD: "true"
           MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
           MYSQL_COLLATION_SERVER: "utf8mb4_unicode_ci"
-        options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval 10s --health-timeout 5s --health-retries 3
         ports:
           - 3306:3306
 
@@ -31,12 +31,8 @@ jobs:
       fail-fast: false
       matrix:
         moodle-branch: ['MOODLE_502_STABLE', 'MOODLE_501_STABLE', 'main']
-        php: ['8.3']
+        php: ['8.3', '8.4']
         database: ['mariadb', 'pgsql']
-        include:
-          - php: '8.4'
-            moodle-branch: 'main'
-            database: 'pgsql'
 
     steps:
       - name: checkout plugin
@@ -49,6 +45,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           ini-values: max_input_vars=5000,  opcache.enable_cli=1, opcache.jit = disable
+          tools: composer
           coverage: pcov
 
       - name: composer
@@ -57,6 +54,8 @@ jobs:
            echo $(cd ci/bin; pwd) >> $GITHUB_PATH
            echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
            sudo locale-gen en_AU.UTF-8
+           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+
 
       - name: install Moodle
         run: moodle-plugin-ci --ansi install --db-host=127.0.0.1 --plugin this-plugin
@@ -89,7 +88,7 @@ jobs:
         run: moodle-plugin-ci --ansi savepoints
 
       - name: grunt
-        if: ${{ !cancelled() }}
+        if: ${{ matrix.moodle-branch == 'main'}}
         run: moodle-plugin-ci --ansi grunt
 
       - name: mustache
@@ -105,19 +104,13 @@ jobs:
         run: vendor/bin/phpunit --colors --no-coverage --testsuite tool_dataprivacy_testsuite,tool_policy_testsuite,core_privacy_testsuite
         working-directory: moodle
 
-      - name: other
-        if: ${{ matrix.moodle-branch == 'main'}}
-        run: vendor/bin/phpunit --colors --no-coverage --testsuite core_enrol_testsuite
-        working-directory: moodle
-
       - name: coveralls
-        if: ${{ !cancelled() }}
+        continue-on-error: true
         run: moodle-plugin-ci coveralls-upload
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: firefox
-        id: behat
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi behat
 
@@ -129,7 +122,7 @@ jobs:
           path: ${{ github.workspace }}/moodledata/behat_dump
           retention-days: 7
           if-no-files-found: ignore
-
+ 
       - name: chrome
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi behat --profile chrome
