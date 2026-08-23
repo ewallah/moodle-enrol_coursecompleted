@@ -33,8 +33,8 @@ Feature: Restrict enrolment on course completion to selected source-course group
     And I set the field "Teacher" to "1"
     And I press "Save changes"
     And I add "Course completed enrolment" enrolment method in "Course 2" with:
-      | Course            | Course 1 |
-      | Restrict to groups | Group 1 |
+      | Course             | Course 1 |
+      | Restrict to groups | Group 1  |
     And I log out
 
   Scenario: Only members of the selected group are enrolled, and only they see the promise
@@ -50,8 +50,8 @@ Feature: Restrict enrolment on course completion to selected source-course group
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I navigate to "Reports" in current page administration
     And I click on "Course completion" "link" in the "region-main" "region"
-    And I follow "Click to mark user complete" on the "user1" user
-    And I follow "Click to mark user complete" on the "user2" user
+    And I follow "Click to mark user complete"
+    And I follow "Click to mark user complete"
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
 

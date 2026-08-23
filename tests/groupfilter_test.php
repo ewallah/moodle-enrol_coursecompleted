@@ -59,9 +59,13 @@ final class groupfilter_test extends advanced_testcase {
         // Group AGOSTO in the source course; only $inuser belongs to it.
         // create_group() returns the record; the plugin stores group ids, so keep the id.
         $agosto = (int)$generator->create_group(['courseid' => $source->id, 'name' => 'AGOSTO'])->id;
+        $generator->create_group(['courseid' => $source->id]);
+        $generator->create_group(['courseid' => $source->id]);
+        $tmpgroup = (int)$generator->create_group(['courseid' => $source->id])->id;
         $inuser = $generator->create_and_enrol($source, 'student');
         $outuser = $generator->create_and_enrol($source, 'student');
         groups_add_member($agosto, $inuser->id);
+        groups_add_member($tmpgroup, $inuser->id);
 
         $plugin = enrol_get_plugin('coursecompleted');
 
@@ -79,6 +83,7 @@ final class groupfilter_test extends advanced_testcase {
 
         $plugin->enrol_user($instance, $inuser->id);
         $plugin->enrol_user($instance, $outuser->id);
+
         $targetctx = context_course::instance($target->id);
         $this->assertTrue(is_enrolled($targetctx, $inuser->id));
         $this->assertFalse(is_enrolled($targetctx, $outuser->id));
@@ -97,6 +102,7 @@ final class groupfilter_test extends advanced_testcase {
 
         $plugin->enrol_user($instance2, $inuser->id);
         $plugin->enrol_user($instance2, $outuser->id);
+
         $filteredctx = context_course::instance($filtered->id);
         $this->assertTrue(is_enrolled($filteredctx, $inuser->id));
         $this->assertTrue(is_enrolled($filteredctx, $outuser->id));

@@ -80,6 +80,7 @@ final class backup_test extends advanced_testcase {
         );
         $generator->create_and_enrol($course, 'student');
         $generator->create_and_enrol($course, 'student');
+
         $records = $DB->get_records('user_enrolments', []);
         foreach ($records as $record) {
             $record->customint1 = 1;

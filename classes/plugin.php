@@ -427,7 +427,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
         $mform->addElement('select', 'status', get_string('enabled', 'admin'), $options);
         $mform->setDefault('status', $this->get_config('status'));
 
-        $role = isset($instance->roleid) ? $instance->roleid : $this->get_config('roleid');
+        $role = $instance->roleid ?? $this->get_config('roleid');
         $start = isset($instance->customint1) ? get_course($instance->customint1)->startdate : time();
 
         $roles = get_default_enrol_roles($context, $role);
@@ -462,6 +462,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
                 }
             }
         }
+
         $mform->addElement(
             'autocomplete',
             'groupfilter',
@@ -544,7 +545,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
      * @return string JSON array of ints ("[]" when none)
      */
     protected static function encode_groupfilter($value): string {
-        $arr = is_array($value) ? array_values(array_filter(array_map('intval', $value))) : [];
+        $arr = is_array($value) ? array_values(array_filter(array_map(intval(...), $value))) : [];
         return json_encode($arr);
     }
 
@@ -562,13 +563,14 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
     public function passes_group_filter(stdClass $instance, int $userid): bool {
         global $CFG;
         $groupids = json_decode($instance->customtext2);
-        if (!is_array($groupids) || count($groupids) === 0) {
+        if (!is_array($groupids) || $groupids === []) {
             return true;
         }
         require_once($CFG->dirroot . '/group/lib.php');
         $usergroups = groups_get_user_groups((int)$instance->customint1, $userid)[0] ?? [];
-        return !empty(array_intersect(array_map('intval', $groupids), array_map('intval', $usergroups)));
+        return array_intersect(array_map(intval(...), $groupids), array_map(intval(...), $usergroups)) !== [];
     }
+
 
     /**
      * Update instance of enrol plugin.
@@ -677,11 +679,7 @@ class enrol_coursecompleted_plugin extends enrol_plugin {
             return false;
         }
 
-        if ($instance->enrolenddate && $instance->enrolenddate < $now) {
-            return false;
-        }
-
-        return true;
+        return !($instance->enrolenddate && $instance->enrolenddate < $now);
     }
 
     /**

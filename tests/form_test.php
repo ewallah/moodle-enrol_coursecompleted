@@ -80,6 +80,7 @@ final class form_test extends advanced_testcase {
         $course2 = $generator->create_course(['shortname' => 'F2', 'enablecompletion' => 1]);
         $generator->create_course(['enablecompletion' => 1]);
         $generator->create_course(['enablecompletion' => 0]);
+
         $this->group = $generator->create_group(['courseid' => $course2->id]);
 
         $id = $this->plugin->add_instance(
@@ -90,7 +91,7 @@ final class form_test extends advanced_testcase {
                 'customint2' => ENROL_SEND_EMAIL_FROM_NOREPLY,
                 'customint4' => 100,
                 'roleid' => 3,
-                'groupfilter' => [$this->group->id],
+                'groupfilter' => [$this->group->id, 1, 9999],
             ]
         );
         $this->instance = $DB->get_record('enrol', ['id' => $id]);
@@ -181,6 +182,9 @@ final class form_test extends advanced_testcase {
             '<divclass="fdescriptionrequired"aria-hidden="true">',
             '<inputname="sesskey"type="hidden"value="',
             '<labelid="id_roleid_label"class="d-inlineword-break"for="id_roleid">Assignrole</label>',
+            'id_groupfilter">Restricttogroups',
+            'inputtype="hidden"name="groupfilter"value="_qf__force_multiselect_submission"',
+            'group-0001</option></select>',
         ];
 
         foreach ($strs as $str) {
@@ -194,6 +198,7 @@ final class form_test extends advanced_testcase {
             'Keepgroup',
             'Sendcoursewelcomemessage',
             'Customwelcomemessage',
+            'Restricttogroups',
             'Startdate',
             'Enddate',
         ];
