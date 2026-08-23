@@ -25,7 +25,7 @@ jobs:
       - name: setup pgsql
         uses: m4nu56/postgresql-action@v1
         with:
-          postgresql version: 16
+          postgresql version: 17
           postgresql user: test
           postgresql password: test
 
@@ -33,7 +33,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          ini-values: max_input_vars=5000
+          ini-values: max_input_vars=5000,  opcache.enable_cli=1, opcache.jit = disable
           coverage: pcov
 
       - name: composer
