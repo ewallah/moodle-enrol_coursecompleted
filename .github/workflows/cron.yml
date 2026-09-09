@@ -25,7 +25,7 @@ jobs:
       - name: setup pgsql
         uses: m4nu56/postgresql-action@v1
         with:
-          postgresql version: 17
+          postgresql version: 18
           postgresql user: test
           postgresql password: test
 
