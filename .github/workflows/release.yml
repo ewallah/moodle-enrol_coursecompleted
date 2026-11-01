@@ -17,7 +17,7 @@ defaults:
 
 jobs:
   release-at-moodle-org:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       PLUGIN: enrol_coursecompleted
       CURL: curl -s
