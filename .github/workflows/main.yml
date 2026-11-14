@@ -43,6 +43,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           path: this-plugin
+          ref: groupfilter
 
       - name: setup PHP
         uses: shivammathur/setup-php@v2
@@ -59,7 +60,6 @@ jobs:
            echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
            sudo locale-gen en_AU.UTF-8
            echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
-
 
       - name: install Moodle
         run: moodle-plugin-ci --ansi install --db-host=127.0.0.1 --plugin this-plugin
