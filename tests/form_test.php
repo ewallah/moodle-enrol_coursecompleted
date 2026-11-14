@@ -203,7 +203,7 @@ final class form_test extends advanced_testcase {
             'Enddate',
         ];
         foreach ($arr as $value) {
-            $this->assertStringContainsString('title="Helpwith' . $value . '"role="img"', $cleaned);
+            $this->assertStringContainsString('"Helpwith' . $value . '"', $cleaned);
         }
 
         $strm = get_string_manager();

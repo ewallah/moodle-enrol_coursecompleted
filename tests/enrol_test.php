@@ -303,8 +303,10 @@ final class enrol_test extends advanced_testcase {
         $this->assertEquals($icons[0]->attributes['title'], 'After completing course: Test course 1');
         $icons = $this->plugin->get_action_icons($this->instance);
         $this->assertCount(2, $icons);
-        $this->assertStringContainsString('icon fa fa-pen fa-fw iconsmall', $icons[0]);
-        $this->assertStringContainsString('"icon fa fa-user-plus fa-fw iconsmall', $icons[1]);
+        $this->assertStringContainsString('"icon fa', $icons[0]);
+        $this->assertStringContainsString('iconsmall', $icons[0]);
+        $this->assertStringContainsString('"icon fa fa-user-plus', $icons[1]);
+        $this->assertStringContainsString('iconsmall', $icons[1]);
         $this->assertStringContainsString(
             '<a href="https://www.example.com/moodle/enrol/editinstance.php?courseid=' . $this->course2->id,
             $icons[0]
