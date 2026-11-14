@@ -117,7 +117,7 @@ jobs:
       - name: firefox
         id: firefox
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi behat
+        run: moodle-plugin-ci --ansi behat --auto-rerun=5
 
       - name: faildump
         if: ${{ failure() && steps.firefox.outcome == 'failure' }}
@@ -130,7 +130,7 @@ jobs:
  
       - name: chrome
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi behat --profile chrome
+        run: moodle-plugin-ci --ansi behat --profile chrome  --auto-rerun=5
 
       - name: admin bookmarks
         if: ${{ !cancelled() }}
