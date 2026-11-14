@@ -1,5 +1,9 @@
-## v5.3.3-groups1 (fork)
+## v5.5.1 (2026-11-14)
 
+* Version update
+* MOODLE_503_STABLE
+* infection 95%
+* camp integration
 * New: per-instance group filter. Restrict auto-enrolment to members of selected
   groups in the completed course (empty = everyone). Stored in customtext2, group
   list loaded by AJAX from the chosen source course. Filter enforced in enrol_user
